@@ -1,7 +1,7 @@
 # qj_projec
 
 A new Flutter project.
-제발 되게 해주세요.....
+겨우 성공했습니다ㅋ
 
 ## Getting Started
 
