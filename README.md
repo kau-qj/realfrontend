@@ -1,7 +1,7 @@
 # qj_projec
 
 A new Flutter project.
-Test
+Testing
 
 ## Getting Started
 
