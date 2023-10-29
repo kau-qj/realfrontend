@@ -1,0 +1,23 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "realfrontend",
+      "request": "attach",
+      "type": "dart",
+      "flutterMode": "debug"
+    },
+    {
+      "name": "realfrontend (profile mode)",
+      "request": "attach",
+      "type": "dart",
+      "flutterMode": "profile"
+    },
+    {
+      "name": "realfrontend (release mode)",
+      "request": "attach",
+      "type": "dart",
+      "flutterMode": "release"
+    }
+  ]
+}

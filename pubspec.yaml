@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.1.4 <4.0.0'
+  sdk: '>=3.1.3 <4.0.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -58,30 +58,13 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets: 
-    - assets/RoundButton.svg
-    - assets/CreatePostButton.svg
-    - assets/subButton.svg
-    - assets/signButton.svg
-    - assets/HompageSideButton.svg
-    - assets/HompageAdButton.svg
-    - assets/XButton.svg
-    - assets/MypageEditButton.svg
-    - assets/MyprofileButton.svg
-    - assets/BackButton.svg
+    - assets/Add.svg
     - assets/AddButton.svg
-    - assets/DictionaryInButton.svg
-    - assets/SearchButton.svg
-    - assets/AnonymBoxButton.svg
     - assets/AnonyBoxCheckButton.svg
-    - assets/MyLecturePushButton.svg
-    - aseets/OtherLecturePushButton.svg
-
-  fonts: 
-    - family: Poppins
-      fonts:
-        - asset: fonts/Poppins-Bold.ttf
-          weight: 700
-        - asset: fonts/Poppins-Medium.ttf
+    - assets/AnonymBoxButton.svg
+    - assets/BackButton.svg
+    - assets/
+    
 
 
   # The following line ensures that the Material Icons font is
