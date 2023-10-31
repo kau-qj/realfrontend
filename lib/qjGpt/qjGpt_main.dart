@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:async';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class CourseRecommend extends StatefulWidget {
   const CourseRecommend({super.key});
@@ -62,28 +63,7 @@ class _CourseRecommendState extends State<CourseRecommend> {
               Positioned.fill(
                 child: GptLoading(),
               ),
-            Positioned(
-              top: 288,
-              child: Text(
-                "내 직무 강의 추천",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: 295,
-              child: Text(
-                "다른 직무 강의 추천",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
-                ),
-              ),
-            ),
+            
           ],
         ),
       ),
@@ -94,10 +74,20 @@ class _CourseRecommendState extends State<CourseRecommend> {
 class GptLoading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return SvgPicture.asset('assets/GptLoading.svg');
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        SvgPicture.asset('assets/GptLoading.svg'), // SVG 이미지
+        CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Color.fromARGB(194, 183, 236, 255)),
+        ), // 원형 로딩 모션
+      ],
+    );
   }
 }
 
+
+//MyLecture
 class MyLecture extends StatelessWidget {
   const MyLecture({super.key});
 
@@ -118,8 +108,10 @@ class MyLecture extends StatelessWidget {
               left: 25, // 상단 위치 조절
               child: InkWell(
                 onTap: () {
-                  // 이전 페이지로 돌아가기
-                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const CourseRecommend()),
+                  );
                 },
                 child: SvgPicture.asset('assets/BackButton.svg'),
               ),
@@ -137,7 +129,7 @@ class MyLecture extends StatelessWidget {
               child: SvgPicture.asset('assets/CourseInfo.svg'),
             ),
             Positioned(
-              top: 420, // 상단 위치 조절
+              top: 450, // 상단 위치 조절
               child: SvgPicture.asset('assets/QjLogoBack.svg'),
             ),
           ],
@@ -147,6 +139,8 @@ class MyLecture extends StatelessWidget {
   }
 }
 
+
+//OtherLecture
 class OtherLecture extends StatelessWidget {
   const OtherLecture({super.key});
 
@@ -186,7 +180,7 @@ class OtherLecture extends StatelessWidget {
               child: SvgPicture.asset('assets/CourseInfo.svg'),
             ),
             Positioned(
-              top: 420, // 상단 위치 조절
+              top: 450, // 상단 위치 조절
               child: SvgPicture.asset('assets/QjLogoBack.svg'),
             ),
           ],

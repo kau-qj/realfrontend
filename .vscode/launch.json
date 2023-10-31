@@ -2,22 +2,14 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "realfrontend",
-      "request": "attach",
+      "name": "Flutter",
+      "request": "launch",
       "type": "dart",
+      "program": "lib/main.dart",
+      "args": [
+        "--no-sound-null-safety"
+      ],
       "flutterMode": "debug"
-    },
-    {
-      "name": "realfrontend (profile mode)",
-      "request": "attach",
-      "type": "dart",
-      "flutterMode": "profile"
-    },
-    {
-      "name": "realfrontend (release mode)",
-      "request": "attach",
-      "type": "dart",
-      "flutterMode": "release"
     }
   ]
 }
