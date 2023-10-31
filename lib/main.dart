@@ -1,41 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:qj_projec/dictionary/course_dic.dart';
+import 'package:qj_projec/dictionary/job_dic.dart';
+import 'package:qj_projec/qjGpt/qjGpt_main.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {    
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHompage(),
+      home: CourseRecommend(),
+
     );
-  }
-}
 
-class MyHompage extends StatefulWidget {
-  const MyHompage({super.key});
-
-  @override
-  State<MyHompage> createState() => _MyHompageState();
-}
-
-class _MyHompageState extends State<MyHompage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("qj"),
-      ),
-      body: const Center(child: Text("Hello")),
-    );
   }
 }
