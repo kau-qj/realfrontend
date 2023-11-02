@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:qj_projec/dictionary/course_dic.dart';
-import 'package:qj_projec/dictionary/job_dic.dart';
-import 'package:qj_projec/qjGpt/qjGpt_main.dart';
+import 'package:qj_projec/course_dic.dart';
+import 'package:qj_projec/job_dic.dart';
+import 'package:qj_projec/qjGpt_main.dart';
 
 void main() {
   runApp(MyApp());
