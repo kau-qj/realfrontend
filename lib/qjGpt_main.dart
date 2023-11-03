@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:async';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:qj_projec/bottomNav.dart';
+
 
 class CourseRecommend extends StatefulWidget {
   const CourseRecommend({super.key});
@@ -48,7 +50,7 @@ class _CourseRecommendState extends State<CourseRecommend> {
               ),
             ),
             Positioned(
-              bottom: 250,
+              bottom: 150,
               child: GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -63,7 +65,6 @@ class _CourseRecommendState extends State<CourseRecommend> {
               Positioned.fill(
                 child: GptLoading(),
               ),
-            
           ],
         ),
       ),
