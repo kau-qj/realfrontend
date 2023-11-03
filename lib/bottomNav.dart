@@ -41,8 +41,8 @@ class _MyButtomNavBarState extends State<MyButtomNaVBar> {
             child: BottomNavigationBar(
               type: BottomNavigationBarType.fixed,
               backgroundColor: Colors.white,
-              selectedItemColor: Color.fromRGBO(178, 214, 252, 1),
-              unselectedItemColor: Color.fromRGBO(178, 214, 252, 1),
+              selectedItemColor: Color.fromRGBO(161, 196, 253, 1),
+              unselectedItemColor: Color.fromRGBO(161, 196, 253, 1),
               onTap: (index){
                 setState(() {
                   myCurrentIndex = index;
