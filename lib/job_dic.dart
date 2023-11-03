@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:qj_projec/bottomNav.dart';
 
 
 class JobDictionary extends StatefulWidget {
@@ -25,7 +26,7 @@ class _JobDictionaryState extends State<JobDictionary> {
             Positioned(
               top: 50,
               left: 0, // 상단 위치 조절
-              child: SvgPicture.asset('assets/img/smallQj.svg'),
+              child: SvgPicture.asset('assets/smallQj.svg'),
             ),
             Positioned(
               top:110,
@@ -40,20 +41,20 @@ class _JobDictionaryState extends State<JobDictionary> {
             ),
             Positioned(
               top: 160,
-              child: SvgPicture.asset('assets/img/SearchButton.svg'),
+              child: SvgPicture.asset('assets/SearchButton.svg'),
             ),
             Positioned(
               top: 240,
               left: 15,
-              child: SvgPicture.asset('assets/img/BackButton.svg'),
+              child: SvgPicture.asset('assets/BackButton.svg'),
             ),
             Positioned(
               top: 240,
               right: 15,
-              child: SvgPicture.asset('assets/img/AddButton.svg'),
+              child: SvgPicture.asset('assets/AddButton.svg'),
             ),
             Positioned(
-              top: 257,
+              top: 256,
               right: 60,
               child: Text(
                 "관심 직무 추가하기",
