@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:async';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:qj_projec/bottomNav.dart';
-
+import 'package:qj_projec/httpApi/api_qjGpt.dart';
 
 class CourseRecommend extends StatefulWidget {
   const CourseRecommend({super.key});
@@ -22,7 +22,7 @@ class _CourseRecommendState extends State<CourseRecommend> {
     });
 
     // 2초 동안 GptLoading 페이지를 표시
-    await Future.delayed(Duration(seconds: 5));
+    await Future.delayed(Duration(seconds: 3));
 
     // MyLecture 화면으로 이동
     Navigator.push(
@@ -30,6 +30,7 @@ class _CourseRecommendState extends State<CourseRecommend> {
       MaterialPageRoute(builder: (context) => const MyLecture()),
     );
   }
+  final ApiService apiService = ApiService(); //api 연결
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +40,7 @@ class _CourseRecommendState extends State<CourseRecommend> {
           alignment: Alignment.center,
           children: <Widget>[
             Positioned(
-              top: 23,
+              top: 0,
               child: SvgPicture.asset('assets/TopTheme.svg'),
             ),
             Positioned(
@@ -49,6 +50,7 @@ class _CourseRecommendState extends State<CourseRecommend> {
                 child: SvgPicture.asset('assets/MyLecturePushButton.svg'),
               ),
             ),
+            
             Positioned(
               bottom: 150,
               child: GestureDetector(
@@ -94,6 +96,8 @@ class MyLecture extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ApiService apiService = ApiService(); //api 연결
+
     Color textColor = const Color.fromRGBO(45, 67, 77, 1);
     return Scaffold(
       body: Center(
@@ -101,7 +105,7 @@ class MyLecture extends StatelessWidget {
           alignment: Alignment.center,
           children: <Widget>[
             Positioned(
-              top: 23, // 상단 위치 조절
+              top: 0, // 상단 위치 조절
               child: SvgPicture.asset('assets/TopTheme.svg'),
             ),
             Positioned(
@@ -154,7 +158,7 @@ class OtherLecture extends StatelessWidget {
           alignment: Alignment.center,
           children: <Widget>[
             Positioned(
-              top: 23, // 상단 위치 조절
+              top: 0, // 상단 위치 조절
               child: SvgPicture.asset('assets/TopTheme.svg'),
             ),
             Positioned(
