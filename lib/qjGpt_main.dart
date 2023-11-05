@@ -115,7 +115,7 @@ class MyLecture extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const CourseRecommend()),
+                    MaterialPageRoute(builder: (context) => const MyButtomNaVBar()),
                   );
                 },
                 child: SvgPicture.asset('assets/BackButton.svg'),

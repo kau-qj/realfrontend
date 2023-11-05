@@ -6,6 +6,8 @@ import 'package:flutter_inner_shadow/flutter_inner_shadow.dart';
 import 'package:qj_projec/button/x_button.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:qj_projec/httpApi/api_hompage.dart';
+import 'package:qj_projec/bottomNav.dart';
+
 
 class MyHompage extends StatefulWidget {
   const MyHompage({super.key});
