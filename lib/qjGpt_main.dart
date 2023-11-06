@@ -21,8 +21,11 @@ class _CourseRecommendState extends State<CourseRecommend> {
       isGptLoadingVisible = true; // 로딩 페이지 표시
     });
 
-    // 2초 동안 GptLoading 페이지를 표시
-    await Future.delayed(Duration(seconds: 3));
+    final ApiService apiService = ApiService(); //api 연결
+
+
+    // 3초 동안 GptLoading 페이지를 표시
+    //await Future.delayed(Duration(seconds: 3));
 
     // MyLecture 화면으로 이동
     Navigator.push(
@@ -30,7 +33,6 @@ class _CourseRecommendState extends State<CourseRecommend> {
       MaterialPageRoute(builder: (context) => const MyLecture()),
     );
   }
-  final ApiService apiService = ApiService(); //api 연결
 
   @override
   Widget build(BuildContext context) {
@@ -63,10 +65,12 @@ class _CourseRecommendState extends State<CourseRecommend> {
                 child: SvgPicture.asset('assets/OtherLecturePushButton.svg'),
               ),
             ),
+            /*
             if (isGptLoadingVisible) // 로딩 페이지가 표시될 때만 아래 위젯 표시
               Positioned.fill(
                 child: GptLoading(),
               ),
+            */
           ],
         ),
       ),
@@ -96,6 +100,7 @@ class MyLecture extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     final ApiService apiService = ApiService(); //api 연결
 
     Color textColor = const Color.fromRGBO(45, 67, 77, 1);
@@ -137,6 +142,57 @@ class MyLecture extends StatelessWidget {
               top: 450, // 상단 위치 조절
               child: SvgPicture.asset('assets/QjLogoBack.svg'),
             ),
+            FutureBuilder<Map<String, dynamic>>(
+              future: apiService.fetchData(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return GptLoading(); // GptLoading 위젯 반환
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else if (!snapshot.hasData || snapshot.data == null || snapshot.data!['result'] == null) {
+                  return Text('No data fetched from API.');
+                } else {
+                  // API로부터 받아온 데이터를 저장
+                  List result = snapshot.data!['result'];
+
+                  // 각 아이템에서 'title', 'comment', 'score'만 추출
+                  List<Map<String, dynamic>> extractedData = result.map((item) {
+                    return {
+                      'title': item['title'],
+                      'comment': item['comment'],
+                      'score': item['score'],
+                    };
+                  }).toList();
+
+                  // ListView.builder를 이용하여 모든 아이템을 출력
+                  return ListView.builder(
+                    itemCount: extractedData.length,
+                    itemBuilder: (context, index) {
+                      if (index == 0) { // 첫 번째 아이템인 경우
+                        return Container(
+                          padding: EdgeInsets.all(14.0),
+                          child: ListTile(
+                            title: Text('Title: ${extractedData[index]['title']}'),
+                            subtitle: Text('${extractedData[index]['comment']}'),
+                            trailing: Text('Score: ${extractedData[index]['score']}'),
+                          ),
+                        );
+                      } else { // 그 외의 경우
+                        return Container(
+                          padding: EdgeInsets.all(14.0),
+                          child: ListTile(
+                            subtitle: Text('${extractedData[index]['comment']}'),
+                            trailing: Text('Score: ${extractedData[index]['score']}'),
+                          ),
+                        );
+                      }
+
+                    },
+                  );
+                }
+              },
+            ),
+
           ],
         ),
       ),
