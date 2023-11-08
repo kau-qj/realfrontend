@@ -47,7 +47,6 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       body: Padding(
         padding: const EdgeInsets.only(left: 50.0, right: 50.0),  // 상단 패딩을 제거합니다.
         child: Column(
@@ -130,7 +129,7 @@ class _LoginPageState extends State<LoginPage> {
                     width: double.infinity,
                     height: 50,
                     alignment: Alignment.center,
-                    child: const Text('로그인', style: TextStyle(fontSize: 30, color: Colors.white)),
+                    child: const Text('로그인', style: TextStyle(fontSize: 23, color: Colors.white,)),
                   ),
                 ),
               ),

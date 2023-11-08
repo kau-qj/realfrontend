@@ -29,6 +29,7 @@ class _MyHompageState extends State<MyHompage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset : false,
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 255, 255, 255),
@@ -158,20 +159,26 @@ class _MyHompageState extends State<MyHompage> {
                                   FutureBuilder<Map<String, dynamic>>(
                                     future: apiService.fetchData(),
                                     builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
+                                      if (snapshot.connectionState == ConnectionState.waiting) {
                                         return CircularProgressIndicator();
                                       } else if (snapshot.hasError) {
                                         return Text('Error: ${snapshot.error}');
-                                      } else if (!snapshot.hasData ||
-                                          snapshot.data == null) {
-                                        return Text(
-                                            'No data fetched from API.');
+                                      } else if (!snapshot.hasData || snapshot.data == null || snapshot.data!['result'] == null) {
+                                        return Text('No data fetched from API.');
                                       } else {
-                                        // 여기에 데이터를 표시하는 코드를 추가할 수 있습니다.
-                                        // 예를 들어: Text('${snapshot.data['keyName']}')
-                                        return Center(
-                                            child: Text('${snapshot.data.toString()}')
+                                        // API로부터 받아온 데이터를 저장
+                                        List result = snapshot.data!['result'];
+
+                                        // 각 아이템에서 'title'만 추출
+                                        List<String> titles = result.map((item) => item['title'] as String).toList();
+
+                                        return ListView.builder(
+                                          itemCount: titles.length,
+                                          itemBuilder: (context, index) {
+                                            return ListTile(
+                                              title: Text(titles[index]),
+                                            );
+                                          },
                                         );
                                       }
                                     },

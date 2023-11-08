@@ -46,15 +46,24 @@ class _CourseRecommendState extends State<CourseRecommend> {
               child: SvgPicture.asset('assets/TopTheme.svg'),
             ),
             Positioned(
+              top: 100,
+              left: 0,
+              child: SvgPicture.asset('assets/CourseRecO1.svg'),
+            ),
+            Positioned(
               top: 250,
               child: GestureDetector(
                 onTap: loadMyLecturePage,
                 child: SvgPicture.asset('assets/MyLecturePushButton.svg'),
               ),
             ),
-            
             Positioned(
-              bottom: 150,
+              bottom: 20,
+              right: 0,
+              child: SvgPicture.asset('assets/CourseRecO2.svg'),
+            ),
+            Positioned(
+              bottom: 180,
               child: GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -164,35 +173,40 @@ class MyLecture extends StatelessWidget {
                     };
                   }).toList();
 
-                  // ListView.builder를 이용하여 모든 아이템을 출력
-                  return ListView.builder(
-                    itemCount: extractedData.length,
-                    itemBuilder: (context, index) {
-                      if (index == 0) { // 첫 번째 아이템인 경우
-                        return Container(
-                          padding: EdgeInsets.all(14.0),
-                          child: ListTile(
-                            title: Text('Title: ${extractedData[index]['title']}'),
-                            subtitle: Text('${extractedData[index]['comment']}'),
-                            trailing: Text('Score: ${extractedData[index]['score']}'),
-                          ),
-                        );
-                      } else { // 그 외의 경우
-                        return Container(
-                          padding: EdgeInsets.all(14.0),
-                          child: ListTile(
-                            subtitle: Text('${extractedData[index]['comment']}'),
-                            trailing: Text('Score: ${extractedData[index]['score']}'),
-                          ),
-                        );
-                      }
+                  String myJob = extractedData[0]['title'];
 
-                    },
+                  // Stack 위젯으로 myJob과 ListView.builder를 겹치게 배치
+                  return Column(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(top: 215),
+                        child: Text(
+                          myJob,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: extractedData.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
+                              child: ListTile(
+                                subtitle: Text('${extractedData[index]['comment']}'),
+                                trailing: Text('Score: ${extractedData[index]['score']}'),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   );
                 }
               },
             ),
-
           ],
         ),
       ),
@@ -239,6 +253,18 @@ class OtherLecture extends StatelessWidget {
             Positioned(
               top: 285, // 상단 위치 조절
               child: SvgPicture.asset('assets/CourseInfo.svg'),
+            ),
+            Positioned(
+              top: 215, // 상단 위치 조절
+              child: Text('다른 관심 직무'),
+            ),
+            Positioned(
+              top: 310, // 상단 위치 조절
+              child: Text('----이곳에는 강의 정보와 점수가 나올 것입니다.----'),
+            ),
+            Positioned(
+              bottom: 135, // 상단 위치 조절
+              child: Text('---------------산학 에이플 가쟈~---------------'),
             ),
             Positioned(
               top: 450, // 상단 위치 조절
