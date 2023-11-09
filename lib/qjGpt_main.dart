@@ -127,10 +127,8 @@ class MyLecture extends StatelessWidget {
               left: 25, // 상단 위치 조절
               child: InkWell(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const MyButtomNaVBar()),
-                  );
+                  // 이전 페이지로 돌아가기
+                  Navigator.pop(context);
                 },
                 child: SvgPicture.asset('assets/BackButton.svg'),
               ),
