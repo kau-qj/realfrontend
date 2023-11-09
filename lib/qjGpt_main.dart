@@ -21,8 +21,11 @@ class _CourseRecommendState extends State<CourseRecommend> {
       isGptLoadingVisible = true; // 로딩 페이지 표시
     });
 
-    // 2초 동안 GptLoading 페이지를 표시
-    await Future.delayed(Duration(seconds: 3));
+    final ApiService apiService = ApiService(); //api 연결
+
+
+    // 3초 동안 GptLoading 페이지를 표시
+    //await Future.delayed(Duration(seconds: 3));
 
     // MyLecture 화면으로 이동
     Navigator.push(
@@ -30,7 +33,6 @@ class _CourseRecommendState extends State<CourseRecommend> {
       MaterialPageRoute(builder: (context) => const MyLecture()),
     );
   }
-  final ApiService apiService = ApiService(); //api 연결
 
   @override
   Widget build(BuildContext context) {
@@ -44,15 +46,24 @@ class _CourseRecommendState extends State<CourseRecommend> {
               child: SvgPicture.asset('assets/TopTheme.svg'),
             ),
             Positioned(
+              top: 100,
+              left: 0,
+              child: SvgPicture.asset('assets/CourseRecO1.svg'),
+            ),
+            Positioned(
               top: 250,
               child: GestureDetector(
                 onTap: loadMyLecturePage,
                 child: SvgPicture.asset('assets/MyLecturePushButton.svg'),
               ),
             ),
-            
             Positioned(
-              bottom: 150,
+              bottom: 20,
+              right: 0,
+              child: SvgPicture.asset('assets/CourseRecO2.svg'),
+            ),
+            Positioned(
+              bottom: 180,
               child: GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -63,10 +74,12 @@ class _CourseRecommendState extends State<CourseRecommend> {
                 child: SvgPicture.asset('assets/OtherLecturePushButton.svg'),
               ),
             ),
+            /*
             if (isGptLoadingVisible) // 로딩 페이지가 표시될 때만 아래 위젯 표시
               Positioned.fill(
                 child: GptLoading(),
               ),
+            */
           ],
         ),
       ),
@@ -96,6 +109,7 @@ class MyLecture extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     final ApiService apiService = ApiService(); //api 연결
 
     Color textColor = const Color.fromRGBO(45, 67, 77, 1);
@@ -113,10 +127,8 @@ class MyLecture extends StatelessWidget {
               left: 25, // 상단 위치 조절
               child: InkWell(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const CourseRecommend()),
-                  );
+                  // 이전 페이지로 돌아가기
+                  Navigator.pop(context);
                 },
                 child: SvgPicture.asset('assets/BackButton.svg'),
               ),
@@ -136,6 +148,62 @@ class MyLecture extends StatelessWidget {
             Positioned(
               top: 450, // 상단 위치 조절
               child: SvgPicture.asset('assets/QjLogoBack.svg'),
+            ),
+            FutureBuilder<Map<String, dynamic>>(
+              future: apiService.fetchData(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return GptLoading(); // GptLoading 위젯 반환
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else if (!snapshot.hasData || snapshot.data == null || snapshot.data!['result'] == null) {
+                  return Text('No data fetched from API.');
+                } else {
+                  // API로부터 받아온 데이터를 저장
+                  List result = snapshot.data!['result'];
+
+                  // 각 아이템에서 'title', 'comment', 'score'만 추출
+                  List<Map<String, dynamic>> extractedData = result.map((item) {
+                    return {
+                      'title': item['title'],
+                      'comment': item['comment'],
+                      'score': item['score'],
+                    };
+                  }).toList();
+
+                  String myJob = extractedData[0]['title'];
+
+                  // Stack 위젯으로 myJob과 ListView.builder를 겹치게 배치
+                  return Column(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(top: 215),
+                        child: Text(
+                          myJob,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: extractedData.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
+                              child: ListTile(
+                                subtitle: Text('${extractedData[index]['comment']}'),
+                                trailing: Text('Score: ${extractedData[index]['score']}'),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+                }
+              },
             ),
           ],
         ),
@@ -183,6 +251,18 @@ class OtherLecture extends StatelessWidget {
             Positioned(
               top: 285, // 상단 위치 조절
               child: SvgPicture.asset('assets/CourseInfo.svg'),
+            ),
+            Positioned(
+              top: 215, // 상단 위치 조절
+              child: Text('다른 관심 직무'),
+            ),
+            Positioned(
+              top: 310, // 상단 위치 조절
+              child: Text('----이곳에는 강의 정보와 점수가 나올 것입니다.----'),
+            ),
+            Positioned(
+              bottom: 135, // 상단 위치 조절
+              child: Text('---------------산학 에이플 가쟈~---------------'),
             ),
             Positioned(
               top: 450, // 상단 위치 조절
