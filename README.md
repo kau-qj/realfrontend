@@ -1,7 +1,6 @@
 # qj_projec
 
 A new Flutter project.
-겨우 성공했습니다ㅋ
 
 ## Getting Started
 
