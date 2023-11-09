@@ -146,8 +146,8 @@ class _SignupPageState extends State<SignupPage> {
                     // http 요청 대신에 원하는 동작을 수행하도록 처리합니다.
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.transparent, // 버튼의 배경색을 투명으로 설정하여 테두리를 없앱니다.
-                    shadowColor: Colors.transparent, // 그림자 효과도 제거합니다.
+                    primary: Colors.transparent,
+                    shadowColor: Colors.transparent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
@@ -156,11 +156,11 @@ class _SignupPageState extends State<SignupPage> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30.0),
                       gradient: LinearGradient(
-                        begin: Alignment.topCenter,  // 그라데이션 시작점을 왼쪽 중앙으로 설정
+                        begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          Color.fromRGBO(194, 233, 251, 1),  // 그라데이션 시작 색상
-                          Color.fromRGBO(161, 196, 253, 0.94),  // 그라데이션 끝 색상
+                          Color.fromRGBO(194, 233, 251, 1),
+                          Color.fromRGBO(161, 196, 253, 0.94),
                         ],
                       ),
                     ),
@@ -168,8 +168,32 @@ class _SignupPageState extends State<SignupPage> {
                       width: double.infinity,
                       height: 50,
                       alignment: Alignment.center,
-                      child: const Text('회원가입', style: TextStyle(fontSize: 23, color: Colors.white,)),
+                      child: const Text(
+                        '회원가입',
+                        style: TextStyle(fontSize: 23, color: Colors.white),
+                      ),
                     ),
+                  ),
+                ),
+                const SizedBox(height: 0.0),
+                Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text('이미 회원이신가요?', style: TextStyle(fontSize: 15)),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/login');
+                        },
+                        child: const Text(
+                          '로그인',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        style: TextButton.styleFrom(
+                          primary: primaryColor,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
