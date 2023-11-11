@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:qj_projec/bottomNav.dart';
+import 'package:qj_projec/mypage.dart';
+
 
 class JobDictionary extends StatefulWidget {
   const JobDictionary({super.key});
@@ -29,7 +31,15 @@ class _JobDictionaryState extends State<JobDictionary> {
             Positioned(
               top: 80,
               right: 20,
-              child: SvgPicture.asset('assets/bookmark.svg'),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Mypage()), //Mypage => 관심직무 목록으로 변경
+                  );
+                },
+                child: SvgPicture.asset('assets/bookmark.svg'),
+              ),
             ),
             Positioned(
               bottom: 180,
