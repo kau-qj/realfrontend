@@ -261,7 +261,7 @@ class OtherLecture extends StatelessWidget {
               child: Text('----이곳에는 강의 정보와 점수가 나올 것입니다.----'),
             ),
             Positioned(
-              bottom: 135, // 상단 위치 조절
+              bottom: 80, // 상단 위치 조절
               child: Text('---------------산학 에이플 가쟈~---------------'),
             ),
             Positioned(
