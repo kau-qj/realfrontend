@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:qj_projec/job_dic.dart';
 import 'package:qj_projec/home.dart';
 import 'package:qj_projec/mypage.dart';
-import 'package:qj_projec/qjGpt_main.dart';
+import 'package:qj_projec/qjGpt/qjGpt_main.dart';
 import 'package:qj_projec/post.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
@@ -17,11 +17,11 @@ class MyButtomNaVBar extends StatefulWidget {
 class _MyButtomNavBarState extends State<MyButtomNaVBar> {
   int myCurrentIndex = 0;
   List pages = const[
-    MyHompage(),
-    JobDictionary(),
-    CourseRecommend(),
-    PostPage(),
-    Mypage(),
+    MyHompage(), //홈
+    JobDictionary(), //진로사전
+    MyApp(), //강의추천
+    PostPage(), //게시판
+    Mypage(), //마이페이지
   ];
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,10 @@ class _MyButtomNavBarState extends State<MyButtomNaVBar> {
                 offset: const Offset(0,15))
             ]),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(25.0),
+              topRight: Radius.circular(25.0),
+            ),
             child: BottomNavigationBar(
               type: BottomNavigationBarType.fixed,
               backgroundColor: Colors.white,

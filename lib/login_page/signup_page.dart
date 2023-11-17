@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:qj_projec/login_page/login_page.dart';
 
 
-
 class SignupPage extends StatefulWidget {
   const SignupPage({Key? key});
 
