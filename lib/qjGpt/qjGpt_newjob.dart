@@ -60,7 +60,7 @@ class _OtherLectureState extends State<OtherLecture> {
             ),
             Positioned(
               top: 110, // 상단 위치 조절
-              child: SvgPicture.asset('assets/TopQjBar.svg'),
+              child: SvgPicture.asset('assetsß/TopQjBar.svg'),
             ),
             Positioned(
               top: 200, // 상단 위치 조절

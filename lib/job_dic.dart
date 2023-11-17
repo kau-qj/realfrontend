@@ -43,7 +43,7 @@ class _JobDictionaryState extends State<JobDictionary> {
               ),
             ),
             Positioned(
-              bottom: 180,
+              top: 390,
               left: 0,
               child: SvgPicture.asset('assets/CourseRecO1.svg'),
             ),
