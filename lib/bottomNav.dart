@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:qj_projec/job_dic.dart';
 import 'package:qj_projec/home.dart';
 import 'package:qj_projec/mypage/myPage.dart';
-import 'package:qj_projec/qjGpt/qjGpt_main.dart';
+import 'package:qj_projec/qjGpt/qjGpt_myjob.dart';
 import 'package:qj_projec/post.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
@@ -19,7 +19,7 @@ class _MyButtomNavBarState extends State<MyButtomNaVBar> {
   List pages = const[
     MyHompage(), //홈
     JobDictionary(), //진로사전
-    MyApp(), //강의추천
+    CourseRecommend(), //강의추천
     PostPage(), //게시판
     MyPage(), //마이페이지
   ];
