@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'login_page.dart';
-import 'signup_page.dart';
+import 'qjGpt_myJob.dart';
+import 'qjGpt_newJob.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,14 +12,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Login and Signup',
+      title: 'qjGpt',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/login',
+      initialRoute: '/main',
       routes: {
-        '/login': (context) => const LoginPage(),
-        '/signup': (context) => const SignupPage(),
+        '/main': (context) => const CourseRecommend(),
+        '/myJob': (context) => const MyLecture(),
+        '/newJob': (context) => const OtherLecture(),
       },
     );
   }

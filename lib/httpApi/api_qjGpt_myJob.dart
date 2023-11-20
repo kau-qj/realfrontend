@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 class ApiService {
   final String baseUrl = 'https://kauqj.shop'; // 여기에 사용할 API의 기본 URL을 넣으세요.
-  final String endpoint = '/app/login'; // API의 엔드포인트
+  final String endpoint = '/qj/myJob'; // API의 엔드포인트
 
   Future<Map<String, dynamic>> fetchData() async {
     final response = await http

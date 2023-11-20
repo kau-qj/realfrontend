@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:async';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:qj_projec/bottomNav.dart';
-import 'package:qj_projec/httpApi/api_qjGpt.dart';
+import 'package:qj_projec/httpApi/api_qjGpt_myJob.dart';
 
 class CourseRecommend extends StatefulWidget {
   const CourseRecommend({super.key});
@@ -64,14 +62,15 @@ class _CourseRecommendState extends State<CourseRecommend> {
             ),
             Positioned(
               bottom: 180,
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const OtherLecture()),
+              child: Builder(
+                builder: (BuildContext context) {
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(context, '/newJob');
+                    },
+                    child: SvgPicture.asset('assets/OtherLecturePushButton.svg'),
                   );
                 },
-                child: SvgPicture.asset('assets/OtherLecturePushButton.svg'),
               ),
             ),
             /*
@@ -90,18 +89,20 @@ class _CourseRecommendState extends State<CourseRecommend> {
 class GptLoading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        SvgPicture.asset('assets/GptLoading.svg'), // SVG 이미지
-        CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(Color.fromARGB(194, 183, 236, 255)),
-        ), // 원형 로딩 모션
-      ],
+    return Container(
+      color: Colors.white, // 흰색 배경
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          SvgPicture.asset('assets/GptLoading.svg'), // SVG 이미지
+          CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Color.fromARGB(194, 183, 236, 255)),
+          ), // 원형 로딩 모션
+        ],
+      ),
     );
   }
 }
-
 
 //MyLecture
 class MyLecture extends StatelessWidget {
@@ -142,7 +143,7 @@ class MyLecture extends StatelessWidget {
               child: SvgPicture.asset('assets/CourseName.svg'),
             ),
             Positioned(
-              top: 285, // 상단 위치 조절
+              top: 265, // 상단 위치 조절
               child: SvgPicture.asset('assets/CourseInfo.svg'),
             ),
             Positioned(
@@ -174,7 +175,7 @@ class MyLecture extends StatelessWidget {
                   String myJob = extractedData[0]['title'];
 
                   // Stack 위젯으로 myJob과 ListView.builder를 겹치게 배치
-                  return Column(
+                  return Row(
                     children: [
                       Container(
                         margin: EdgeInsets.only(top: 215),
@@ -182,7 +183,8 @@ class MyLecture extends StatelessWidget {
                           myJob,
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontWeight: FontWeight.bold,
+                            //fontWeight: FontWeight.bold,
+                            fontSize: 17,  // 글자 크기를 20으로 설정
                           ),
                         ),
                       ),
@@ -191,7 +193,7 @@ class MyLecture extends StatelessWidget {
                           itemCount: extractedData.length,
                           itemBuilder: (context, index) {
                             return Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
+                              padding: EdgeInsets.fromLTRB(14, 10, 14, 10),
                               child: ListTile(
                                 subtitle: Text('${extractedData[index]['comment']}'),
                                 trailing: Text('Score: ${extractedData[index]['score']}'),
@@ -204,69 +206,6 @@ class MyLecture extends StatelessWidget {
                   );
                 }
               },
-            ),
-          ],
-        ),
-      ),
-    );    
-  }
-}
-
-
-//OtherLecture
-class OtherLecture extends StatelessWidget {
-  const OtherLecture({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    Color textColor = const Color.fromRGBO(45, 67, 77, 1);
-    return Scaffold(
-      body: Center(
-        child: Stack(
-          alignment: Alignment.center,
-          children: <Widget>[
-            Positioned(
-              top: 0, // 상단 위치 조절
-              child: SvgPicture.asset('assets/TopTheme.svg'),
-            ),
-            Positioned(
-              top: 70,
-              left: 25, // 상단 위치 조절
-              child: InkWell(
-                onTap: () {
-                  // 이전 페이지로 돌아가기
-                  Navigator.pop(context);
-                },
-                child: SvgPicture.asset('assets/BackButton.svg'),
-              ),
-            ),
-            Positioned(
-              top: 110, // 상단 위치 조절
-              child: SvgPicture.asset('assets/TopQjBar.svg'),
-            ),
-            Positioned(
-              top: 200, // 상단 위치 조절
-              child: SvgPicture.asset('assets/OtherLectureBar.svg'),
-            ),
-            Positioned(
-              top: 285, // 상단 위치 조절
-              child: SvgPicture.asset('assets/CourseInfo.svg'),
-            ),
-            Positioned(
-              top: 215, // 상단 위치 조절
-              child: Text('다른 관심 직무'),
-            ),
-            Positioned(
-              top: 310, // 상단 위치 조절
-              child: Text('----이곳에는 강의 정보와 점수가 나올 것입니다.----'),
-            ),
-            Positioned(
-              bottom: 80, // 상단 위치 조절
-              child: Text('---------------산학 에이플 가쟈~---------------'),
-            ),
-            Positioned(
-              top: 450, // 상단 위치 조절
-              child: SvgPicture.asset('assets/QjLogoBack.svg'),
             ),
           ],
         ),

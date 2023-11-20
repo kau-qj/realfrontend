@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:qj_projec/bottomNav.dart';
 import 'package:qj_projec/mypage.dart';
+import 'package:qj_projec/httpApi/api_jobDic.dart';
+
 
 
 class JobDictionary extends StatefulWidget {
@@ -42,13 +43,13 @@ class _JobDictionaryState extends State<JobDictionary> {
               ),
             ),
             Positioned(
-              bottom: 180,
+              top: 390,
               left: 0,
               child: SvgPicture.asset('assets/CourseRecO1.svg'),
             ),
             Positioned(
-              top: 286,
-              left: 120,
+              top: 290,
+              left: 130,
               child: SvgPicture.asset('assets/miniQJ.svg'),
             ),
             Positioned(
