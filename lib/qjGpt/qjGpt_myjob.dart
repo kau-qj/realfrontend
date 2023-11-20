@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:async';
 import 'package:qj_projec/httpApi/api_qjGpt_myJob.dart';
+import 'package:qj_projec/qjGpt/qjGpt_newJob.dart';
+
 
 class CourseRecommend extends StatefulWidget {
   const CourseRecommend({super.key});
@@ -62,15 +64,14 @@ class _CourseRecommendState extends State<CourseRecommend> {
             ),
             Positioned(
               bottom: 180,
-              child: Builder(
-                builder: (BuildContext context) {
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, '/newJob');
-                    },
-                    child: SvgPicture.asset('assets/OtherLecturePushButton.svg'),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const OtherLecture()), //Mypage => 관심직무 목록으로 변경
                   );
                 },
+                child: SvgPicture.asset('assets/OtherLecturePushButton.svg'),
               ),
             ),
             /*

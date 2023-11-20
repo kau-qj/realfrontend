@@ -54,8 +54,8 @@ class _LoginPageState extends State<LoginPage> {
           children: <Widget>[
             SvgPicture.asset( 
               'assets/LoginPageCircle.svg',
-              height: 250, 
-              width: 250, 
+              height: 150, 
+              width: 150, 
             ),
             SvgPicture.asset( 
               'assets/miniQJ.svg',
@@ -152,8 +152,8 @@ class _LoginPageState extends State<LoginPage> {
             ),
             SvgPicture.asset( 
               'assets/LoginPageCircle2.svg',
-              height: 200, 
-              width: 200, 
+              height: 100, 
+              width: 100, 
             ),
           ],
         ),

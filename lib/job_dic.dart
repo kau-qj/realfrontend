@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:qj_projec/mypage.dart';
+import 'package:qj_projec/mypage/Mypage_storage.dart';
 import 'package:qj_projec/httpApi/api_jobDic.dart';
 
 
@@ -36,7 +36,7 @@ class _JobDictionaryState extends State<JobDictionary> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const Mypage()), //Mypage => 관심직무 목록으로 변경
+                    MaterialPageRoute(builder: (context) => const Storage()), //Mypage => 관심직무 목록으로 변경
                   );
                 },
                 child: SvgPicture.asset('assets/bookmark.svg'),
@@ -48,15 +48,9 @@ class _JobDictionaryState extends State<JobDictionary> {
               child: SvgPicture.asset('assets/CourseRecO1.svg'),
             ),
             Positioned(
-              top: 290,
-              left: 130,
-              child: SvgPicture.asset('assets/miniQJ.svg'),
-            ),
-            Positioned(
               top: 280,
-              left: 170,
               child: Text(
-                "진로 사전",
+                "QJ 진로 사전",
                 style: TextStyle(
                   fontSize: 25,
                   fontWeight: FontWeight.bold,
