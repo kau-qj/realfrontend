@@ -49,6 +49,8 @@ class _LoginPageState extends State<LoginPage> {
     double screenWidth = MediaQuery.of(context).size.width;  // 화면의 너비를 가져옵니다.
     double screenHeight = MediaQuery.of(context).size.height;  // 화면의 높이를 가져옵니다.
     return Scaffold(
+      resizeToAvoidBottomInset: false,  // 추가된 코드입니다.
+
       body: Stack(
         children: <Widget>[
           Positioned(
