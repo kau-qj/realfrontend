@@ -23,7 +23,6 @@ class _OtherLectureState extends State<OtherLecture> {
 
     final ApiService apiService = ApiService(); //api 연결
 
-
     // 3초 동안 GptLoading 페이지를 표시
     //await Future.delayed(Duration(seconds: 3));
 
@@ -60,12 +59,13 @@ class _OtherLectureState extends State<OtherLecture> {
             ),
             Positioned(
               top: 110, // 상단 위치 조절
-              child: SvgPicture.asset('assetsß/TopQjBar.svg'),
+              child: SvgPicture.asset('assets/TopQjBar.svg'),
             ),
             Positioned(
               top: 200, // 상단 위치 조절
               child: SvgPicture.asset('assets/OtherLectureBar.svg'),
             ),
+
             Positioned(
               top: 265, // 상단 위치 조절
               child: SvgPicture.asset('assets/CourseInfo.svg'),
@@ -81,15 +81,6 @@ class _OtherLectureState extends State<OtherLecture> {
             Positioned(
               top: 450, // 상단 위치 조절
               child: SvgPicture.asset('assets/QjLogoBack.svg'),
-            ),
-            Positioned(
-              top: 215, // 상단 위치 조절
-              child: TextField(
-                  decoration: InputDecoration(
-                      labelText: '다른 관심 직무',
-                      border: UnderlineInputBorder(),
-                  ),
-              ),
             ),
           ],
         ),

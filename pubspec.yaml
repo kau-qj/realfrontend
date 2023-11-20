@@ -38,6 +38,8 @@ dependencies:
   smooth_page_indicator: ^1.0.0+2   
   http: ^0.13.3
   flutter_secure_storage: ^4.2.1
+  shared_preferences: ^2.0.10
+  image_picker: 1.0.4
     
     
 

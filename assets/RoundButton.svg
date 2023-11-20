@@ -1,6 +1,7 @@
 <svg width="393" height="104" viewBox="0 0 393 104" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g filter="url(#filter0_d_22_723)">
 <rect x="21" y="12" width="357" height="60" rx="30" fill="url(#paint0_linear_22_723)"/>
+<text x="50%" y="50%" fill="white" font-family="Poppins" font-size="20" font-weight="bold" dy=".3em" text-anchor="middle">설정완료</text>
 </g>
 <defs>
 <filter id="filter0_d_22_723" x="-1" y="0" width="401" height="104" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">

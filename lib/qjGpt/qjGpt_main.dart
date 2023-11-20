@@ -16,9 +16,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/myJob',
+      initialRoute: '/main',
       routes: {
-        '/myJob': (context) => const CourseRecommend(),
+        '/main': (context) => const CourseRecommend(),
+        '/myJob': (context) => const MyLecture(),
         '/newJob': (context) => const OtherLecture(),
       },
     );

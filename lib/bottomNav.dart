@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qj_projec/job_dic.dart';
 import 'package:qj_projec/home.dart';
-import 'package:qj_projec/mypage.dart';
+import 'package:qj_projec/mypage/myPage.dart';
 import 'package:qj_projec/qjGpt/qjGpt_main.dart';
 import 'package:qj_projec/post.dart';
 
@@ -21,7 +21,7 @@ class _MyButtomNavBarState extends State<MyButtomNaVBar> {
     JobDictionary(), //진로사전
     MyApp(), //강의추천
     PostPage(), //게시판
-    Mypage(), //마이페이지
+    MyPage(), //마이페이지
   ];
   @override
   Widget build(BuildContext context) {
