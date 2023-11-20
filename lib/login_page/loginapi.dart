@@ -23,6 +23,7 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
+  // 비동기 함수를 사용하여 사용자 로그인 처리
   Future<void> loginUser(String userId, String userPw, BuildContext context) async {
     try {
       if (userId.isEmpty || userPw.isEmpty) {
@@ -69,12 +70,14 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  // 토큰을 SharedPreferences에 저장하는 함수
   Future<void> saveTokenToSharedPreferences(String setCookieHeader) async {
     String token = _extractTokenFromSetCookieHeader(setCookieHeader);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('token', token);
   }
 
+  // Set-Cookie 헤더에서 토큰 추출
   String _extractTokenFromSetCookieHeader(String setCookieHeader) {
     List<String> parts = setCookieHeader.split(';');
     for (String part in parts) {
@@ -85,6 +88,7 @@ class _LoginPageState extends State<LoginPage> {
     return '';
   }
 
+  // 알림 창을 띄우는 함수
   void _showAlertDialog(String title, String content) {
     showDialog(
       context: context,
@@ -118,6 +122,7 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            // SVG 이미지 추가
             SvgPicture.asset(
               'assets/LoginPageCircle.svg',
               height: 250,
@@ -129,6 +134,7 @@ class _LoginPageState extends State<LoginPage> {
               width: 50,
             ),
             SizedBox(height: 70),
+            // 아이디 입력 필드
             TextField(
               controller: _emailController,
               decoration: InputDecoration(
@@ -139,6 +145,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             const SizedBox(height: 16.0),
+            // 비밀번호 입력 필드
             TextField(
               controller: _passwordController,
               decoration: InputDecoration(
@@ -157,6 +164,7 @@ class _LoginPageState extends State<LoginPage> {
               obscureText: _obscureText,
             ),
             const SizedBox(height: 16.0),
+            // 로그인 버튼
             InkWell(
               onTap: () async {
                 String email = _emailController.text;
@@ -184,6 +192,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             const SizedBox(height: 16.0),
+            // 회원가입 버튼 및 텍스트
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -199,6 +208,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ],
             ),
+            // 추가 SVG 이미지
             SvgPicture.asset(
               'assets/LoginPageCircle2.svg',
               height: 200,
