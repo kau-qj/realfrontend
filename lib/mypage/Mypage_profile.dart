@@ -53,6 +53,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   @override
   Widget build(BuildContext context) {
     final _imageSize = MediaQuery.of(context).size.width / 4;
+    final Size screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
@@ -92,7 +93,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 10),
+              SizedBox(height: screenSize.height * 0.01), // 높이의 1%
               Center(
                 child: Stack(
                   alignment: Alignment.bottomRight,
@@ -115,7 +116,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                 ),
               ),
 
-              const SizedBox(height: 30), // 닉네임 입력란과의 간격 조정
+              SizedBox(height: screenSize.height * 0.03), // 높이의 3%
               const Text(
                 '닉네임',
                 style: TextStyle(
@@ -124,7 +125,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                   color: Color.fromARGB(236, 0, 0, 0),
                 ),
               ),
-              SizedBox(height: 8),
+              SizedBox(height: screenSize.height * 0.01), // 높이의 1%
               TextField(
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
@@ -134,7 +135,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                       horizontal: 20, vertical: 10), // 내부 패딩을 조절
                 ),
               ),
-              SizedBox(height: 20), // 관심직무 입력란과의 간격 조정
+              SizedBox(height: screenSize.height * 0.02), // 관심직무 입력란과의 간격 조정
               const Text(
                 '나의 관심직무',
                 style: TextStyle(
@@ -155,7 +156,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                 keyboardType: TextInputType.multiline,
                 maxLines: 5, // 입력란의 라인 수
               ),
-              SizedBox(height: 20), // 설명 텍스트와의 간격 조정
+              SizedBox(height: screenSize.height * 0.02), // 설명 텍스트와의 간격 조정
               const Text(
                 '• 작성된 내용 검토 후\n•욕설이나 내용이 있는 경우\n• QJ 서비스 이용 약관에 따라 부적절하다고 판단될 경우\n 노출 제한 처리와 서비스 이용에 제한이 생길 수 있습니다',
                 style: TextStyle(
@@ -164,7 +165,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                   color: Color.fromARGB(236, 150, 150, 150),
                 ),
               ),
-              SizedBox(height: 50), // 간격 조정
+              SizedBox(height: screenSize.height * 0.04), // 간격 조정
               Align(
                 alignment: Alignment.bottomCenter,
                 child: TextButton(
