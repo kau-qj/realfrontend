@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 // 사용자 등록을 처리하는 비동기 함수 정의
-Future<String> User(String userId, String userPw, String grade, String major, String phonenumber, String school, String jobname) async {
+Future<String> User(String userId, String userPw, String grade, String major, String phoneNum, String school, String jobName) async {
   try {
     // 서버의 기본 URL 및 엔드포인트 정의
     final baseUrl = "https://kauqj.shop";
@@ -24,9 +24,9 @@ Future<String> User(String userId, String userPw, String grade, String major, St
         'userPw': userPw,
         'grade': grade,
         'major': major,
-        'phonenumber': phonenumber,
+        'phoneNum': phoneNum,
         'school': school,
-        'jobname': jobname
+        'jobName': jobName
       }),
     );
     // 요청이 성공적으로 이루어졌는지 확인 (상태 코드 200)
@@ -63,27 +63,6 @@ class _SignupPageState extends State<SignupPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: primaryColor,
-        title: Text(
-          '회원가입',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20, // 글씨 크기 조절
-            color: Colors.white, // 텍스트 색상 흰색으로 변경
-          ),
-        ),
-        // 왼쪽 상단에 뒤로가기 버튼 추가
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
@@ -92,7 +71,7 @@ class _SignupPageState extends State<SignupPage> {
               controller: _schoolController,
               decoration: InputDecoration(
                 labelText: '학교',
-                border: OutlineInputBorder(),
+                border: UnderlineInputBorder(),
                 prefixIcon: Icon(Icons.school, color: primaryColor),
               ),
             ),
@@ -101,7 +80,7 @@ class _SignupPageState extends State<SignupPage> {
               controller: _majorController,
               decoration: InputDecoration(
                 labelText: '전공',
-                border: OutlineInputBorder(),
+                border: UnderlineInputBorder(),
                 prefixIcon: Icon(Icons.book, color: primaryColor),
               ),
             ),
@@ -121,7 +100,7 @@ class _SignupPageState extends State<SignupPage> {
               },
               decoration: InputDecoration(
                 labelText: '학년',
-                border: OutlineInputBorder(),
+                border: UnderlineInputBorder(),
                 prefixIcon: Icon(Icons.school, color: primaryColor),
               ),
             ),
@@ -130,7 +109,7 @@ class _SignupPageState extends State<SignupPage> {
               controller: _interestController,
               decoration: InputDecoration(
                 labelText: '관심직무',
-                border: OutlineInputBorder(),
+                border: UnderlineInputBorder(),
                 prefixIcon: Icon(Icons.workspace_premium, color: primaryColor),
               ),
             ),
@@ -139,7 +118,7 @@ class _SignupPageState extends State<SignupPage> {
               controller: _nameController,
               decoration: InputDecoration(
                 labelText: '이름',
-                border: OutlineInputBorder(),
+                border: UnderlineInputBorder(),
                 prefixIcon: Icon(Icons.person, color: primaryColor),
               ),
             ),
@@ -148,7 +127,7 @@ class _SignupPageState extends State<SignupPage> {
               controller: _contactController,
               decoration: InputDecoration(
                 labelText: '연락처',
-                border: OutlineInputBorder(),
+                border: UnderlineInputBorder(),
                 prefixIcon: Icon(Icons.phone, color: primaryColor),
               ),
             ),
@@ -157,7 +136,7 @@ class _SignupPageState extends State<SignupPage> {
               controller: _userIdController,
               decoration: InputDecoration(
                 labelText: '아이디',
-                border: OutlineInputBorder(),
+                border: UnderlineInputBorder(),
                 prefixIcon: Icon(Icons.account_circle, color: primaryColor),
               ),
             ),
@@ -166,7 +145,7 @@ class _SignupPageState extends State<SignupPage> {
               controller: _passwordController,
               decoration: InputDecoration(
                 labelText: '비밀번호',
-                border: OutlineInputBorder(),
+                border: UnderlineInputBorder(),
                 prefixIcon: Icon(Icons.lock, color: primaryColor),
               ),
               obscureText: true,
@@ -174,7 +153,6 @@ class _SignupPageState extends State<SignupPage> {
             const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () async {
-                // 사용자가 입력한 정보 수집
                 String school = _schoolController.text;
                 String major = _majorController.text;
                 String year = _year;
@@ -184,7 +162,6 @@ class _SignupPageState extends State<SignupPage> {
                 String userId = _userIdController.text;
                 String userPw = _passwordController.text;
 
-                // 각 필드가 비어있는지 확인
                 if (school.isEmpty ||
                     major.isEmpty ||
                     year.isEmpty ||
@@ -197,7 +174,6 @@ class _SignupPageState extends State<SignupPage> {
                   return;
                 }
 
-                // 사용자 등록 함수 호출
                 String result = await User(
                   userId,
                   userPw,
@@ -209,7 +185,6 @@ class _SignupPageState extends State<SignupPage> {
                 );
 
                 if (result == '회원가입 성공') {
-                  // 회원가입 정보 출력
                   print('회원가입 정보: ');
                   print('학교: $school');
                   print('전공: $major');
@@ -220,26 +195,60 @@ class _SignupPageState extends State<SignupPage> {
                   print('아이디: $userId');
                   print('비밀번호: $userPw');
 
-                  // 회원가입 성공 후 로그인 화면으로 이동
                   Navigator.pushReplacementNamed(context, '/login');
                 }
 
                 print(result);
               },
               style: ElevatedButton.styleFrom(
-                primary: primaryColor,
-                onPrimary: Colors.white, // 글씨 색상 추가
-                minimumSize: Size(double.infinity, 50),
+                primary: Colors.transparent,
+                shadowColor: Colors.transparent,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30.0),
                 ),
               ),
-              child: const Text(
-                '회원가입',
-                style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30.0),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Color.fromRGBO(194, 233, 251, 1),
+                      Color.fromRGBO(161, 196, 253, 0.94),
+                    ],
+                  ),
                 ),
+                child: Container(
+                  width: double.infinity,
+                  height: 50,
+                  alignment: Alignment.center,
+                  child: const Text(
+                    '회원가입',
+                    style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 0.0),
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('이미 회원이신가요?', style: TextStyle(fontSize: 15)),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/login');
+                    },
+                    child: const Text(
+                      '로그인',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    style: TextButton.styleFrom(
+                      primary: primaryColor,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -248,7 +257,6 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
-  // 알림 창을 띄우는 함수
   void _showAlertDialog(String title, String content) {
     showDialog(
       context: context,
