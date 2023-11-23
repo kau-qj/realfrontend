@@ -139,7 +139,7 @@ class _JobDictionaryState extends State<JobDictionary> {
                           itemCount: titles.length,
                           itemBuilder: (context, index) {
                             return Container(
-                              padding: EdgeInsets.symmetric(vertical: 0.1), // 항목 간의 간격을 조절
+                              padding: index == 0 ? EdgeInsets.fromLTRB(0, 0, 0, 0) : EdgeInsets.fromLTRB(0, 0, 0, 0),
                               child: ListTile(
                                 title: Text(titles[index]),
                                 onTap: () { // 항목을 탭했을 때의 이벤트를 정의

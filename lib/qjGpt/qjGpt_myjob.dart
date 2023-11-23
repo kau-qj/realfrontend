@@ -164,43 +164,45 @@ class MyLecture extends StatelessWidget {
                   // API로부터 받아온 데이터를 저장
                   List result = snapshot.data!['result'];
 
-                  // 각 아이템에서 'title', 'comment', 'score'만 추출
+                  // 각 아이템에서 'title', 'comment', 'score', 'details'만 추출
                   List<Map<String, dynamic>> extractedData = result.map((item) {
                     return {
                       'title': item['title'],
                       'comment': item['comment'],
                       'score': item['score'],
+                      'details': item['details'],
                     };
                   }).toList();
 
-                  String myJob = extractedData[0]['title'];
-
-                  // Stack 위젯으로 myJob과 ListView.builder를 겹치게 배치
-                  return Row(
+                  return Column(
                     children: [
-                      Container(
-                        margin: EdgeInsets.only(top: 215),
+                      Padding(
+                        padding: EdgeInsets.only(top: 211, left: 0.0, right: 0.0),  // 패딩 값 지정
                         child: Text(
-                          myJob,
-                          textAlign: TextAlign.center,
+                          '${extractedData[0]['title']}',
                           style: TextStyle(
-                            //fontWeight: FontWeight.bold,
-                            fontSize: 17,  // 글자 크기를 20으로 설정
+                            fontSize: 15,     // 글자 크기
+                            fontWeight: FontWeight.bold,  // 글자 두께
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: extractedData.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: EdgeInsets.fromLTRB(14, 10, 14, 10),
-                              child: ListTile(
-                                subtitle: Text('${extractedData[index]['comment']}'),
-                                trailing: Text('Score: ${extractedData[index]['score']}'),
-                              ),
-                            );
-                          },
+                      Padding(
+                        padding: EdgeInsets.only(top: 50),
+                        child: Container(
+                          height: MediaQuery.of(context).size.height - 300,
+                          child: ListView.builder(
+                            itemCount: extractedData[0]['details'].length,
+                            itemBuilder: (context, index) {
+                              // 첫 번째 아이템에만 상단에 패딩을 적용
+                              return Padding(
+                                padding: index == 0 ? EdgeInsets.fromLTRB(18, 0, 18, 10) : EdgeInsets.fromLTRB(18, 5, 18, 10),
+                                child: ListTile(
+                                  subtitle: Text('${extractedData[0]['details'][index]['comment']}'),
+                                  trailing: Text('Score: ${extractedData[0]['details'][index]['score']}'),
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ],

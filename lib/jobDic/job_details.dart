@@ -47,7 +47,11 @@ class JobDetails extends StatelessWidget {
             ),
             */
             Positioned(
-              top: 180,
+              top: 170,
+              child: SvgPicture.asset('assets/jobDetailsBox.svg'),
+            ),
+            Positioned(
+              top: 190,
               right: 25,
               child: InkWell(
                 onTap: () {
@@ -55,10 +59,6 @@ class JobDetails extends StatelessWidget {
                 },
                 child: SvgPicture.asset('assets/AddButton.svg'),
               ),
-            ),
-            Positioned(
-              top: 240,
-              child: SvgPicture.asset('assets/CourseInfo.svg'),
             ),
             FutureBuilder<Map<String, dynamic>>(
               future: apiService.fetchData(jobname),
@@ -80,25 +80,42 @@ class JobDetails extends StatelessWidget {
                     'imageUrl': result['imageUrl'],
                   };
 
-                  // 아래 코드는 기존의 ListView.builder를 사용하던 코드를 수정해야 합니다.
-                  // 예를 들어, 아래와 같이 수정할 수 있습니다.
-                  return Column(
-                    children: [
-                      SizedBox(height: 230),
-                      Padding(
-                        padding: EdgeInsets.all(40.0),
-                        child: Image.network('${extractedData['imageUrl']}'),
+                  return Positioned(
+                    top: 245,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      height: MediaQuery.of(context).size.height - 290,
+                      child: ListView(
+                        padding: EdgeInsets.symmetric(horizontal: 40),  // 패딩 값 지정
+                        children: <Widget>[
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(25.0),  // 곡선 반지름 설정
+                            child: Image.network('${extractedData['imageUrl']}'),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            '${extractedData['jobname']}',
+                            style: TextStyle(
+                              fontSize: 16,     // 글자 크기
+                              fontWeight: FontWeight.bold,  // 글자 두께
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 30),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 0),  // 좌우 패딩 값 설정
+                            child: Text(
+                              '${extractedData['comments']}',
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 0),
-                      Text('${extractedData['jobname']}'),
-                      Text('${extractedData['comments']}'),
-
-                    ],
+                    ),
                   );
                 }
               },
             ),
-
           ],
         ),
       ),
