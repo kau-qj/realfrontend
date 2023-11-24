@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:qj_projec/POST/post.dart';
 import 'package:qj_projec/jobDic/job_main.dart';
 import 'package:qj_projec/home.dart';
 import 'package:qj_projec/mypage/myPage.dart';
 import 'package:qj_projec/qjGpt/qjGpt_myjob.dart';
-import 'package:qj_projec/post.dart';
+
 
 import 'package:flutter_svg/flutter_svg.dart';
 

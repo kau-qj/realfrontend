@@ -93,19 +93,22 @@ class _CreatePostPageState extends State<CreatePostPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 10.0),
+            const SizedBox(height: 100.0),
             // 작성 완료 버튼
             ElevatedButton(
               onPressed: () {
                 // TODO: Save the post
                 Navigator.pop(context);
               },
-              child: const Text('작성완료', style: TextStyle(fontSize: 20)),
+              child: const Text(
+                '작성완료',
+                style: TextStyle(fontSize: 40, color: Colors.white, fontWeight: FontWeight.bold), // 흰색으로 변경
+              ),
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 80),
+                padding: const EdgeInsets.symmetric(horizontal: 90),
                 backgroundColor: Color.fromRGBO(161, 196, 253, 1),
               ),
             ),
@@ -155,53 +158,69 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
             child: SvgPicture.asset('assets/BackButton.svg'),
           ),
         ),
+        actions: [
+          // 수정 버튼
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () {
+              _editPost(context);
+            },
+          ),
+          // 삭제 버튼
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: () {
+              _deletePost(context);
+            },
+          ),
+        ],
       ),
+      // 글 제목
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 글의 제목을 표시하는 부분
             Container(
-              height: 50,
+              height: 60,
               child: Text(
                 widget.post.title,
                 style: TextStyle(
                   fontSize: 30.0,
                   fontWeight: FontWeight.bold,
-                  decoration: TextDecoration.underline
+                  decoration: TextDecoration.underline,
                 ),
               ),
             ),
+            // 글 상세 내용
             const SizedBox(height: 15.0),
-           // 글의 내용을 표시하는 부분
-          Container(
-            height: 300, // 필요에 따라 높이 조절
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 2,
-                  blurRadius: 10,
-                  offset: Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(120.0),
-              child: SingleChildScrollView(
-                child: Text(
-                  widget.post.content,
-                  style: TextStyle(fontSize: 16.0),
+            Container(
+              height: 280,
+              width: 400,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(30),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 10,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: SingleChildScrollView(
+                  child: Text(
+                    widget.post.content,
+                    style: TextStyle(fontSize: 16.0),
+                  ),
                 ),
               ),
             ),
-          ),
-
-            const SizedBox(height: 238.0),
-            // 댓글을 입력하는 부분
+            const SizedBox(height: 50.0),
+            // 댓글 입력창
             TextField(
               controller: _commentController,
               decoration: InputDecoration(
@@ -213,19 +232,16 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
                   borderSide: BorderSide(color: Color.fromRGBO(161, 196, 253, 1)),
                   borderRadius: BorderRadius.circular(35),
                 ),
-                contentPadding: EdgeInsets.all(20),
+                contentPadding: EdgeInsets.all(22),
                 suffixIcon: IconButton(
                   icon: Icon(Icons.send),
                   onPressed: () {
-                    setState(() {
-                      _comments.add(_commentController.text);
-                      _commentController.clear();
-                    });
+                    // 댓글 등록 버튼 클릭 시 댓글을 추가하고 UI를 업데이트합니다.
+                    _addComment();
                   },
                 ),
               ),
             ),
-           
             const SizedBox(height: 20.0),
             // 댓글 목록을 나타내는 ListView
             Expanded(
@@ -243,6 +259,31 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
       ),
     );
   }
+
+  void _editPost(BuildContext context) {
+    // TODO: 글 수정 기능을 수행하는 코드를 추가하세요.
+    // 수정 화면으로 이동하도록 할 수 있습니다.
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => EditPostPage(post: widget.post),
+    //   ),
+    // );
+  }
+
+  void _deletePost(BuildContext context) {
+    // TODO: 글 삭제 기능을 수행하는 코드를 추가하세요.
+    // 글을 삭제한 후 이전 화면으로 돌아갈 수 있습니다.
+    // Navigator.pop(context);
+  }
+
+  // 댓글을 추가하고 UI를 업데이트하는 메서드
+  void _addComment() {
+    setState(() {
+      _comments.add(_commentController.text);
+      _commentController.clear();
+    });
+  }
 }
 
 // 전체 게시판을 나타내는 StatefulWidget
@@ -258,7 +299,7 @@ class _PostPageState extends State<PostPage> {
   final TextEditingController _searchController = TextEditingController();
   final List<Post> _posts = List<Post>.generate(
     50,
-    (index) => Post('Post #$index', 'Content for Post #$index'),
+    (index) => Post('제목 #$index', '이것은 내용입니다 어떤 내용인지 궁금하네요 # $index'),
   );
 
   List<Post> _filteredPosts = [];
