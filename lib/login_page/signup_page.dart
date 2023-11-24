@@ -58,7 +58,7 @@ class _SignupPageState extends State<SignupPage> {
   TextEditingController _contactController = TextEditingController();
   TextEditingController _userIdController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
-  Color primaryColor = Color.fromRGBO(196, 239, 255, 0.855);
+  Color primaryColor = Color.fromRGBO(161, 196, 253, 1);
 
   @override
   Widget build(BuildContext context) {
