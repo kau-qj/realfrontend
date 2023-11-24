@@ -136,15 +136,15 @@ class MyLecture extends StatelessWidget {
               ),
             ),
             Positioned(
-              top: 110, // 상단 위치 조절
+              top: 105, // 상단 위치 조절
               child: SvgPicture.asset('assets/TopQjBar.svg'),
             ),
             Positioned(
-              top: 200, // 상단 위치 조절
+              top: 195, // 상단 위치 조절
               child: SvgPicture.asset('assets/CourseName.svg'),
             ),
             Positioned(
-              top: 265, // 상단 위치 조절
+              top: 260, // 상단 위치 조절
               child: SvgPicture.asset('assets/CourseInfo.svg'),
             ),
             Positioned(
@@ -177,7 +177,7 @@ class MyLecture extends StatelessWidget {
                   return Column(
                     children: [
                       Padding(
-                        padding: EdgeInsets.only(top: 211, left: 0.0, right: 0.0),  // 패딩 값 지정
+                        padding: EdgeInsets.only(top: 206, left: 0.0, right: 0.0),  // 패딩 값 지정
                         child: Text(
                           '${extractedData[0]['title']}',
                           style: TextStyle(
@@ -187,18 +187,17 @@ class MyLecture extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(top: 50),
+                        padding: EdgeInsets.only(top: 40),
                         child: Container(
-                          height: MediaQuery.of(context).size.height - 300,
+                          height: MediaQuery.of(context).size.height - 290,
                           child: ListView.builder(
                             itemCount: extractedData[0]['details'].length,
                             itemBuilder: (context, index) {
-                              // 첫 번째 아이템에만 상단에 패딩을 적용
                               return Padding(
-                                padding: index == 0 ? EdgeInsets.fromLTRB(18, 0, 18, 10) : EdgeInsets.fromLTRB(18, 5, 18, 10),
+                                padding: EdgeInsets.fromLTRB(18, 0, 18, 10),
                                 child: ListTile(
-                                  subtitle: Text('${extractedData[0]['details'][index]['comment']}'),
-                                  trailing: Text('Score: ${extractedData[0]['details'][index]['score']}'),
+                                  leading: Text('Score: ${extractedData[0]['details'][index]['score']}'),  // leading 사용
+                                  subtitle: Text('${extractedData[0]['details'][index]['comment']}'),  // title 사용
                                 ),
                               );
                             },

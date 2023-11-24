@@ -18,11 +18,7 @@ class JobDetails extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: <Widget>[
-            Positioned(
-              top: 50,
-              left: 0,
-              child: SvgPicture.asset('assets/smallQj.svg'),
-            ),
+            
             Positioned(
               top: 110,
               child: Text(
@@ -47,11 +43,18 @@ class JobDetails extends StatelessWidget {
             ),
             */
             Positioned(
-              top: 170,
+              top: 50,
+              left: 0,
+              child: SvgPicture.asset('assets/smallQj.svg'),
+            ),
+            Positioned(
+              top: 45,
+              height: 915,
+              width: 370,
               child: SvgPicture.asset('assets/jobDetailsBox.svg'),
             ),
             Positioned(
-              top: 190,
+              top: 195,
               right: 25,
               child: InkWell(
                 onTap: () {
