@@ -1,28 +1,6 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart'; 
-import 'package:qj_projec/bottomNav.dart';
-
-Future<String> loginUser(String userId, String userPw, BuildContext context) async {
-  // 사용자 ID와 비밀번호를 검증하는 로직을 여기에 작성합니다.
-  if (userId == 'admin' && userPw == 'password') {
-    // 로그인이 성공했을 경우
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => MyButtomNaVBar()),  // HomeDart 페이지로 이동
-    );
-    return '로그인 성공';
-  } else {
-    // 로그인이 실패했을 경우
-    return '로그인 실패';
-  }
-}
-/*
- catch (e) {
-    print('loginUser 함수에서 에러 발생: $e');
-    return '로그인 중 에러 발생';
-  }
-*/
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:qj_projec/httpApi/api_login.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key});
@@ -44,31 +22,70 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
+  Future<void> _login() async {
+  String userId = _emailController.text;
+  String userPw = _passwordController.text;
+  try {
+    // 이 부분에서 context를 추가해서 loginUser 함수를 호출합니다.
+    String result = await loginUser(userId, userPw, context);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('로그인 결과'),
+        content: Text(result),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('확인'),
+          ),
+        ],
+      ),
+    );
+  } catch (error) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('로그인 실패'),
+        content: Text(error.toString()),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('확인'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;  // 화면의 너비를 가져옵니다.
-    double screenHeight = MediaQuery.of(context).size.height;  // 화면의 높이를 가져옵니다.
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      resizeToAvoidBottomInset: false,  // 추가된 코드입니다.
-
+      resizeToAvoidBottomInset: false,
       body: Stack(
         children: <Widget>[
           Positioned(
-            right: 0,  // 왼쪽에 배치합니다.
-            top: screenHeight * 0.011,  // 상단에서 화면 높이의 10% 위치에 배치합니다.
-            child: SvgPicture.asset( 
+            right: 0,
+            top: screenHeight * 0.011,
+            child: SvgPicture.asset(
               'assets/LoginPageCircle.svg',
-              height: 230, 
-              width: 230, 
+              height: 230,
+              width: 230,
             ),
           ),
           Positioned(
-            left: 0,  // 오른쪽에 배치합니다.
-            bottom: screenHeight * 0.0001,  // 하단에서 화면 높이의 10% 위치에 배치합니다.
-            child: SvgPicture.asset( 
+            left: 0,
+            bottom: screenHeight * 0.0001,
+            child: SvgPicture.asset(
               'assets/LoginPageCircle2.svg',
-              height: 190, 
-              width: 190, 
+              height: 190,
+              width: 190,
             ),
           ),
           Padding(
@@ -76,12 +93,12 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                SvgPicture.asset( 
+                SvgPicture.asset(
                   'assets/miniQJ.svg',
-                  height: 50, 
-                  width: 50, 
+                  height: 50,
+                  width: 50,
                 ),
-                SizedBox(height: 70), 
+                SizedBox(height: 70),
                 TextField(
                   controller: _emailController,
                   decoration: InputDecoration(
@@ -101,7 +118,6 @@ class _LoginPageState extends State<LoginPage> {
                     prefixIcon: Icon(Icons.lock, color: primaryColor),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        // 비밀번호가 보이면 'visibility' 아이콘을, 아니면 'visibility_off' 아이콘을 보여줍니다.
                         _obscureText ? Icons.visibility : Icons.visibility_off,
                         color: primaryColor,
                       ),
@@ -112,47 +128,27 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 16.0),
                 InkWell(
-                  onTap: () async {
-                    String email = _emailController.text;
-                    String password = _passwordController.text;
-                    String result = await loginUser(email, password, context);
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text('로그인 결과'),
-                        content: Text(result),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text('확인'),
-                          ),
+                  onTap: _login,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30.0),
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Color.fromRGBO(194, 233, 251, 1),
+                          Color.fromRGBO(161, 196, 253, 0.94),
                         ],
                       ),
-                    );
-                  },
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30.0),
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,  // 그라데이션 시작점을 왼쪽 중앙으로 설정
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Color.fromRGBO(194, 233, 251, 1),  // 그라데이션 시작 색상
-                            Color.fromRGBO(161, 196, 253, 0.94),  // 그라데이션 끝 색상
-                          ],
-                        ),
-                      ),
-                      child: Container(
-                        width: double.infinity,
-                        height: 50,
-                        alignment: Alignment.center,
-                        child: const Text('로그인', style: TextStyle(fontSize: 23, color: Colors.white,)),
-                      ),
+                    ),
+                    child: Container(
+                      width: double.infinity,
+                      height: 50,
+                      alignment: Alignment.center,
+                      child: const Text('로그인', style: TextStyle(fontSize: 23, color: Colors.white)),
                     ),
                   ),
-
+                ),
                 const SizedBox(height: 16.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

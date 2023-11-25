@@ -40,6 +40,8 @@ dependencies:
   flutter_secure_storage: ^4.2.1
   shared_preferences: ^2.0.10
   image_picker: 1.0.4
+  cookie_jar: ^4.0.8
+
     
     
 
