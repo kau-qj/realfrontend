@@ -1,13 +1,14 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:qj_projec/button/hompage_ad_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_inner_shadow/flutter_inner_shadow.dart';
-import 'package:qj_projec/button/x_button.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:qj_projec/httpApi/api_hompage.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_inner_shadow/flutter_inner_shadow.dart';
 
 class MyHompage extends StatefulWidget {
-  const MyHompage({super.key});
+  const MyHompage({Key? key}) : super(key: key);
 
   @override
   State<MyHompage> createState() => _MyHompageState();
@@ -16,23 +17,26 @@ class MyHompage extends StatefulWidget {
 class _MyHompageState extends State<MyHompage> {
   int _current = 0;
   final CarouselController _controller = CarouselController();
-  List imageList = [
+  List<String> imageList = [
     'assets/HompageAd.png',
     'assets/HompageAd2.png',
     'assets/image 11.png',
   ];
 
-  final ApiService apiService = ApiService(); //api 연결
+  final ApiService apiService = ApiService();
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      resizeToAvoidBottomInset : false,
+      resizeToAvoidBottomInset: false,
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 255, 255, 255),
         elevation: 0.0,
-        toolbarHeight: 120,
+        toolbarHeight: screenHeight * 0.13,
         title: Padding(
           padding: const EdgeInsets.only(top: 0.0),
           child: Row(
@@ -42,8 +46,8 @@ class _MyHompageState extends State<MyHompage> {
                 padding: const EdgeInsets.only(left: 0),
                 child: SvgPicture.asset(
                   'assets/QJLog.svg',
-                  height: 71,
-                  width: 71,
+                  height: screenHeight * 0.1,
+                  width: screenWidth * 0.15,
                 ),
               ),
               Padding(
@@ -59,135 +63,114 @@ class _MyHompageState extends State<MyHompage> {
       body: SafeArea(
         child: Column(
           children: [
-            Expanded(
-              child: Column(
+            // CarouselSlider 부분
+            SizedBox(
+              height: 200,
+              child: Stack(
                 children: [
-                  SizedBox(
-                    height: 200,
-                    child: Stack(
-                      children: [
-                        sliderWidget(),
-                        sliderIndicator(),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    flex: 3,
-                    child: Center(
-                      child: SizedBox(
-                        height: 520,
-                        width: 420,
-                        child: InnerShadow(
-                            shadows: [
-                              Shadow(
-                                color: Color.fromARGB(255, 255, 255, 255)
-                                    .withOpacity(0.25),
-                                blurRadius: 10,
-                                offset: const Offset(2, 5),
-                              )
-                            ],
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(37),
-                                  topRight: Radius.circular(37),
+                  sliderWidget(),
+                  sliderIndicator(),
+                ],
+              ),
+            ),
+            SizedBox(height: 20),
+            Expanded(
+              flex: 3,
+              child: Center(
+                child: SizedBox(
+                  height: 520,
+                  width: 420,
+                  child: InnerShadow(
+                    shadows: [
+                      Shadow(
+                        color: Color.fromARGB(255, 255, 255, 255)
+                            .withOpacity(0.25),
+                        blurRadius: 10,
+                        offset: const Offset(2, 5),
+                      )
+                    ],
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(37),
+                          topRight: Radius.circular(37),
+                        ),
+                        color: Color.fromARGB(255, 255, 255, 255),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.25),
+                            blurRadius: 10,
+                            offset: const Offset(2, 5),
+                          ),
+                        ],
+                      ),
+                      child: Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Padding(
+                              padding: EdgeInsets.all(20.0),
+                              child: SvgPicture.asset(
+                                'assets/HompageSideL.svg',
+                              ),
+                            ),
+                          ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Padding(
+                              padding: EdgeInsets.all(20.0),
+                              child: SvgPicture.asset(
+                                'assets/HompageSideR.svg',
+                              ),
+                            ),
+                          ),
+                          Column(
+                            children: [
+                              const Align(
+                                alignment: Alignment.topLeft,
+                                child: Padding(
+                                  padding:
+                                      EdgeInsets.fromLTRB(20.0, 15.0, 8.0, 1.0),
+                                  child: Text(
+                                    "채용공고",
+                                    style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontSize: 17,
+                                      color: Colors.black,
+                                    ),
+                                  ),
                                 ),
-                                color: Color.fromARGB(255, 255, 255, 255),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.25),
-                                    blurRadius: 10,
-                                    offset: const Offset(2, 5),
-                                  ),
-                                ],
                               ),
-                              child: Stack(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: const BorderRadius.only(
-                                        topLeft: Radius.circular(37),
-                                        topRight: Radius.circular(37),
-                                      ),
-                                      color: Color.fromARGB(255, 255, 255, 255),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.25),
-                                          blurRadius: 10,
-                                          offset: const Offset(2, 5),
-                                        ),
-                                      ],
-                                    ),
-                                    child: PageView.builder(
-                                        itemCount: 3,
-                                        itemBuilder: (context, index) {
-                                          return _buildAdButtonPage(context);
-                                        }),
-                                  ),
-                                  const Align(
-                                    alignment: Alignment.topLeft,
-                                    child: Padding(
-                                      padding: EdgeInsets.all(2.5),
-                                      child: Text(
-                                        "채용공고",
-                                        style: TextStyle(
-                                          fontFamily: 'Poppins',
-                                          fontSize: 17,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Padding(
-                                      padding: EdgeInsets.all(20.0),
-                                      child: SvgPicture.asset(
-                                          'assets/HompageSideL.svg'),
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.centerRight,
-                                    child: Padding(
-                                      padding: EdgeInsets.all(20.0),
-                                      child: SvgPicture.asset(
-                                          'assets/HompageSideR.svg'),
-                                    ),
-                                  ),
-                                  FutureBuilder<Map<String, dynamic>>(
-                                    future: apiService.fetchData(),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState == ConnectionState.waiting) {
-                                        return CircularProgressIndicator();
-                                      } else if (snapshot.hasError) {
-                                        return Text('Error: ${snapshot.error}');
-                                      } else if (!snapshot.hasData || snapshot.data == null || snapshot.data!['result'] == null) {
-                                        return Text('No data fetched from API.');
-                                      } else {
-                                        // API로부터 받아온 데이터를 저장
-                                        List result = snapshot.data!['result'];
-
-                                        // 각 아이템에서 'title'만 추출
-                                        List<String> titles = result.map((item) => item['title'] as String).toList();
-
-                                        return ListView.builder(
-                                          itemCount: titles.length,
-                                          itemBuilder: (context, index) {
-                                            return ListTile(
-                                              title: Text(titles[index]),
-                                            );
-                                          },
-                                        );
-                                      }
-                                    },
-                                  ),
-                                ],
+                              Expanded(
+                                child: FutureBuilder<Map<String, dynamic>>(
+                                  future: apiService.fetchData(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return Center(
+                                          child: CircularProgressIndicator());
+                                    } else if (snapshot.hasError) {
+                                      return Text('Error: ${snapshot.error}');
+                                    } else if (!snapshot.hasData ||
+                                        snapshot.data == null ||
+                                        snapshot.data!['result'] == null) {
+                                      return Text('No data fetched from API.');
+                                    } else {
+                                      List<dynamic> result =
+                                          snapshot.data!['result'];
+                                      // _buildAdButtonPage를 호출하여 광고 버튼들을 생성합니다.
+                                      return _buildAdButtonPage(result);
+                                    }
+                                  },
+                                ),
                               ),
-                            )),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                  )
-                ],
+                  ),
+                ),
               ),
             ),
           ],
@@ -205,7 +188,10 @@ class _MyHompageState extends State<MyHompage> {
             builder: (context) {
               return SizedBox(
                 width: MediaQuery.of(context).size.width,
-                child: Image(fit: BoxFit.fill, image: AssetImage(imgLink)),
+                child: Image.asset(
+                  imgLink,
+                  fit: BoxFit.fill,
+                ),
               );
             },
           );
@@ -249,406 +235,79 @@ class _MyHompageState extends State<MyHompage> {
       ),
     );
   }
-}
 
-Widget _buildAdButtonPage(BuildContext context) {
-  return Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    crossAxisAlignment: CrossAxisAlignment.center,
-    children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(bottom: 0),
-            child: _buildAdButton(
-              context,
-              'assets/HompageAdButton.svg',
-              HomepageToAd(),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(bottom: 0),
-            child: _buildAdButton(
-              context,
-              'assets/HompageAdButton.svg',
-              ToAdTopL(),
-            ),
-          ),
-        ],
-      ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(bottom: 20),
-            child: _buildAdButton(
-              context,
-              'assets/HompageAdButton.svg',
-              ToAdBottomR(),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(bottom: 20),
-            child: _buildAdButton(
-              context,
-              'assets/HompageAdButton.svg',
-              ToAdBottomL(),
-            ),
-          ),
-        ],
-      ),
-    ],
-  );
-}
+  Widget _buildAdButtonPage(List<dynamic> adsData) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    List<Widget> adButtons = adsData.map((ad) {
+      return _buildAdButton(
+        'assets/HompageAdButton.svg',
+        ad['title'] ?? 'No Title',
+        ad['url'] ?? '',
+      );
+    }).toList();
 
-Widget _buildAdButton(
-    BuildContext context, String svgAsset, Widget targetPage) {
-  return Padding(
-    padding: const EdgeInsets.only(left: 1.0),
-    child: DecoratedBox(
-      decoration: BoxDecoration(boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.05),
-          blurRadius: 25.0,
-          spreadRadius: 0.0,
-          offset: const Offset(0.0, 0.2),
+    return Wrap(
+      alignment: WrapAlignment.center,
+      children: adButtons,
+    );
+  }
+
+  Widget _buildAdButton(
+    String svgAsset,
+    String title,
+    String url,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 1.0),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 25.0,
+              spreadRadius: 0.0,
+              offset: const Offset(0.0, 0.2),
+            ),
+          ],
         ),
-      ]),
-      child: HompageAdButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => targetPage,
-            ),
-          );
-        },
-        svgAsset: svgAsset,
-      ),
-    ),
-  );
-}
-
-class HomepageToAd extends StatelessWidget {
-  const HomepageToAd({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(0, 0, 0, 0),
-        elevation: 0.0,
-        toolbarHeight: 120,
-        title: Padding(
-          padding: const EdgeInsets.only(top: 0.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+        child: InkWell(
+          onTap: () => _launchURL(url),
+          child: Stack(
+            alignment: Alignment.center,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 0),
-                child: SvgPicture.asset(
-                  'assets/QJLog.svg',
-                  height: 71,
-                  width: 71,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: 40.0,
-                  left: 1,
-                ),
-                child: SvgPicture.asset(
-                  'assets/HompageTopBar.svg',
+              SvgPicture.asset(svgAsset),
+              Positioned(
+                bottom: 70,
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    width: 150,
+                    child: Text(
+                      title,
+                      textAlign: TextAlign.center,
+                      maxLines: 4,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ],
-          ),
-        ),
-      ),
-      body: Center(
-        child: SizedBox(
-          height: 800,
-          width: 420,
-          child: InnerShadow(
-            shadows: [
-              Shadow(
-                color: Colors.black.withOpacity(0.25),
-                blurRadius: 10,
-                offset: const Offset(2, 5),
-              ),
-            ],
-            child: Container(
-              padding: const EdgeInsets.only(top: 20.0, left: 10.0),
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(37),
-                  topRight: Radius.circular(37),
-                ),
-                color: const Color.fromARGB(255, 255, 255, 255),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.25),
-                    blurRadius: 10,
-                    offset: const Offset(2, 5),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  XButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    svgAsset: 'assets/XButton.svg',
-                  ),
-                ],
-              ),
-            ),
           ),
         ),
       ),
     );
   }
-}
 
-class ToAdTopL extends StatelessWidget {
-  const ToAdTopL({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(0, 0, 0, 0),
-        elevation: 0.0,
-        toolbarHeight: 120,
-        title: Padding(
-          padding: const EdgeInsets.only(top: 0.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 0),
-                child: SvgPicture.asset(
-                  'assets/QJLog.svg',
-                  height: 71,
-                  width: 71,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 40.0, left: 1),
-                child: SvgPicture.asset(
-                  'assets/HompageTopBar.svg',
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      body: Center(
-        child: SizedBox(
-          height: 800,
-          width: 420,
-          child: InnerShadow(
-            shadows: [
-              Shadow(
-                color: Colors.black.withOpacity(0.25),
-                blurRadius: 10,
-                offset: const Offset(2, 5),
-              ),
-            ],
-            child: Container(
-              padding: const EdgeInsets.only(top: 20.0, left: 10.0),
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(37),
-                  topRight: Radius.circular(37),
-                ),
-                color: const Color.fromARGB(255, 255, 255, 255),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.25),
-                    blurRadius: 10,
-                    offset: const Offset(2, 5),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  XButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    svgAsset: 'assets/XButton.svg',
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class ToAdBottomR extends StatelessWidget {
-  const ToAdBottomR({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(0, 0, 0, 0),
-        elevation: 0.0,
-        toolbarHeight: 120,
-        title: Padding(
-          padding: const EdgeInsets.only(top: 0.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 0),
-                child: SvgPicture.asset(
-                  'assets/QJLog.svg',
-                  height: 71,
-                  width: 71,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 40.0, left: 1),
-                child: SvgPicture.asset(
-                  'assets/HompageTopBar.svg',
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      body: Center(
-        child: SizedBox(
-          height: 800,
-          width: 420,
-          child: InnerShadow(
-            shadows: [
-              Shadow(
-                color: Colors.black.withOpacity(0.25),
-                blurRadius: 10,
-                offset: const Offset(2, 5),
-              ),
-            ],
-            child: Container(
-              padding: const EdgeInsets.only(top: 20.0, left: 10.0),
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(37),
-                  topRight: Radius.circular(37),
-                ),
-                color: const Color.fromARGB(255, 255, 255, 255),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.25),
-                    blurRadius: 10,
-                    offset: const Offset(2, 5),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  XButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    svgAsset: 'assets/XButton.svg',
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class ToAdBottomL extends StatelessWidget {
-  const ToAdBottomL({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(0, 0, 0, 0),
-        elevation: 0.0,
-        toolbarHeight: 120,
-        title: Padding(
-          padding: const EdgeInsets.only(top: 0.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 0),
-                child: SvgPicture.asset(
-                  'assets/QJLog.svg',
-                  height: 71,
-                  width: 71,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 40.0, left: 1),
-                child: SvgPicture.asset(
-                  'assets/HompageTopBar.svg',
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      body: Center(
-        child: SizedBox(
-          height: 800,
-          width: 420,
-          child: InnerShadow(
-            shadows: [
-              Shadow(
-                color: Colors.black.withOpacity(0.25),
-                blurRadius: 10,
-                offset: const Offset(2, 5),
-              ),
-            ],
-            child: Container(
-              padding: const EdgeInsets.only(top: 20.0, left: 10.0),
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(37),
-                  topRight: Radius.circular(37),
-                ),
-                color: const Color.fromARGB(255, 255, 255, 255),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.25),
-                    blurRadius: 10,
-                    offset: const Offset(2, 5),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  XButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    svgAsset: 'assets/XButton.svg',
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+  Future<void> _launchURL(String url) async {
+    if (!await launch(url)) {
+      print('Could not launch $url');
+    }
   }
 }

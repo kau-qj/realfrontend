@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:qj_projec/mypage/Mypage_storage.dart';
 import 'package:qj_projec/httpApi/api_jobdetails.dart';
+import 'package:flutter_html/flutter_html.dart';
+
 
 class JobDetails extends StatelessWidget {
   //const jobdetails({super.key});
@@ -9,10 +11,16 @@ class JobDetails extends StatelessWidget {
   final ApiService apiService = ApiService(); //api 연결
 
   JobDetails({required this.jobname}); // 생성자에서 jobname 파라미터를 필수로 받도록 설정
+  
+  String convertNewlinesToBreaks(String text) {
+    return text.replaceAll('\n', '<br>');
+  }
 
   @override
   Widget build(BuildContext context) {
-    Color textColor = const Color.fromRGBO(161, 196, 253, 0.94);
+    Color textColor1 = const Color.fromRGBO(161, 196, 253, 1);
+    Color textColor2 = const Color.fromRGBO(45, 67, 77, 1);
+
     return Scaffold(
       body: Center(
         child: Stack(
@@ -26,7 +34,7 @@ class JobDetails extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 23,
                   fontWeight: FontWeight.bold,
-                  color: textColor,
+                  color: textColor1,
                 ),
               ),
             ),
@@ -57,8 +65,71 @@ class JobDetails extends StatelessWidget {
               top: 195,
               right: 25,
               child: InkWell(
-                onTap: () {
-                  // 마이페이지 관심직무에 추가되도록 설정
+                // AddButton의 onTap 메소드
+                onTap: () async {
+                  // 사용자의 관심 직무가 이미 등록되어 있는지 확인
+                  // 이 부분은 실제 앱에서는 사용자의 관심 직무 정보를 관리하는 로직에 따라 달라집니다.
+                  bool isJobRegistered = true;
+
+                  if (isJobRegistered) {
+                    // 이미 관심 직무가 등록되어 있으면 AlertDialog를 표시
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(color: textColor1, width: 2),
+                            borderRadius: BorderRadius.circular(30.0), // 테두리 둥글게 설정
+                          ),
+                          title: Text(
+                            '관심 직무 등록',
+                            style: TextStyle(
+                              color: textColor2,
+                              fontWeight: FontWeight.bold,
+
+                            ),
+                          ),
+                          content: Text(
+                            '최대 한 개의 관심직무 등록이 가능합니다. 관심직무를 수정하시겠습니까?',
+                            style: TextStyle(
+                              color: textColor2,
+                            ),
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text(
+                                '아니오',
+                                style: TextStyle(
+                                  color: textColor1,
+                                  fontWeight: FontWeight.bold,
+                                ), // 아니오 버튼의 글씨 색상을 빨간색으로 변경
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();  // 닫기
+                              },
+                            ),
+                            TextButton(
+                              child: Text(
+                                '예',
+                                style: TextStyle(
+                                  color: textColor1,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),                              
+                              onPressed: () {
+                                // 예를 선택하면 관심 직무를 수정하는 로직을 실행
+                                // 이 부분은 실제 앱에서는 관심 직무 정보를 수정하는 로직에 따라 달라집니다.
+                                Navigator.of(context).pop();  // 닫기
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  } else {
+                    // 관심 직무가 등록되어 있지 않으면 직무를 등록하는 로직을 실행
+                    // 이 부분은 실제 앱에서는 관심 직무 정보를 등록하는 로직에 따라 달라집니다.
+                  }
                 },
                 child: SvgPicture.asset('assets/AddButton.svg'),
               ),
@@ -107,9 +178,9 @@ class JobDetails extends StatelessWidget {
                           ),
                           SizedBox(height: 30),
                           Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 0),  // 좌우 패딩 값 설정
-                            child: Text(
-                              '${extractedData['comments']}',
+                            padding: EdgeInsets.symmetric(horizontal: 0),
+                            child: Html(
+                              data: convertNewlinesToBreaks('${extractedData['comments']}'),
                             ),
                           ),
                         ],
