@@ -86,12 +86,13 @@ class _QJStorageState extends State<QJStorage> {
                 Positioned(
                   top: screenSize.height * 0.15, // 적절한 위치 조정
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10.0), // 좌우 여백 설정
-                    child: Text(
-                      'Score: ${course['score']} ${course['comment']}',
-                      style: TextStyle(
-                          // 스타일 설정
-                          ),
+                    padding: EdgeInsets.symmetric(horizontal: 20.0), // 좌우 여백 설정
+                    child: Container( // Container 위젯 사용
+                      width: MediaQuery.of(context).size.width - 70, // 화면 너비에서 양옆 여백만큼 뺀 값을 너비로 설정
+                      child: ListTile(
+                        leading: Text('Score: ${course['score']}'),  // leading에 점수 표시
+                        subtitle: Text('${course['comment']}'),  // subtitle에 코멘트 표시
+                      ),
                     ),
                   ),
                 ),
