@@ -68,25 +68,35 @@ class _QJStorageState extends State<QJStorage> {
             return Stack(
               alignment: Alignment.center,
               children: <Widget>[
-                SvgPicture.asset('assets/CourseName.svg'),
                 Positioned(
-                  top: screenSize.height * 0.05, // 적절한 위치 조정
+                  top: screenSize.height * 0, // 상단 위치 조절
+                  child: SvgPicture.asset('assets/CourseName.svg'),
+                ),
+                Positioned(
+                  top: screenSize.height * 0.017, // 적절한 위치 조정
                   child: Text(course['title'],
                       style: TextStyle(
                           // 스타일 설정
                           )),
                 ),
-                SvgPicture.asset('assets/CourseInfo.svg'),
                 Positioned(
-                  top: screenSize.height * 0.1, // 적절한 위치 조정
-                  child: Text(
-                      'Score: ${course['score']} Comment: ${course['comment']}',
-                      style: TextStyle(
-                          // 스타일 설정
-                          )),
+                  top: screenSize.height * 0.1, // 상단 위치 조절
+                  child: SvgPicture.asset('assets/CourseInfo.svg'),
                 ),
                 Positioned(
-                  top: screenSize.height * 0.4, // 상단 위치 조정 (화면 높이의 50%)
+                  top: screenSize.height * 0.15, // 적절한 위치 조정
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10.0), // 좌우 여백 설정
+                    child: Text(
+                      'Score: ${course['score']} ${course['comment']}',
+                      style: TextStyle(
+                          // 스타일 설정
+                          ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: screenSize.height * 0.35, // 상단 위치 조정 (화면 높이의 50%)
                   child: SvgPicture.asset('assets/QjLogoBack.svg'),
                 )
               ],
