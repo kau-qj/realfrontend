@@ -19,9 +19,9 @@ class _StorageState extends State<Storage> {
     qjData = ApiService().fetchData(); // API 서비스에서 데이터를 가져옵니다.
   }
 
-  void _navigateToQjStorage(BuildContext context) {
+  void _navigateToQjStorage(BuildContext context, int setIdx) {
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const QJStorage()),
+      MaterialPageRoute(builder: (context) => QJStorage(setIdx: setIdx)),
     );
   }
 
@@ -75,7 +75,7 @@ class _StorageState extends State<Storage> {
               itemBuilder: (context, index) {
                 var item = snapshot.data![index];
                 return GestureDetector(
-                  onTap: () => _navigateToQjStorage(context),
+                  onTap: () => _navigateToQjStorage(context, item['setIdx']),
                   child: Stack(
                     alignment: Alignment.center,
                     children: [

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../httpApi/api_Mypage/api_mypage.dart';
 import 'Mypage_Setting .dart';
 import 'Mypage_profile.dart';
 import 'Mypage_PrivacyPage.dart';
@@ -13,16 +14,50 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
+  String userName = ""; // 사용자 이름을 저장할 변수
+  String job = ""; // 사용자 직무를 저장할 변수
+  String? imageUrl = ""; // 프로필 이미지 URL을 저장할 변수,  null을 허용하도록 변경
+  final ApiService _apiService = ApiService(); // ApiService 인스턴스를 생성합니다.
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserData();
+  }
+
+  void _fetchUserData() async {
+    try {
+      final userInfo = await _apiService.fetchUserInfo();
+      setState(() {
+        userName = userInfo['userName']; //유저 이름 업데이트
+        job = userInfo['job']; // 관심직무 업데이트
+        imageUrl = userInfo['imageUrl'] ?? ''; //프로필 업데이트
+      });
+    } catch (e) {
+      // 에러 처리
+      print('Error fetching user data: $e');
+    }
+  }
+
   void _navigateToSettings() {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => const SettingPage()),
     );
   }
 
-  void _navigateToProfile(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const ProfileEditPage()),
+  void _navigateToProfile(BuildContext context) async {
+    final result = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const ProfileEditPage(),
+      ),
     );
+
+    if (result != null) {
+      setState(() {
+        imageUrl =
+            result['imageUrl'] ?? 'assets/profile.png'; // null일 경우 기본 이미지 설정
+      });
+    }
   }
 
   void _navigateToPrivacy() {
@@ -35,6 +70,18 @@ class _MyPageState extends State<MyPage> {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => const Storage()),
     );
+  }
+
+  void _navigateToProfilImage(BuildContext context) async {
+    final newProfile = await Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => const ProfileEditPage()),
+    );
+
+    if (newProfile != null) {
+      setState(() {
+        imageUrl = newProfile['imageUrl'];
+      });
+    }
   }
 
   @override
@@ -64,13 +111,13 @@ class _MyPageState extends State<MyPage> {
           SizedBox(height: 5),
           Container(
             width: double.infinity,
-            height: 120,
+            height: 130,
             child: Stack(
               alignment: Alignment.bottomCenter,
               children: [
                 Positioned(
                   left: 60,
-                  bottom: 0,
+                  top: 39,
                   child: SvgPicture.asset(
                     'assets/MypageProfileRound.svg',
                     width: 91.0,
@@ -79,30 +126,47 @@ class _MyPageState extends State<MyPage> {
                 ),
                 Positioned(
                   left: 40,
-                  bottom: 10,
+                  top: 30,
                   child: Container(
                     width: 91,
                     height: 91,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       image: DecorationImage(
-                        image: AssetImage('assets/profile.png'),
+                        image: (imageUrl != null && imageUrl!.isNotEmpty)
+                            ? NetworkImage(imageUrl!) as ImageProvider // 타입 캐스팅
+                            : AssetImage('assets/profile.png'),
                         fit: BoxFit.cover,
                       ),
                     ),
                   ),
                 ),
                 Positioned(
+                  left: 40,
+                  top: 0,
+                  child: Text(
+                    '$userName님 안녕하세요!',
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: Color.fromARGB(255, 0, 0, 0),
+                    ),
+                  ),
+                ),
+                Positioned(
                   right: 20, // 왼쪽 여백 조절
-                  top: 50, // 아래쪽 여백 조절
+                  top: 50, // 텍스트를 원하는 위치에 배치하기 위해 조정
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        '나의 관심직무를 설정해주세요!',
+                      Text(
+                        job.isNotEmpty
+                            ? '나의 관심 직무는 ‘$job’!'
+                            : '나의 관심직무를 설정해주세요!',
                         style: TextStyle(
-                          fontSize: 12,
-                          color: Color.fromARGB(101, 0, 0, 0),
+                          fontSize: 13,
+                          color: job.isNotEmpty
+                              ? Colors.black
+                              : Color.fromARGB(101, 0, 0, 0), // 조건부 색상 설정
                         ),
                       ),
                       SizedBox(height: 8),
@@ -114,17 +178,27 @@ class _MyPageState extends State<MyPage> {
                             SvgPicture.asset(
                               'assets/MypageEditButton.svg',
                             ),
+                            Positioned(
+                              left: 0,
+                              right: 0,
+                              top: 100, // SVG가 놓일 정확한 위치를 조정하세요
+                              child: SvgPicture.asset(
+                                'assets/Mypagebar2.svg', // 여기에 새 SVG 파일명을 넣으세요
+                                // 화면 너비에 맞게 조정할 수 있습니다
+                                // height: 20, // 필요하다면 높이도 조정하세요
+                              ),
+                            ),
                           ],
                         ),
                       ),
                     ],
                   ),
-                )
+                ),
               ],
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 65),
+            padding: const EdgeInsets.only(top: 30),
             child: Column(
               children: [
                 _buildMenuItem('유료 구독하기', () {
@@ -203,9 +277,17 @@ class _MyPageState extends State<MyPage> {
 
   Widget _buildMenuItem(String title, VoidCallback onTap) {
     return ListTile(
-      title: Text(title.trim(),
-          style: TextStyle(color: Colors.black, fontSize: 12)),
-      onTap: onTap,
+      title: Text(
+        title.trim(),
+        style: TextStyle(color: Colors.black, fontSize: 12),
+      ),
+      onTap: () {
+        if (title == '나의 관심직무를 설정해주세요!') {
+          _navigateToProfile(context);
+        } else {
+          onTap();
+        }
+      },
       contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
     );
   }
