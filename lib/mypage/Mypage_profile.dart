@@ -19,11 +19,19 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   String? nickname;
   String? jobName;
   String? imageUrl;
+  TextEditingController jobNameController = TextEditingController();
+  bool _isImageUpdated = false;
 
   @override
   void initState() {
     super.initState();
     _fetchUserProfile();
+  }
+
+  @override
+  void dispose() {
+    jobNameController.dispose();
+    super.dispose();
   }
 
   void _fetchUserProfile() async {
@@ -34,6 +42,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
         nickname = userProfile['nickname'];
         jobName = userProfile['jobName'];
         imageUrl = userProfile['image'][0]['imageUrl'];
+        jobNameController.text = jobName ?? '';
       });
     } catch (e) {
       // 에러 처리
@@ -45,10 +54,10 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     var uri = Uri.parse('https://kauqj.shop/mypage/profile');
     var request = http.MultipartRequest('PUT', uri)
       ..fields['nickName'] = nickname ?? ''
-      ..fields['jobName'] = jobName ?? '';
+      ..fields['jobName'] = jobNameController.text;
 
-    if (imageUrl != null && imageUrl!.isNotEmpty) {
-      // 파일 이미지를 추가합니다.
+    // 새 이미지가 선택되었고, 로컬 파일 경로인 경우에만 이미지 업로드를 수행합니다.
+    if (_isImageUpdated && imageUrl != null && File(imageUrl!).existsSync()) {
       request.files.add(await http.MultipartFile.fromPath(
         'profileImage',
         imageUrl!,
@@ -59,26 +68,28 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     try {
       var response = await request.send();
       if (response.statusCode == 200) {
-        // 성공적으로 업데이트 되었을 때의 처리
         print('프로필 업데이트 성공');
         final respStr = await response.stream.bytesToString();
         print(respStr); // 서버 응답 출력
 
-        // userName과 job 업데이트
+        // 새 이미지가 업데이트되지 않았다면 기존 imageUrl 유지
+        String updatedImageUrl =
+            _isImageUpdated && imageUrl != null && File(imageUrl!).existsSync()
+                ? imageUrl!
+                : (imageUrl ?? 'assets/profile.png');
+
         setState(() {
-          // userName과 job을 MyPage로 전달
+          // job과 imageUrl을 MyPage로 전달
           Navigator.of(context).pop({
-            'userName': nickname,
-            'job': jobName,
-            'imageUrl': imageUrl,
+            'job': jobNameController.text,
+            'imageUrl': updatedImageUrl,
           });
         });
       } else {
-        // 에러 처리
-        print('프로필 업데이트 실패.');
+        print('프로필 업데이트 실패: ${response.statusCode}');
       }
     } catch (e) {
-      print(e);
+      print("프로필 업데이트 에러: $e");
     }
   }
 
@@ -89,6 +100,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       if (image != null) {
         setState(() {
           imageUrl = image.path;
+          _isImageUpdated = true; // 새 이미지가 선택되었음을 나타냄
         });
       }
     } catch (e) {
@@ -150,10 +162,11 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                     GestureDetector(
                       onTap: _pickImage,
                       child: CircleAvatar(
-                        backgroundImage: imageUrl != null && imageUrl!.isNotEmpty
-                          ? NetworkImage(imageUrl!) as ImageProvider
-                          : AssetImage('assets/profile.png') as ImageProvider,
-                      radius: _imageSize / 2,
+                        backgroundImage: imageUrl != null &&
+                                imageUrl!.isNotEmpty
+                            ? NetworkImage(imageUrl!) as ImageProvider
+                            : AssetImage('assets/profile.png') as ImageProvider,
+                        radius: _imageSize / 2,
                       ),
                     ),
                     SvgPicture.asset('assets/profilePlus.svg'),
@@ -196,7 +209,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
               ),
               SizedBox(height: 8),
               TextField(
-                controller: TextEditingController(text: jobName),
+                controller: jobNameController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -209,15 +222,16 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                 onChanged: (value) {
                   setState(() {
                     jobName = value;
+                    print("jobName updated to: $jobName"); // 디버그 콘솔 출력
                   });
                 },
               ),
               SizedBox(height: screenSize.height * 0.02),
               const Text(
-                '• 작성된 내용 검토 후\n'
-                '• 욕설이나 내용이 있는 경우\n'
-                '• QJ 서비스 이용 약관에 따라 부적절하다고 판단될 경우\n'
-                '노출 제한 처리와 서비스 이용에 제한이 생길 수 있습니다',
+                '• 작성된 내용 검토 후'
+                '\n• 욕설이나 내용이 있는 경우'
+                '\n• QJ 서비스 이용 약관에 따라 부적절하다고 판단될 경우'
+                '\n노출 제한 처리와 서비스 이용에 제한이 생길 수 있습니다',
                 style: TextStyle(
                   fontSize: 12,
                   fontFamily: 'Poppins',

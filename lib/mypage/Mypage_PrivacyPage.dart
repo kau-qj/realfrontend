@@ -1,6 +1,9 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../httpApi/api_Mypage/api_mypage_privacy.dart'; // 해당 부분은 실제 API 서비스 파일을 import 해야 합니다.
+import '../httpApi/api_Mypage/api_mypage_privacy.dart';
+
 
 class PrivacyPage extends StatefulWidget {
   const PrivacyPage({Key? key}) : super(key: key);
@@ -19,6 +22,7 @@ class _PrivacyPageState extends State<PrivacyPage> {
   TextEditingController _userIdController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   Color primaryColor = Color.fromRGBO(161, 196, 253, 1);
+  final ApiService _apiService = ApiService();
 
   @override
   void initState() {
@@ -28,7 +32,6 @@ class _PrivacyPageState extends State<PrivacyPage> {
 
   void _fetchUserData() async {
     try {
-      final ApiService _apiService = ApiService();
       final userInfo = await _apiService.fetchUserInfo();
       setState(() {
         _nameController.text = userInfo['userName'];
@@ -39,6 +42,28 @@ class _PrivacyPageState extends State<PrivacyPage> {
       });
     } catch (e) {
       print('Error fetching user data: $e');
+    }
+  }
+
+  void _savePrivacy() async {
+    var uri = Uri.parse('https://kauqj.shop/mypage/info');
+    var request = http.MultipartRequest('PUT', uri)
+      ..fields['userName'] = _nameController.text
+      ..fields['major'] = _majorController.text
+      ..fields['grade'] = _year
+      ..fields['school'] = _schoolController.text
+      ..fields['phoneNum'] = _contactController.text;
+
+    try {
+      var response = await request.send();
+      if (response.statusCode == 200) {
+        print('개인정보 업데이트 성공');
+        // 필요한 경우 추가 처리
+      } else {
+        print('개인정보 업데이트 실패: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('개인정보 업데이트 에러: $e');
     }
   }
 
@@ -151,6 +176,7 @@ class _PrivacyPageState extends State<PrivacyPage> {
             const SizedBox(height: 10.0),
             TextField(
               controller: _nameController,
+              textCapitalization: TextCapitalization.words,
               decoration: InputDecoration(
                 labelText: '이름',
                 border: UnderlineInputBorder(),
@@ -173,7 +199,7 @@ class _PrivacyPageState extends State<PrivacyPage> {
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 30.0),
         child: TextButton(
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: _savePrivacy,
           child: SvgPicture.asset('assets/RoundButton.svg'),
         ),
       ),

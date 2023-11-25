@@ -15,7 +15,7 @@ class MyPage extends StatefulWidget {
 
 class _MyPageState extends State<MyPage> {
   String userName = ""; // 사용자 이름을 저장할 변수
-  String job = ""; // 사용자 직무를 저장할 변수
+  String? job = ""; // 사용자 직무를 저장할 변수
   String? imageUrl = ""; // 프로필 이미지 URL을 저장할 변수,  null을 허용하도록 변경
   final ApiService _apiService = ApiService(); // ApiService 인스턴스를 생성합니다.
 
@@ -48,14 +48,16 @@ class _MyPageState extends State<MyPage> {
   void _navigateToProfile(BuildContext context) async {
     final result = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => const ProfileEditPage(),
+        builder: (context) => ProfileEditPage(),
       ),
     );
 
     if (result != null) {
       setState(() {
-        imageUrl =
-            result['imageUrl'] ?? 'assets/profile.png'; // null일 경우 기본 이미지 설정
+        job = result['job'] ?? job;
+        imageUrl = result['imageUrl'].isEmpty
+            ? 'assets/profile.png'
+            : result['imageUrl'];
       });
     }
   }
@@ -134,7 +136,7 @@ class _MyPageState extends State<MyPage> {
                       shape: BoxShape.circle,
                       image: DecorationImage(
                         image: (imageUrl != null && imageUrl!.isNotEmpty)
-                            ? NetworkImage(imageUrl!) as ImageProvider // 타입 캐스팅
+                            ? NetworkImage(imageUrl!) as ImageProvider
                             : AssetImage('assets/profile.png'),
                         fit: BoxFit.cover,
                       ),
@@ -159,14 +161,14 @@ class _MyPageState extends State<MyPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        job.isNotEmpty
-                            ? '나의 관심 직무는 ‘$job’!'
+                        job != null && job!.isNotEmpty
+                            ? '나의 관심 직무는 $job!'
                             : '나의 관심직무를 설정해주세요!',
                         style: TextStyle(
-                          fontSize: 13,
-                          color: job.isNotEmpty
+                          fontSize: 12,
+                          color: job != null && job!.isNotEmpty
                               ? Colors.black
-                              : Color.fromARGB(101, 0, 0, 0), // 조건부 색상 설정
+                              : Color.fromARGB(101, 0, 0, 0),
                         ),
                       ),
                       SizedBox(height: 8),
@@ -266,6 +268,7 @@ class _MyPageState extends State<MyPage> {
       ),
     );
   }
+
 
   Widget _Line() {
     return Divider(
