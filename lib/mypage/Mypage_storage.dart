@@ -86,7 +86,7 @@ class _StorageState extends State<Storage> {
                         height: 100,
                       ),
                       Positioned(
-                        top: 25, // 이 값을 조절하여 텍스트 위치를 조정합니다.
+                        top: 25, 
                         child: Column(
                           children: [
                             Text(

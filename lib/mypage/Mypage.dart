@@ -15,7 +15,7 @@ class MyPage extends StatefulWidget {
 
 class _MyPageState extends State<MyPage> {
   String userName = ""; // 사용자 이름을 저장할 변수
-  String job = ""; // 사용자 직무를 저장할 변수
+  String? job = ""; // 사용자 직무를 저장할 변수
   String? imageUrl = ""; // 프로필 이미지 URL을 저장할 변수,  null을 허용하도록 변경
   final ApiService _apiService = ApiService(); // ApiService 인스턴스를 생성합니다.
 
@@ -48,14 +48,16 @@ class _MyPageState extends State<MyPage> {
   void _navigateToProfile(BuildContext context) async {
     final result = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => const ProfileEditPage(),
+        builder: (context) => ProfileEditPage(),
       ),
     );
 
     if (result != null) {
       setState(() {
-        imageUrl =
-            result['imageUrl'] ?? 'assets/profile.png'; // null일 경우 기본 이미지 설정
+        job = result['job'] ?? job;
+        imageUrl = result['imageUrl'].isEmpty
+            ? 'assets/profile.png'
+            : result['imageUrl'];
       });
     }
   }
@@ -111,7 +113,7 @@ class _MyPageState extends State<MyPage> {
           SizedBox(height: 5),
           Container(
             width: double.infinity,
-            height: 130,
+            height: 150,
             child: Stack(
               alignment: Alignment.bottomCenter,
               children: [
@@ -134,7 +136,7 @@ class _MyPageState extends State<MyPage> {
                       shape: BoxShape.circle,
                       image: DecorationImage(
                         image: (imageUrl != null && imageUrl!.isNotEmpty)
-                            ? NetworkImage(imageUrl!) as ImageProvider // 타입 캐스팅
+                            ? NetworkImage(imageUrl!) as ImageProvider
                             : AssetImage('assets/profile.png'),
                         fit: BoxFit.cover,
                       ),
@@ -154,19 +156,19 @@ class _MyPageState extends State<MyPage> {
                 ),
                 Positioned(
                   right: 20, // 왼쪽 여백 조절
-                  top: 50, // 텍스트를 원하는 위치에 배치하기 위해 조정
+                  top: 30, // 텍스트를 원하는 위치에 배치하기 위해 조정
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        job.isNotEmpty
-                            ? '나의 관심 직무는 ‘$job’!'
+                        job != null && job!.isNotEmpty
+                            ? '나의 관심 직무는 $job!'
                             : '나의 관심직무를 설정해주세요!',
                         style: TextStyle(
-                          fontSize: 13,
-                          color: job.isNotEmpty
+                          fontSize: 12,
+                          color: job != null && job!.isNotEmpty
                               ? Colors.black
-                              : Color.fromARGB(101, 0, 0, 0), // 조건부 색상 설정
+                              : Color.fromARGB(101, 0, 0, 0),
                         ),
                       ),
                       SizedBox(height: 8),
@@ -178,20 +180,19 @@ class _MyPageState extends State<MyPage> {
                             SvgPicture.asset(
                               'assets/MypageEditButton.svg',
                             ),
-                            Positioned(
-                              left: 0,
-                              right: 0,
-                              top: 100, // SVG가 놓일 정확한 위치를 조정하세요
-                              child: SvgPicture.asset(
-                                'assets/Mypagebar2.svg', // 여기에 새 SVG 파일명을 넣으세요
-                                // 화면 너비에 맞게 조정할 수 있습니다
-                                // height: 20, // 필요하다면 높이도 조정하세요
-                              ),
-                            ),
                           ],
                         ),
                       ),
                     ],
+                  ),
+                ),
+                Positioned(
+                  right: 0,
+                  top: 140, // SVG가 놓일 정확한 위치를 조정하세요
+                  child: SvgPicture.asset(
+                    'assets/Mypagebar2.svg', // 여기에 새 SVG 파일명을 넣으세요
+                    // 화면 너비에 맞게 조정할 수 있습니다
+                    // height: 20, // 필요하다면 높이도 조정하세요
                   ),
                 ),
               ],
@@ -199,24 +200,29 @@ class _MyPageState extends State<MyPage> {
           ),
           Padding(
             padding: const EdgeInsets.only(top: 30),
-            child: Column(
-              children: [
-                _buildMenuItem('유료 구독하기', () {
-                  // 다른 페이지로 이동하는 로직
-                }),
-                _Line(),
-                _buildMenuItem('QJ 보관함', _navigateToStorage),
-                _Line(),
-                _buildMenuItem('개인정보', _navigateToPrivacy),
-                _Line(),
-                _buildMenuItem(
-                    '환경설정', _navigateToSettings), // 여기서 SettingPage로 이동합니다.
-                _Line(),
-                _buildMenuItem('로그아웃', () {
-                  // 다른 페이지로 이동하는 로직
-                }),
-                SizedBox(height: 5),
-              ],
+            child: Container(
+              color: Colors.transparent, // 배경색을 투명으로 설정
+              child: Column(
+                children: [
+                  _buildMenuItem('유료 구독하기', () {
+                    // 다른 페이지로 이동하는 로직
+                  }),
+                  _Line(),
+                  _buildMenuItem('QJ 보관함', _navigateToStorage),
+                  _Line(),
+                  _buildMenuItem('개인정보', _navigateToPrivacy),
+                  _Line(),
+                  _buildMenuItem(
+                    '환경설정',
+                    _navigateToSettings,
+                  ), // 여기서 SettingPage로 이동합니다.
+                  _Line(),
+                  _buildMenuItem('로그아웃', () {
+                    // 다른 페이지로 이동하는 로직
+                  }),
+                  SizedBox(height: 5),
+                ],
+              ),
             ),
           ),
           Container(
@@ -224,39 +230,11 @@ class _MyPageState extends State<MyPage> {
             child: Stack(
               children: [
                 Positioned(
-                  bottom: 0,
-                  left: 0, // 위치를 조정하여 적절한 위치를 찾습니다.
+                  bottom: 10,
+                  // 위치를 조정하여 적절한 위치를 찾습니다.
                   child: SvgPicture.asset(
-                    'assets/RoundL.svg', // 첫 번째 원형 SVG 파일
-                    width: 150, // 적절한 크기로 조절
-                    height: 150, // 적절한 크기로 조절
-                  ),
-                ),
-                Positioned(
-                  bottom: 110,
-                  right: 90, // 위치를 조정하여 적절한 위치를 찾습니다.
-                  child: SvgPicture.asset(
-                    'assets/MypagePlane.svg', // 두 번째 원형 SVG 파일
-                    width: 60, // 적절한 크기로 조절
-                    height: 50, // 적절한 크기로 조절
-                  ),
-                ),
-                Positioned(
-                  bottom: 30,
-                  right: 0, // 위치를 조정하여 적절한 위치를 찾습니다.
-                  child: SvgPicture.asset(
-                    'assets/RoundRT.svg', // 두 번째 원형 SVG 파일
-                    width: 150, // 적절한 크기로 조절
-                    height: 150, // 적절한 크기로 조절
-                  ),
-                ),
-                Positioned(
-                  bottom: 0,
-                  right: 20, // 위치를 조정하여 적절한 위치를 찾습니다.
-                  child: SvgPicture.asset(
-                    'assets/RoundRB.svg', // 세 번째 원형 SVG 파일
-                    width: 130, // 적절한 크기로 조절
-                    height: 130, // 적절한 크기로 조절
+                    'assets/MypageButtonRound.svg', // 세 번째 원형 SVG 파일
+                    width: 410,
                   ),
                 ),
               ],

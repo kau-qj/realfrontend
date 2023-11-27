@@ -25,7 +25,6 @@ class SettingPage extends StatelessWidget {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,41 +92,12 @@ class SettingPage extends StatelessWidget {
             ],
           ),
           Positioned(
-            bottom: 0,
-            left: 0, // 위치를 조정하여 적절한 위치를 찾습니다.
-            child: SvgPicture.asset(
-              'assets/RoundL.svg', // 첫 번째 원형 SVG 파일
-              width: 150, // 적절한 크기로 조절
-              height: 150, // 적절한 크기로 조절
-            ),
-          ),
-          Positioned(
-            bottom: 110,
-            right: 90, // 위치를 조정하여 적절한 위치를 찾습니다.
-            child: SvgPicture.asset(
-              'assets/MypagePlane.svg', // 두 번째 원형 SVG 파일
-              width: 60, // 적절한 크기로 조절
-              height: 50, // 적절한 크기로 조절
-            ),
-          ),
-          Positioned(
-            bottom: 30,
-            right: 0, // 위치를 조정하여 적절한 위치를 찾습니다.
-            child: SvgPicture.asset(
-              'assets/RoundRT.svg', // 두 번째 원형 SVG 파일
-              width: 150, // 적절한 크기로 조절
-              height: 150, // 적절한 크기로 조절
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            right: 20, // 위치를 조정하여 적절한 위치를 찾습니다.
-            child: SvgPicture.asset(
-              'assets/RoundRB.svg', // 세 번째 원형 SVG 파일
-              width: 130, // 적절한 크기로 조절
-              height: 130, // 적절한 크기로 조절
-            ),
-          ),
+              bottom: 0,
+              // 위치를 조정하여 적절한 위치를 찾습니다.
+              child: SvgPicture.asset(
+                'assets/GroupRoundButton.svg', // 세 번째 원형 SVG 파일
+                width: 410,
+              )),
         ],
       ),
     );
