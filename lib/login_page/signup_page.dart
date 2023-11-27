@@ -64,8 +64,8 @@ class _SignupPageState extends State<SignupPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
+        padding: EdgeInsets.only(top:20, left: 45.0, right: 45.0, bottom: 20),
+        child: Stack(
           children: <Widget>[
             TextField(
               controller: _schoolController,

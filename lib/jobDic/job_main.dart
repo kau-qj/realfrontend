@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:qj_projec/mypage/Mypage_storage.dart';
 import 'package:qj_projec/jobDic/job_details.dart';
 import 'package:qj_projec/httpApi/api_job_main.dart';
 
@@ -33,19 +32,6 @@ class _JobDictionaryState extends State<JobDictionary> {
         child: Stack(
           alignment: Alignment.center,
           children: <Widget>[
-            Positioned(
-              top: 80,
-              right: 20,
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Storage()), //Mypage => 관심직무 목록으로 변경
-                  );
-                },
-                child: SvgPicture.asset('assets/bookmark.svg'),
-              ),
-            ),
             Positioned(
               top: 390,
               left: 0,
@@ -139,7 +125,7 @@ class _JobDictionaryState extends State<JobDictionary> {
                           itemCount: titles.length,
                           itemBuilder: (context, index) {
                             return Container(
-                              padding: EdgeInsets.symmetric(vertical: 0.1), // 항목 간의 간격을 조절
+                              padding: index == 0 ? EdgeInsets.fromLTRB(0, 0, 0, 0) : EdgeInsets.fromLTRB(0, 0, 0, 0),
                               child: ListTile(
                                 title: Text(titles[index]),
                                 onTap: () { // 항목을 탭했을 때의 이벤트를 정의

@@ -9,7 +9,7 @@ class ApiService {
     final String endpoint = '/jobguide/jobdetails/$jobname'; // API의 엔드포인트
 
     final response = await http
-        .get(Uri.parse('$baseUrl$endpoint')); // 여기에 API의 endpoint를 넣으세요.
+      .get(Uri.parse('$baseUrl$endpoint')); // 여기에 API의 endpoint를 넣으세요.
 
     if (response.statusCode == 200) {
       return json.decode(response.body);

@@ -1,9 +1,12 @@
+import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-//import 'package:qj_projec/httpApi/api_MypageProfile.dart';
+import 'mypage.dart';
+import '../httpApi/api_Mypage/api_mypage_profile.dart';
 
 class ProfileEditPage extends StatefulWidget {
   const ProfileEditPage({Key? key}) : super(key: key);
@@ -13,7 +16,82 @@ class ProfileEditPage extends StatefulWidget {
 }
 
 class _ProfileEditPageState extends State<ProfileEditPage> {
-  String? _imageUrl;
+  String? nickname;
+  String? jobName;
+  String? imageUrl;
+  TextEditingController jobNameController = TextEditingController();
+  bool _isImageUpdated = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserProfile();
+  }
+
+  @override
+  void dispose() {
+    jobNameController.dispose();
+    super.dispose();
+  }
+
+  void _fetchUserProfile() async {
+    try {
+      final ApiService _apiService = ApiService();
+      final userProfile = await _apiService.fetchUserProfile();
+      setState(() {
+        nickname = userProfile['nickname'];
+        jobName = userProfile['jobName'];
+        imageUrl = userProfile['image'][0]['imageUrl'];
+        jobNameController.text = jobName ?? '';
+      });
+    } catch (e) {
+      // 에러 처리
+      print('Error fetching user profile: $e');
+    }
+  }
+
+  void _saveProfile() async {
+    var uri = Uri.parse('https://kauqj.shop/mypage/profile');
+    var request = http.MultipartRequest('PUT', uri)
+      ..fields['nickName'] = nickname ?? ''
+      ..fields['jobName'] = jobNameController.text;
+
+    // 새 이미지가 선택되었고, 로컬 파일 경로인 경우에만 이미지 업로드를 수행합니다.
+    if (_isImageUpdated && imageUrl != null && File(imageUrl!).existsSync()) {
+      request.files.add(await http.MultipartFile.fromPath(
+        'profileImage',
+        imageUrl!,
+        contentType: MediaType('image', 'jpeg'),
+      ));
+    }
+
+    try {
+      var response = await request.send();
+      if (response.statusCode == 200) {
+        print('프로필 업데이트 성공');
+        final respStr = await response.stream.bytesToString();
+        print(respStr); // 서버 응답 출력
+
+        // 새 이미지가 업데이트되지 않았다면 기존 imageUrl 유지
+        String updatedImageUrl =
+            _isImageUpdated && imageUrl != null && File(imageUrl!).existsSync()
+                ? imageUrl!
+                : (imageUrl ?? 'assets/profile.png');
+
+        setState(() {
+          // job과 imageUrl을 MyPage로 전달
+          Navigator.of(context).pop({
+            'job': jobNameController.text,
+            'imageUrl': updatedImageUrl,
+          });
+        });
+      } else {
+        print('프로필 업데이트 실패: ${response.statusCode}');
+      }
+    } catch (e) {
+      print("프로필 업데이트 에러: $e");
+    }
+  }
 
   Future<void> _pickImage() async {
     final ImagePicker _picker = ImagePicker();
@@ -21,33 +99,16 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
       if (image != null) {
         setState(() {
-          _imageUrl = image.path;
+          imageUrl = image.path;
+          _isImageUpdated = true; // 새 이미지가 선택되었음을 나타냄
         });
       }
     } catch (e) {
-      // Handle errors or user cancellation
+      // 에러 처리
       if (kDebugMode) {
         print('Image pick cancelled or failed: $e');
       }
     }
-  }
-
-  Future<void> _fetchImage() async {
-    // 이미지 가져오기 로직 구현...
-    // 예시: http 패키지를 사용하여 이미지를 가져오는 경우
-    final response = await http.get(Uri.parse(
-        'https://kau-sanhak-qj.s3.ap-northeast-2.amazonaws.com/1699688431867-KakaoTalk_20231111_161348208.png'));
-    if (response.statusCode == 200) {
-      setState(() {
-        _imageUrl = response.body; // 이미지 URL을 저장
-      });
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchImage();
   }
 
   @override
@@ -59,13 +120,13 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       appBar: AppBar(
         leading: IconButton(
-          icon: SvgPicture.asset('assets/BackButton.svg'), // 뒤로가기 버튼 SVG 파일
+          icon: SvgPicture.asset('assets/BackButton.svg'),
           onPressed: () {
-            Navigator.of(context).pop(); // 현재 화면을 스택에서 제거하여 이전 화면으로 돌아감
+            Navigator.of(context).pop();
           },
         ),
         title: Row(
-          mainAxisSize: MainAxisSize.min, // 자식들의 크기만큼 Row의 크기를 설정
+          mainAxisSize: MainAxisSize.min,
           children: [
             const Text(
               '프로필 설정',
@@ -77,7 +138,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
             ),
             const SizedBox(width: 10),
             Container(
-              margin: const EdgeInsets.only(top: 15), // 아이콘을 조금 아래로 내립니다.
+              margin: const EdgeInsets.only(top: 15),
               child: SvgPicture.asset('assets/RoundTop.svg'),
             )
           ],
@@ -93,30 +154,26 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: screenSize.height * 0.01), // 높이의 1%
+              SizedBox(height: screenSize.height * 0.01),
               Center(
                 child: Stack(
                   alignment: Alignment.bottomRight,
                   children: [
                     GestureDetector(
                       onTap: _pickImage,
-                      child: _imageUrl != null
-                          ? CircleAvatar(
-                              backgroundImage: NetworkImage(_imageUrl!),
-                              radius: _imageSize / 2,
-                            )
-                          : Image.asset(
-                              'assets/profile.png',
-                              width: 91,
-                              height: 91,
-                            ),
+                      child: CircleAvatar(
+                        backgroundImage: imageUrl != null &&
+                                imageUrl!.isNotEmpty
+                            ? NetworkImage(imageUrl!) as ImageProvider
+                            : AssetImage('assets/profile.png') as ImageProvider,
+                        radius: _imageSize / 2,
+                      ),
                     ),
                     SvgPicture.asset('assets/profilePlus.svg'),
                   ],
                 ),
               ),
-
-              SizedBox(height: screenSize.height * 0.03), // 높이의 3%
+              SizedBox(height: screenSize.height * 0.03),
               const Text(
                 '닉네임',
                 style: TextStyle(
@@ -125,17 +182,23 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                   color: Color.fromARGB(236, 0, 0, 0),
                 ),
               ),
-              SizedBox(height: screenSize.height * 0.01), // 높이의 1%
+              SizedBox(height: screenSize.height * 0.01),
               TextField(
+                controller: TextEditingController(text: nickname),
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10), // 모서리 반경을 20으로 설정
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  contentPadding: EdgeInsets.symmetric(
-                      horizontal: 20, vertical: 10), // 내부 패딩을 조절
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 ),
+                onChanged: (value) {
+                  setState(() {
+                    nickname = value;
+                  });
+                },
               ),
-              SizedBox(height: screenSize.height * 0.02), // 관심직무 입력란과의 간격 조정
+              SizedBox(height: screenSize.height * 0.02),
               const Text(
                 '나의 관심직무',
                 style: TextStyle(
@@ -146,30 +209,40 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
               ),
               SizedBox(height: 8),
               TextField(
+                controller: jobNameController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10), // 모서리 반경을 20으로 설정
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  contentPadding: EdgeInsets.symmetric(
-                      horizontal: 20, vertical: 10), // 내부 패딩을 조절
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 ),
                 keyboardType: TextInputType.multiline,
-                maxLines: 5, // 입력란의 라인 수
+                maxLines: 5,
+                onChanged: (value) {
+                  setState(() {
+                    jobName = value;
+                    print("jobName updated to: $jobName"); // 디버그 콘솔 출력
+                  });
+                },
               ),
-              SizedBox(height: screenSize.height * 0.02), // 설명 텍스트와의 간격 조정
+              SizedBox(height: screenSize.height * 0.02),
               const Text(
-                '• 작성된 내용 검토 후\n•욕설이나 내용이 있는 경우\n• QJ 서비스 이용 약관에 따라 부적절하다고 판단될 경우\n 노출 제한 처리와 서비스 이용에 제한이 생길 수 있습니다',
+                '• 작성된 내용 검토 후'
+                '\n• 욕설이나 내용이 있는 경우'
+                '\n• QJ 서비스 이용 약관에 따라 부적절하다고 판단될 경우'
+                '\n노출 제한 처리와 서비스 이용에 제한이 생길 수 있습니다',
                 style: TextStyle(
                   fontSize: 12,
                   fontFamily: 'Poppins',
                   color: Color.fromARGB(236, 150, 150, 150),
                 ),
               ),
-              SizedBox(height: screenSize.height * 0.04), // 간격 조정
+              SizedBox(height: screenSize.height * 0.04),
               Align(
                 alignment: Alignment.bottomCenter,
                 child: TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: _saveProfile,
                   child: SvgPicture.asset('assets/RoundButton.svg'),
                 ),
               ),

@@ -41,6 +41,9 @@ dependencies:
   shared_preferences: ^2.0.10
   image_picker: 1.0.4
   cookie_jar: ^4.0.8
+  flutter_html: ^3.0.0-beta.2
+  url_launcher: ^6.0.0
+
     
     
 

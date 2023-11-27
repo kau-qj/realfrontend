@@ -7,7 +7,7 @@ class ApiService {
 
   Future<Map<String, dynamic>> fetchData() async {
     final response = await http
-        .get(Uri.parse('$baseUrl$endpoint')); // 여기에 API의 endpoint를 넣으세요.
+      .get(Uri.parse('$baseUrl$endpoint')); // 여기에 API의 endpoint를 넣으세요.
 
     if (response.statusCode == 200) {
       return json.decode(response.body);

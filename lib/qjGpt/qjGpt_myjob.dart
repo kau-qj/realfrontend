@@ -3,6 +3,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:async';
 import 'package:qj_projec/httpApi/api_qjGpt_myJob.dart';
 import 'package:qj_projec/qjGpt/qjGpt_newJob.dart';
+import 'package:qj_projec/mypage/Mypage_storage.dart';
+
 
 
 class CourseRecommend extends StatefulWidget {
@@ -44,6 +46,19 @@ class _CourseRecommendState extends State<CourseRecommend> {
             Positioned(
               top: 0,
               child: SvgPicture.asset('assets/TopTheme.svg'),
+            ),
+            Positioned(
+              top: 80,
+              right: 20,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Storage()), //Mypage => 관심직무 목록으로 변경
+                  );
+                },
+                child: SvgPicture.asset('assets/bookmark.svg'),
+              ),
             ),
             Positioned(
               top: 100,
@@ -136,15 +151,15 @@ class MyLecture extends StatelessWidget {
               ),
             ),
             Positioned(
-              top: 110, // 상단 위치 조절
+              top: 105, // 상단 위치 조절
               child: SvgPicture.asset('assets/TopQjBar.svg'),
             ),
             Positioned(
-              top: 200, // 상단 위치 조절
+              top: 195, // 상단 위치 조절
               child: SvgPicture.asset('assets/CourseName.svg'),
             ),
             Positioned(
-              top: 265, // 상단 위치 조절
+              top: 260, // 상단 위치 조절
               child: SvgPicture.asset('assets/CourseInfo.svg'),
             ),
             Positioned(
@@ -164,43 +179,44 @@ class MyLecture extends StatelessWidget {
                   // API로부터 받아온 데이터를 저장
                   List result = snapshot.data!['result'];
 
-                  // 각 아이템에서 'title', 'comment', 'score'만 추출
+                  // 각 아이템에서 'title', 'comment', 'score', 'details'만 추출
                   List<Map<String, dynamic>> extractedData = result.map((item) {
                     return {
                       'title': item['title'],
                       'comment': item['comment'],
                       'score': item['score'],
+                      'details': item['details'],
                     };
                   }).toList();
 
-                  String myJob = extractedData[0]['title'];
-
-                  // Stack 위젯으로 myJob과 ListView.builder를 겹치게 배치
-                  return Row(
+                  return Column(
                     children: [
-                      Container(
-                        margin: EdgeInsets.only(top: 215),
+                      Padding(
+                        padding: EdgeInsets.only(top: 206, left: 0.0, right: 0.0),  // 패딩 값 지정
                         child: Text(
-                          myJob,
-                          textAlign: TextAlign.center,
+                          '${extractedData[0]['title']}',
                           style: TextStyle(
-                            //fontWeight: FontWeight.bold,
-                            fontSize: 17,  // 글자 크기를 20으로 설정
+                            fontSize: 15,     // 글자 크기
+                            fontWeight: FontWeight.bold,  // 글자 두께
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: extractedData.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: EdgeInsets.fromLTRB(14, 10, 14, 10),
-                              child: ListTile(
-                                subtitle: Text('${extractedData[index]['comment']}'),
-                                trailing: Text('Score: ${extractedData[index]['score']}'),
-                              ),
-                            );
-                          },
+                      Padding(
+                        padding: EdgeInsets.only(top: 40),
+                        child: Container(
+                          height: MediaQuery.of(context).size.height - 290,
+                          child: ListView.builder(
+                            itemCount: extractedData[0]['details'].length,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: EdgeInsets.fromLTRB(18, 0, 18, 10),
+                                child: ListTile(
+                                  leading: Text('Score: ${extractedData[0]['details'][index]['score']}'),  // leading 사용
+                                  subtitle: Text('${extractedData[0]['details'][index]['comment']}'),  // title 사용
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ],
