@@ -1,5 +1,3 @@
-// post_details_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../models/post.dart';
@@ -15,7 +13,6 @@ class PostDetailsPage extends StatefulWidget {
 }
 
 class _PostDetailsPageState extends State<PostDetailsPage> {
-  // 댓글을 저장할 리스트와 댓글 입력 필드 컨트롤러를 정의합니다.
   List<String> _comments = [];
   final TextEditingController _commentController = TextEditingController();
 
@@ -49,7 +46,7 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
             onPressed: () {
               _editPost(context);
             },
-            color: Color.fromRGBO(161, 196, 253, 1), // 아이콘 색상 설정
+            color: Color.fromRGBO(161, 196, 253, 1),
           ),
           // 삭제 버튼
           IconButton(
@@ -57,11 +54,11 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
             onPressed: () {
               _deletePost(context);
             },
-            color: Color.fromRGBO(161, 196, 253, 1), // 아이콘 색상 설정
+            color: Color.fromRGBO(161, 196, 253, 1),
           ),
         ],
       ),
-       body: Padding(
+      body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,7 +75,7 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
                 ),
               ),
             ),
-            //내용
+            // 내용
             const SizedBox(height: 15.0),
             Container(
               height: 280,
@@ -105,41 +102,100 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 50.0),
-            TextField(
-              controller: _commentController,
-              decoration: InputDecoration(
-                labelText: "댓글을 입력하세요...",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(35),
+            const SizedBox(height: 20.0),
+
+            // 댓글 목록
+            Expanded(
+            child: ListView.builder(
+              itemCount: _comments.length,
+              itemBuilder: (context, index) {
+                return Container(
+                  height: 100,
+                  margin: EdgeInsets.symmetric(vertical: 5),
+                  child: Card(
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              SizedBox(width: 6),
+                              Icon(Icons.account_circle, color: Color.fromRGBO(161, 196, 253, 1)),
+                              SizedBox(width: 8),
+                              Text(
+                                "작성자",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromRGBO(161, 196, 253, 1),
+                                ),
+                              ),
+                              Spacer(),
+                              Container(
+                                height: 18,
+                                child: IconButton(
+                                  icon: Icon(Icons.delete, color: Color.fromRGBO(161, 196, 253, 1)),
+                                  onPressed: () {
+                                    _deleteComment(index);
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            _comments[_comments.length - index - 1],
+                            style: TextStyle(fontSize: 14),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                "작성 시간",
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+
+            const SizedBox(height: 20.0),
+            // 댓글 입력 필드
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _commentController,
+                    decoration: InputDecoration(
+                      labelText: "댓글을 입력하세요...",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(40),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Color.fromRGBO(161, 196, 253, 1)),
+                        borderRadius: BorderRadius.circular(40),
+                      ),
+                      contentPadding: EdgeInsets.all(13.5),
+                    ),
+                  ),
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color.fromRGBO(161, 196, 253, 1)),
-                  borderRadius: BorderRadius.circular(35),
-                ),
-                contentPadding: EdgeInsets.all(22),
-                suffixIcon: IconButton(
+                IconButton(
                   icon: Icon(Icons.send, color: Color.fromRGBO(161, 196, 253, 1)),
                   onPressed: () {
-                    // 댓글을 리스트에 추가하고 입력 필드를 초기화합니다.
-                    setState(() {
-                      _comments.add(_commentController.text);
-                      _commentController.clear();
-                    });
+                    _addComment();
                   },
                 ),
-              ),
-            ),
-            const SizedBox(height: 20.0),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _comments.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(_comments[index]),
-                  );
-                },
-              ),
+              ],
             ),
           ],
         ),
@@ -147,10 +203,8 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
     );
   }
 
-  // 글 수정 기능을 수행하는 메서드 (미구현)
   void _editPost(BuildContext context) {
-    // TODO: 글 수정 기능을 수행하는 코드를 추가하세요.
-    // 수정 화면으로 이동하도록 할 수 있습니다.
+    // 수정 기능 추가
     // Navigator.push(
     //   context,
     //   MaterialPageRoute(
@@ -159,10 +213,44 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
     // );
   }
 
-  // 글 삭제 기능을 수행하는 메서드 (미구현)
   void _deletePost(BuildContext context) {
-    // TODO: 글 삭제 기능을 수행하는 코드를 추가하세요.
-    // 글을 삭제한 후 이전 화면으로 돌아갈 수 있습니다.
+    // 삭제 기능 추가
     // Navigator.pop(context);
+  }
+
+  void _addComment() {
+    setState(() {
+      _comments.insert(0, _commentController.text);
+      _commentController.clear();
+    });
+  }
+
+  void _deleteComment(int index) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("댓글 삭제"),
+          content: Text("정말로 이 댓글을 삭제하시겠습니까?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text("취소"),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  _comments.removeAt(index);
+                });
+                Navigator.pop(context);
+              },
+              child: Text("삭제"),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

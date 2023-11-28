@@ -57,7 +57,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
           _buildTitleInput(),    // 제목 입력 필드
           const SizedBox(height: 15.0),
           _buildContentInput(),  // 내용 입력 필드
-          const SizedBox(height: 100.0),
+          const SizedBox(height: 150.0),
           _buildSubmitButton(),   // 작성 완료 버튼
         ],
       ),
@@ -93,8 +93,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
         ),
         child: TextField(
           controller: _contentController,
-          maxLines: 10,
-          minLines: 5,
+          maxLines: 15,
+          minLines: 10,
           decoration: InputDecoration(
             labelText: '내용을 입력하세요.',
             alignLabelWithHint: true,
@@ -121,7 +121,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
       },
       child: const Text(
         '작성완료',
-        style: TextStyle(fontSize: 40, color: Colors.white, fontWeight: FontWeight.bold),
+        style: TextStyle(fontSize: 35, color: Colors.white, fontWeight: FontWeight.bold),
       ),
       style: ElevatedButton.styleFrom(
         shape: RoundedRectangleBorder(
