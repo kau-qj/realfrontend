@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:qj_projec/home.dart';
 import 'package:qj_projec/bottomNav.dart';
+import 'package:qj_projec/home.dart';
 import 'package:qj_projec/httpApi/cookie_utils.dart';
 
 Future<String> loginUser(String userId, String userPw, BuildContext context) async {
@@ -25,7 +25,7 @@ Future<String> loginUser(String userId, String userPw, BuildContext context) asy
 
     if (isSuccess) {
       final token = jsonResponse['result']['token'];
-      saveTokenToCookie(token); // 토큰을 쿠키에 저장
+      await saveTokenToCookie(token); // 토큰을 쿠키에 저장
       
       // 로그인 성공 시 홈 화면으로 이동
       Navigator.push(

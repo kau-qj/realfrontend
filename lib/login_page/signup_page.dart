@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 // 사용자 등록을 처리하는 비동기 함수 정의
-Future<String> User(String userId, String userPw, String grade, String major, String phoneNum, String school, String jobName) async {
+Future<String> User(String userId, String userPw, String grade, String major, String phoneNum, String school, String jobName, String userName) async {
   try {
     // 서버의 기본 URL 및 엔드포인트 정의
     final baseUrl = "https://kauqj.shop";
@@ -26,7 +26,8 @@ Future<String> User(String userId, String userPw, String grade, String major, St
         'major': major,
         'phoneNum': phoneNum,
         'school': school,
-        'jobName': jobName
+        'jobName': jobName,
+        'userName': userName
       }),
     );
     // 요청이 성공적으로 이루어졌는지 확인 (상태 코드 200)
@@ -58,6 +59,7 @@ class _SignupPageState extends State<SignupPage> {
   TextEditingController _contactController = TextEditingController();
   TextEditingController _userIdController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+  TextEditingController _userNameController =TextEditingController();
   Color primaryColor = Color.fromRGBO(161, 196, 253, 1);
 
   @override
@@ -65,7 +67,7 @@ class _SignupPageState extends State<SignupPage> {
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.only(top:20, left: 45.0, right: 45.0, bottom: 20),
-        child: Stack(
+        child: ListView(
           children: <Widget>[
             TextField(
               controller: _schoolController,
@@ -133,11 +135,20 @@ class _SignupPageState extends State<SignupPage> {
             ),
             const SizedBox(height: 16.0),
             TextField(
+              controller: _userNameController,
+              decoration: InputDecoration(
+                labelText: '닉네임',
+                border: UnderlineInputBorder(),
+                prefixIcon: Icon(Icons.person_pin, color: primaryColor),
+              ),
+            ),
+            const SizedBox(height: 16.0),
+            TextField(
               controller: _userIdController,
               decoration: InputDecoration(
                 labelText: '아이디',
                 border: UnderlineInputBorder(),
-                prefixIcon: Icon(Icons.account_circle, color: primaryColor),
+                prefixIcon: Icon(Icons.perm_identity, color: primaryColor),
               ),
             ),
             const SizedBox(height: 16.0),
@@ -161,6 +172,7 @@ class _SignupPageState extends State<SignupPage> {
                 String contact = _contactController.text;
                 String userId = _userIdController.text;
                 String userPw = _passwordController.text;
+                String userName = _nameController.text;
 
                 if (school.isEmpty ||
                     major.isEmpty ||
@@ -169,7 +181,8 @@ class _SignupPageState extends State<SignupPage> {
                     name.isEmpty ||
                     contact.isEmpty ||
                     userId.isEmpty ||
-                    userPw.isEmpty) {
+                    userPw.isEmpty||
+                    userName.isEmpty) {
                   _showAlertDialog('입력 오류', '모든 정보를 입력해주세요.');
                   return;
                 }
@@ -182,6 +195,7 @@ class _SignupPageState extends State<SignupPage> {
                   contact,
                   school,
                   interest,
+                  userName
                 );
 
                 if (result == '회원가입 성공') {
@@ -192,6 +206,7 @@ class _SignupPageState extends State<SignupPage> {
                   print('관심직무: $interest');
                   print('이름: $name');
                   print('연락처: $contact');
+                  print('닉네임: $userName');
                   print('아이디: $userId');
                   print('비밀번호: $userPw');
 
