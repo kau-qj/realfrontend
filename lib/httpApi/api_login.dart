@@ -25,7 +25,7 @@ Future<String> loginUser(String userId, String userPw, BuildContext context) asy
 
     if (isSuccess) {
       final token = jsonResponse['result']['token'];
-      saveTokenToCookie(token); // 토큰을 쿠키에 저장
+      await saveTokenToCookie(token); // 토큰을 쿠키에 저장
       
       // 로그인 성공 시 홈 화면으로 이동
       Navigator.push(
