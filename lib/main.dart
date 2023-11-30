@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qj_projec/bottomNav.dart';
 import 'package:qj_projec/login_page/login_page.dart';
+import 'package:qj_projec/login_page/signup_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,6 +15,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login': (context) => LoginPage(),
         '/home': (context) => MyButtomNaVBar(),
+        '/signup':(context) => SignupPage(),
       },
     );
   }
