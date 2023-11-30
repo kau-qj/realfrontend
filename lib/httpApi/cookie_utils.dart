@@ -1,7 +1,8 @@
 import 'package:cookie_jar/cookie_jar.dart';
 
+final CookieJar cookieJar = CookieJar(); // 공통 CookieJar 인스턴스 생성
+
 void saveTokenToCookie(String token) {
-  final cookieJar = CookieJar();
   final uri = Uri.parse('https://kauqj.shop');
   final cookie = Cookie('jwt_token', token);
   cookie.domain = uri.host;

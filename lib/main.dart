@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:qj_projec/bottomNav.dart';
+import 'package:qj_projec/login_page/login_page.dart';
+import 'package:qj_projec/login_page/signup_page.dart';
+
 
 void main() {
   runApp(MyApp());
@@ -7,9 +10,14 @@ void main() {
 
 class MyApp extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {    
+  Widget build(BuildContext context) {
     return MaterialApp(
-      home: MyButtomNaVBar(),
+      initialRoute: '/login', // 초기 경로 설정
+      routes: {
+        '/login': (context) => LoginPage(),
+        '/signup': (context) => SignupPage(),
+        '/home': (context) => MyButtomNaVBar(),
+      },
     );
   }
 }
