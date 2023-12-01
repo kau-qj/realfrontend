@@ -1,66 +1,83 @@
+//api_post.dart
+
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-final String baseUrl = 'https://kauqj.shop/app/posts';
+Future<String> APiPost(String postName, String title, String mainText, String postType) async {
+  try {
+    // 서버의 기본 URL 및 엔드포인트 정의
+    final baseUrl = "https://kauqj.shop";
+    final endpoint = "/board/posts";
 
-Future<void> createPost() async {
-  final response = await http.post(
-    Uri.parse('$baseUrl/board/posts'),
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode({
-      'postName': 'postName',
-      'title': 'title',
-      'mainText': 'mainText',
-      'postType': 'postType',
-    }),
-  );
+    print("baseUrl : $baseUrl");
+    print("endpoint : $endpoint");
 
-  if (response.statusCode == 200) {
-    print('게시글 생성 성공: ${response.body}');
-  } else {
-    print('게시글 생성 실패: ${response.statusCode}');
-  }
-}
+    // 서버에 POST 요청 보내기
+    final postResponse = await http.post(
+      Uri.parse(baseUrl + endpoint),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      // 사용자 데이터를 JSON 형식으로 변환
+      body: jsonEncode(<String, String>{
+        'postName': postName,
+        'title': title,
+        'mainText': mainText,
+        'postType': postType
+      }),
+    );
 
-Future<void> getPosts() async {
-  final response = await http.get(Uri.parse('$baseUrl/board/posts'));
+    // POST 요청이 성공적으로 이루어졌는지 확인 (상태 코드 200)
+    if (postResponse.statusCode == 200) {
+      print("POST 요청이 성공하였습니다.");
 
-  if (response.statusCode == 200) {
-    print('게시글 조회 성공: ${response.body}');
-  } else {
-    print('게시글 조회 실패: ${response.statusCode}');
-  }
-}
+      // 서버에 GET 요청 보내기
+      final getResponse = await http.get(Uri.parse(baseUrl + endpoint));
 
-Future<void> updatePost(String postId) async {
-  final response = await http.patch(
-    Uri.parse('$baseUrl/board/posts/$postId'),
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode({
-      'postName': 'updatedName',
-      'title': 'updatedTitle',
-      'mainText': 'updatedText',
-      'postType': 'updatedType',
-    }),
-  );
+      // GET 요청이 성공적으로 이루어졌는지 확인 (상태 코드 200)
+      if (getResponse.statusCode == 200) {
+        print("GET 요청이 성공하였습니다.");
+        print(getResponse.body);
+        // GET 요청의 응답 데이터 처리
+      } else {
+        print("GET 요청이 실패하였습니다.");
+      }
 
-  if (response.statusCode == 200) {
-    print('게시글 수정 성공: ${response.body}');
-  } else {
-    print('게시글 수정 실패: ${response.statusCode}');
-  }
-}
+      // Add PATCH request
+      final postIdx = jsonDecode(postResponse.body)['postIdx']; // assuming 'postIdx' is the identifier returned from the server
+      final patchResponse = await http.patch(
+        Uri.parse('$baseUrl$endpoint/$postIdx'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'title': 'Updated title',
+          'mainText': 'Updated mainText',
+          // Add other fields to update in the post
+        }),
+      );
 
-Future<void> deletePost(String postId) async {
-  final response = await http.delete(Uri.parse('$baseUrl/board/posts/$postId'));
+      if (patchResponse.statusCode == 200) {
+        print("PATCH 요청이 성공하였습니다.");
+      } else {
+        print("PATCH 요청이 실패하였습니다.");
+      }
 
-  if (response.statusCode == 200) {
-    print('게시글 삭제 성공: ${response.body}');
-  } else {
-    print('게시글 삭제 실패: ${response.statusCode}');
+      // Add DELETE request
+      final deleteResponse = await http.delete(Uri.parse('$baseUrl$endpoint/$postIdx'));
+
+      if (deleteResponse.statusCode == 200) {
+        print("DELETE 요청이 성공하였습니다.");
+      } else {
+        print("DELETE 요청이 실패하였습니다.");
+      }
+
+      return '성공';
+    } else {
+      return '실패';
+    }
+  } catch (e) {
+    print('함수에서 에러 발생: $e');
+    return '에러 발생';
   }
 }
