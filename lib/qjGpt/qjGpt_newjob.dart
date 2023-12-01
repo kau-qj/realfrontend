@@ -31,7 +31,7 @@ class _OtherLectureState extends State<OtherLecture> {
     );
   }
 
-    Future<void> sendJob() async {
+  Future<void> sendJob() async {
     final ApiService apiService = ApiService();  // ApiService 인스턴스 생성
     final String job = _controller.text;  // 텍스트 필드의 내용 가져오기
 
