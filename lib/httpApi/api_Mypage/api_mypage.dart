@@ -40,9 +40,9 @@ class ApiService {
         return {
           'userName': data['result']['userName'],
           'jobName': data['result']['jobName'],
-          'imageUrl': data['result']['userimageUrl'] != null &&
-                  data['result']['userimageUrl'].isNotEmpty
-              ? data['result']['userimageUrl'][0]['imageUrl']
+          'imageUrl': data['result']['imageUrl'] != null &&
+                  data['result']['imageUrl'].isNotEmpty
+              ? data['result']['imageUrl'][0]['imageUrl']
               : null, // userimageUrl이 null이거나 비어있지 않은 경우 첫 번째 이미지 URL을 가져옵니다. 그렇지 않으면 null을 반환합니다.
         };
       } else {

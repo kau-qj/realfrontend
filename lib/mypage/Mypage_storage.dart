@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:qj_projec/httpApi/api_Mypage/api_mypage_Storage.dart';
-import 'Mypage_QJstorage.dart';
+import 'package:qj_projec/mypage/Mypage_QJStorage.dart';
+
 
 class Storage extends StatefulWidget {
   const Storage({Key? key}) : super(key: key);

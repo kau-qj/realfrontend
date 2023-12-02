@@ -92,7 +92,7 @@ class _JobDictionaryState extends State<JobDictionary> {
             ),
             if (isListVisible) // 목록창 가시성 상태에 따라 표시
               Positioned(
-                top: 402, // 검색창 바로 아래에 위치하도록 top 값을 조절
+                top: 340 + 59, // 검색창 바로 아래에 위치하도록 top 값을 조절
                 left: 60,
                 right: 60,
                 child: Container(

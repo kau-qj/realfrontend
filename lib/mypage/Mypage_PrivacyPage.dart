@@ -26,12 +26,12 @@ class _PrivacyPageState extends State<PrivacyPage> {
   @override
   void initState() {
     super.initState();
-    _fetchUserData();
+    _fetchPrivacy();
   }
 
-  void _fetchUserData() async {
+  void _fetchPrivacy() async {
     try {
-      final userInfo = await _apiService.fetchUserInfo();
+      final userInfo = await _apiService.fetchPrivacy();
       setState(() {
         _userNameController.text = userInfo['userName'];
         _majorController.text = userInfo['major'];

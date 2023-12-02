@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'dart:async';
 import 'package:qj_projec/qjGpt/qjGpt_myJob.dart';
 import 'package:qj_projec/httpApi/api_qjGpt_newJob.dart';
+import 'package:qj_projec/mypage/Mypage_storage.dart';
 
 
 class OtherLecture extends StatefulWidget {
@@ -31,15 +33,18 @@ class _OtherLectureState extends State<OtherLecture> {
     );
   }
 
-  Future<void> sendJob() async {
+  Future<String> sendJob() async {
     final ApiService apiService = ApiService();  // ApiService 인스턴스 생성
     final String job = _controller.text;  // 텍스트 필드의 내용 가져오기
 
     // sendJob 메소드를 호출하여 job을 전송
-    final Map<String, dynamic> response = await apiService.sendJob(job);
+    final Map<String, dynamic> response = await apiService.fetchData(job);
 
     print(response);  // 응답 출력
+
+    return job;  // job 반환
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -101,13 +106,13 @@ class _OtherLectureState extends State<OtherLecture> {
               ),
             ),
             Positioned(
-              bottom: 280,
+              bottom: 400,
               child: GestureDetector(  // SvgPicture를 GestureDetector로 감싸서 onTap 이벤트를 처리
                 onTap: () {
-                  sendJob();  // sendJob 메소드를 호출하여 텍스트 필드의 내용을 전송
+                  String job = _controller.text;  // 텍스트 필드의 내용 가져오기
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => NewLecture(job: _controller.text)),
+                    MaterialPageRoute(builder: (context) => NewLecture(job: job)),
                   );
                 },
                 child: Container(
@@ -198,14 +203,22 @@ class _NewLectureState extends State<NewLecture> {
             ),
             Positioned(
               top: 260, // 상단 위치 조절
-              child: SvgPicture.asset('assets/CourseInfo.svg'),
+              child: SvgPicture.asset(
+                'assets/CourseInfo.svg',
+                //width: 270, // 원하는 너비로 조절
+                height: 650, // 원하는 높이로 조절
+              ),
             ),
             Positioned(
               top: 450, // 상단 위치 조절
-              child: SvgPicture.asset('assets/QjLogoBack.svg'),
+              child: SvgPicture.asset(
+                'assets/QjLogoBack.svg',
+                width: 170, // 원하는 너비로 조절
+                height: 170, // 원하는 높이로 조절
+              ),
             ),
             FutureBuilder<Map<String, dynamic>>(
-              future: apiService.sendJob(widget.job),
+              future: apiService.fetchData(widget.job),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return GptLoading(); // GptLoading 위젯 반환
@@ -226,34 +239,46 @@ class _NewLectureState extends State<NewLecture> {
                       'details': item['details'],
                     };
                   }).toList();
-
-                  return Column(
+                  return Stack(
                     children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 206, left: 0.0, right: 0.0),  // 패딩 값 지정
+                      Positioned(
+                        top: 210,
+                        left: 0,
+                        right: 0,
                         child: Text(
                           '${extractedData[0]['title']}',
                           style: TextStyle(
-                            fontSize: 15,     // 글자 크기
+                            fontSize: 16,     // 글자 크기
                             fontWeight: FontWeight.bold,  // 글자 두께
                           ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 40),
+                      Positioned(
+                        top: 280,
+                        left: 0,
+                        right: 0,
                         child: Container(
-                          height: MediaQuery.of(context).size.height - 290,
-                          child: ListView.builder(
-                            itemCount: extractedData[0]['details'].length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: EdgeInsets.fromLTRB(18, 0, 18, 10),
-                                child: ListTile(
-                                  leading: Text('Score: ${extractedData[0]['details'][index]['score']}'),  // leading 사용
-                                  subtitle: Text('${extractedData[0]['details'][index]['comment']}'),  // title 사용
+                          height: MediaQuery.of(context).size.height - 340,
+                          child: ListView(
+                            padding: EdgeInsets.symmetric(horizontal: 10),  // 패딩 값 지정
+                            children: <Widget>[
+                              SizedBox(height: 30),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 0),
+                                child: Column(
+                                  children: extractedData[0]['details'].map<Widget>((item) {
+                                    return Padding(
+                                      padding: EdgeInsets.fromLTRB(18, 0, 18, 10),
+                                      child: ListTile(
+                                        leading: Text('Score: ${item['score']}'),  // leading 사용
+                                        subtitle: Text('${item['comment']}'),  // title 사용
+                                      ),
+                                    );
+                                  }).toList(),
                                 ),
-                              );
-                            },
+                              ),
+                            ],
                           ),
                         ),
                       ),

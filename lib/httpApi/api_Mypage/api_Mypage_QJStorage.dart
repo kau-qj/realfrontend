@@ -9,10 +9,7 @@ class ApiService {
 
   // 특정 setIdx에 대한 코스 세부 정보를 가져오는 메소드
   Future<List<dynamic>> fetchCourseDetails(int setIdx) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl/mypage/qj/$setIdx'),
-      headers: {'accept': 'application/json'},
-    );
+    final String endpoint = '/mypage/qj/$setIdx'; // API의 엔드포인트
     final uri = Uri.parse(baseUrl);
     final cookies = await cookieJar.loadForRequest(uri);
     String jwtToken = '';
@@ -32,6 +29,9 @@ class ApiService {
       'Cookie': cookies.map((c) => '${c.name}=${c.value}').join('; '),
       'Authorization': 'Bearer $jwtToken'
     };
+    
+    final response = await http.get(Uri.parse('$baseUrl$endpoint'), headers: headers);
+
     if (response.statusCode == 200) {
       Map<String, dynamic> data = json.decode(response.body);
       // 로그 출력 추가
