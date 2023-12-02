@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'dart:async';
 import 'package:qj_projec/qjGpt/qjGpt_myJob.dart';
 import 'package:qj_projec/httpApi/api_qjGpt_newJob.dart';
+import 'package:qj_projec/mypage/Mypage_storage.dart';
 
 
 class OtherLecture extends StatefulWidget {
@@ -31,15 +33,18 @@ class _OtherLectureState extends State<OtherLecture> {
     );
   }
 
-  Future<void> sendJob() async {
+  Future<String> sendJob() async {
     final ApiService apiService = ApiService();  // ApiService 인스턴스 생성
     final String job = _controller.text;  // 텍스트 필드의 내용 가져오기
 
     // sendJob 메소드를 호출하여 job을 전송
-    final Map<String, dynamic> response = await apiService.sendJob(job);
+    final Map<String, dynamic> response = await apiService.fetchData(job);
 
     print(response);  // 응답 출력
+
+    return job;  // job 반환
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -104,10 +109,10 @@ class _OtherLectureState extends State<OtherLecture> {
               bottom: 400,
               child: GestureDetector(  // SvgPicture를 GestureDetector로 감싸서 onTap 이벤트를 처리
                 onTap: () {
-                  sendJob();  // sendJob 메소드를 호출하여 텍스트 필드의 내용을 전송
+                  String job = _controller.text;  // 텍스트 필드의 내용 가져오기
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => NewLecture(job: _controller.text)),
+                    MaterialPageRoute(builder: (context) => NewLecture(job: job)),
                   );
                 },
                 child: Container(
@@ -196,12 +201,14 @@ class _NewLectureState extends State<NewLecture> {
               top: 195, // 상단 위치 조절
               child: SvgPicture.asset('assets/CourseName.svg'),
             ),
-            /*
             Positioned(
               top: 260, // 상단 위치 조절
-              child: SvgPicture.asset('assets/CourseInfo.svg'),
+              child: SvgPicture.asset(
+                'assets/CourseInfo.svg',
+                //width: 270, // 원하는 너비로 조절
+                height: 650, // 원하는 높이로 조절
+              ),
             ),
-            */
             Positioned(
               top: 450, // 상단 위치 조절
               child: SvgPicture.asset(
@@ -210,21 +217,18 @@ class _NewLectureState extends State<NewLecture> {
                 height: 170, // 원하는 높이로 조절
               ),
             ),
-            FutureBuilder<List<dynamic>>(
-              future: Future.wait([
-                apiService.sendJob(widget.job),
-                apiService.fetchData(),
-              ]),
+            FutureBuilder<Map<String, dynamic>>(
+              future: apiService.fetchData(widget.job),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return GptLoading(); // GptLoading 위젯 반환
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
-                } else if (!snapshot.hasData || snapshot.data == null || snapshot.data![1]['result'] == null) {
+                } else if (!snapshot.hasData || snapshot.data == null || snapshot.data!['result'] == null) {
                   return Text('No data fetched from API.');
                 } else {
                   // API로부터 받아온 데이터를 저장
-                  List result = snapshot.data![1]['result'];
+                  List result = snapshot.data!['result'];
 
                   // 각 아이템에서 'title', 'comment', 'score', 'details'만 추출
                   List<Map<String, dynamic>> extractedData = result.map((item) {

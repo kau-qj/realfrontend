@@ -119,7 +119,7 @@ class JobDetails extends StatelessWidget {
                               onPressed: () {
                                 // 예를 선택하면 관심 직무를 수정하는 로직을 실행
                                 // 이 부분은 실제 앱에서는 관심 직무 정보를 수정하는 로직에 따라 달라집니다.
-                                Navigator.of(context).pop();  // 닫기
+                                Navigator.of(context).pop({'jobName': jobname});  // jobname을 전달하며 닫기
                               },
                             ),
                           ],

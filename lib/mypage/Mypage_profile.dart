@@ -52,6 +52,10 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   }
 
   void _saveProfile() async {
+    // TextField에서 입력한 값을 nickName 및 jobName 변수에 할당
+    nickName = nickNameController.text;
+    jobName = jobNameController.text;
+    
     var uri = Uri.parse('https://kauqj.shop/mypage/profile');
     var request = http.MultipartRequest('PUT', uri)
       ..fields['nickName'] = nickNameController.text //nickName값을 업데이트

@@ -45,6 +45,20 @@ class _MyPageState extends State<MyPage> {
       print('Error fetching user data: $e');
     }
   }
+  void _navigateToJobDetails(BuildContext context) async {
+    final result = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => JobDetails(jobname: jobName ?? ''),  // 현재 jobName을 JobDetails에 전달
+      ),
+    );
+
+  if (result != null) {
+    setState(() {
+      jobName = result['jobName'] ?? jobName;
+    });
+  }
+}
+
 
   void _navigateToSettings() {
     Navigator.of(context).push(
@@ -254,7 +268,7 @@ class _MyPageState extends State<MyPage> {
       ),
       onTap: () {
         if (title == '나의 관심직무를 설정해주세요!') {
-          _navigateToProfile(context);
+          _navigateToJobDetails(context);
         } else {
           onTap();
         }

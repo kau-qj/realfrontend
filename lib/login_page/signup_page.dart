@@ -3,7 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 // 사용자 등록을 처리하는 비동기 함수 정의
-Future<String> User(String userId, String userPw, String grade, String major, String phoneNum, String school, String jobName, String userName) async {
+Future<String> User(
+    String userId,
+    String userPw,
+    String grade,
+    String major,
+    String phoneNum,
+    String school,
+    String jobName,
+    String userName,
+    String nickName) async {
   try {
     // 서버의 기본 URL 및 엔드포인트 정의
     final baseUrl = "https://kauqj.shop";
@@ -27,15 +36,16 @@ Future<String> User(String userId, String userPw, String grade, String major, St
         'phoneNum': phoneNum,
         'school': school,
         'jobName': jobName,
-        'userName': userName
+        'userName': userName,
+        'nickName': nickName,
       }),
     );
     // 요청이 성공적으로 이루어졌는지 확인 (상태 코드 200)
     if (response.statusCode == 200) {
-        print("good");
-        return jobName; // 회원가입 성공하면 jobName 반환
+      print("good");
+      return '회원가입 성공'; // 회원가입 성공
     } else {
-        return '회원가입 실패'; // 회원가입 실패
+      return '회원가입 실패'; // 회원가입 실패
     }
   } catch (e) {
     print('signupUser 함수에서 에러 발생: $e');
@@ -55,18 +65,18 @@ class _SignupPageState extends State<SignupPage> {
   TextEditingController _majorController = TextEditingController();
   String _grade = '1';
   TextEditingController _jobNameController = TextEditingController();
-  TextEditingController _nameController = TextEditingController();
+  TextEditingController _userNameController = TextEditingController();
   TextEditingController _phoneNumController = TextEditingController();
   TextEditingController _userIdController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
-  TextEditingController _userNameController =TextEditingController();
+  TextEditingController _nickNameController = TextEditingController();
   Color primaryColor = Color.fromRGBO(161, 196, 253, 1);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.only(top:20, left: 45.0, right: 45.0, bottom: 20),
+        padding: EdgeInsets.only(top: 20, left: 45.0, right: 45.0, bottom: 20),
         child: ListView(
           children: <Widget>[
             TextField(
@@ -89,7 +99,8 @@ class _SignupPageState extends State<SignupPage> {
             const SizedBox(height: 16.0),
             DropdownButtonFormField<String>(
               value: _grade,
-              items: <String>['1', '2', '3', '4'].map<DropdownMenuItem<String>>((String value) {
+              items: <String>['1', '2', '3', '4']
+                  .map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),
@@ -117,7 +128,7 @@ class _SignupPageState extends State<SignupPage> {
             ),
             const SizedBox(height: 16.0),
             TextField(
-              controller: _nameController,
+              controller: _userNameController,
               decoration: InputDecoration(
                 labelText: '이름',
                 border: UnderlineInputBorder(),
@@ -135,7 +146,7 @@ class _SignupPageState extends State<SignupPage> {
             ),
             const SizedBox(height: 16.0),
             TextField(
-              controller: _userNameController,
+              controller: _nickNameController,
               decoration: InputDecoration(
                 labelText: '닉네임',
                 border: UnderlineInputBorder(),
@@ -168,21 +179,21 @@ class _SignupPageState extends State<SignupPage> {
                 String major = _majorController.text;
                 String grade = _grade;
                 String jobName = _jobNameController.text;
-                String name = _nameController.text;
+                String userName = _userNameController.text;
                 String phoneNum = _phoneNumController.text;
                 String userId = _userIdController.text;
                 String userPw = _passwordController.text;
-                String userName = _nameController.text;
+                String nickName = _nickNameController.text;
 
                 if (school.isEmpty ||
                     major.isEmpty ||
                     grade.isEmpty ||
                     jobName.isEmpty ||
-                    name.isEmpty ||
+                    userName.isEmpty ||
                     phoneNum.isEmpty ||
                     userId.isEmpty ||
-                    userPw.isEmpty||
-                    userName.isEmpty) {
+                    userPw.isEmpty ||
+                    nickName.isEmpty) {
                   _showAlertDialog('입력 오류', '모든 정보를 입력해주세요.');
                   return;
                 }
@@ -195,7 +206,8 @@ class _SignupPageState extends State<SignupPage> {
                   phoneNum,
                   school,
                   jobName,
-                  userName
+                  userName,
+                  nickName,
                 );
 
                 if (result == '회원가입 성공') {
@@ -204,9 +216,9 @@ class _SignupPageState extends State<SignupPage> {
                   print('전공: $major');
                   print('학년: $grade');
                   print('관심직무: $jobName');
-                  print('이름: $name');
+                  print('이름: $userName');
                   print('연락처: $phoneNum');
-                  print('닉네임: $userName');
+                  print('닉네임: $nickName');
                   print('아이디: $userId');
                   print('비밀번호: $userPw');
 
@@ -240,7 +252,10 @@ class _SignupPageState extends State<SignupPage> {
                   alignment: Alignment.center,
                   child: const Text(
                     '회원가입',
-                    style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold, color: Colors.white),
+                    style: TextStyle(
+                        fontSize: 23,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
                   ),
                 ),
               ),
@@ -257,7 +272,8 @@ class _SignupPageState extends State<SignupPage> {
                     },
                     child: const Text(
                       '로그인',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     style: TextButton.styleFrom(
                       primary: primaryColor,
