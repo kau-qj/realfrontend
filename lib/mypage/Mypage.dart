@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
 import '../httpApi/api_Mypage/api_mypage.dart';
 import 'Mypage_Setting .dart';
 import 'Mypage_profile.dart';
@@ -13,11 +14,23 @@ class MyPage extends StatefulWidget {
   State<MyPage> createState() => _MyPageState();
 }
 
+class UserData {
+  String? jobName;
+
+  static final UserData _singleton = UserData._internal();
+
+  factory UserData() {
+    return _singleton;
+  }
+
+  UserData._internal();
+}
+
 class _MyPageState extends State<MyPage> {
   String userName = ""; // 사용자 이름을 저장할 변수
-  String? job = ""; // 사용자 직무를 저장할 변수
+  String? jobName = ""; // 사용자 직무를 저장할 변수
   String? imageUrl = ""; // 프로필 이미지 URL을 저장할 변수,  null을 허용하도록 변경
-  final ApiService _apiService = ApiService(); // ApiService 인스턴스를 생성합니다.
+  final ApiService apiService = ApiService(); // ApiService 인스턴스를 생성합니다.
 
   @override
   void initState() {
@@ -27,14 +40,17 @@ class _MyPageState extends State<MyPage> {
 
   void _fetchUserData() async {
     try {
+      // Initialize ApiService with the shared cookieJar
+      final ApiService _apiService = ApiService();
+
+      // Now when you call fetchUserInfo, it will use the cookies
       final userInfo = await _apiService.fetchUserInfo();
       setState(() {
-        userName = userInfo['userName']; //유저 이름 업데이트
-        job = userInfo['job']; // 관심직무 업데이트
-        imageUrl = userInfo['imageUrl'] ?? ''; //프로필 업데이트
+        userName = userInfo['userName'] ?? '';
+        UserData().jobName = userInfo['jobName'];
+        imageUrl = userInfo['imageUrl'] ?? '';
       });
     } catch (e) {
-      // 에러 처리
       print('Error fetching user data: $e');
     }
   }
@@ -54,7 +70,7 @@ class _MyPageState extends State<MyPage> {
 
     if (result != null) {
       setState(() {
-        job = result['job'] ?? job;
+        jobName = result['jobName'] ?? jobName;
         imageUrl = result['imageUrl'].isEmpty
             ? 'assets/profile.png'
             : result['imageUrl'];
@@ -113,7 +129,7 @@ class _MyPageState extends State<MyPage> {
           SizedBox(height: 5),
           Container(
             width: double.infinity,
-            height: 150,
+            height: 130,
             child: Stack(
               alignment: Alignment.bottomCenter,
               children: [
@@ -155,18 +171,18 @@ class _MyPageState extends State<MyPage> {
                   ),
                 ),
                 Positioned(
-                  right: 20, // 왼쪽 여백 조절
+                  right: 10, // 왼쪽 여백 조절
                   top: 30, // 텍스트를 원하는 위치에 배치하기 위해 조정
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        job != null && job!.isNotEmpty
-                            ? '나의 관심 직무는 $job!'
+                        jobName != null && jobName!.isNotEmpty
+                            ? '나의 관심 직무는 $jobName!'
                             : '나의 관심직무를 설정해주세요!',
                         style: TextStyle(
                           fontSize: 12,
-                          color: job != null && job!.isNotEmpty
+                          color: jobName != null && jobName!.isNotEmpty
                               ? Colors.black
                               : Color.fromARGB(101, 0, 0, 0),
                         ),
@@ -188,7 +204,7 @@ class _MyPageState extends State<MyPage> {
                 ),
                 Positioned(
                   right: 0,
-                  top: 140, // SVG가 놓일 정확한 위치를 조정하세요
+                  top: 120, // SVG가 놓일 정확한 위치를 조정하세요
                   child: SvgPicture.asset(
                     'assets/Mypagebar2.svg', // 여기에 새 SVG 파일명을 넣으세요
                     // 화면 너비에 맞게 조정할 수 있습니다

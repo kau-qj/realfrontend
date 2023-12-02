@@ -4,7 +4,7 @@ import 'dart:async';
 import 'package:qj_projec/httpApi/api_qjGpt_myJob.dart';
 import 'package:qj_projec/qjGpt/qjGpt_newJob.dart';
 import 'package:qj_projec/mypage/Mypage_storage.dart';
-
+import 'package:qj_projec/mypage/Mypage.dart';
 
 
 class CourseRecommend extends StatefulWidget {
@@ -15,6 +15,7 @@ class CourseRecommend extends StatefulWidget {
 }
 
 class _CourseRecommendState extends State<CourseRecommend> {
+  String? jobName = UserData().jobName;
   Color textColor = const Color.fromRGBO(45, 67, 77, 1);
   bool isGptLoadingVisible = false; // 로딩 페이지 표시 여부를 제어하기 위한 변수
 

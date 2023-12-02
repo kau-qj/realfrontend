@@ -14,12 +14,12 @@ class PrivacyPage extends StatefulWidget {
 class _PrivacyPageState extends State<PrivacyPage> {
   TextEditingController _schoolController = TextEditingController();
   TextEditingController _majorController = TextEditingController();
-  String _year = '1'; // 기본적으로 '1'학년이 선택되도록 설정합니다.
-  TextEditingController _interestController = TextEditingController();
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _contactController = TextEditingController();
+  String _grade = '1'; // 기본적으로 '1'학년이 선택되도록 설정합니다.
+  TextEditingController _jobNameController = TextEditingController();
+  TextEditingController _userNameController = TextEditingController();
+  TextEditingController _phoneNumController = TextEditingController();
   TextEditingController _userIdController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  TextEditingController _userPwController = TextEditingController();
   Color primaryColor = Color.fromRGBO(161, 196, 253, 1);
   final ApiService _apiService = ApiService();
 
@@ -33,11 +33,11 @@ class _PrivacyPageState extends State<PrivacyPage> {
     try {
       final userInfo = await _apiService.fetchUserInfo();
       setState(() {
-        _nameController.text = userInfo['userName'];
+        _userNameController.text = userInfo['userName'];
         _majorController.text = userInfo['major'];
-        _year = userInfo['grade'].toString();
+        _grade = userInfo['grade'].toString();
         _schoolController.text = userInfo['school'];
-        _contactController.text = userInfo['phoneNum'];
+        _phoneNumController.text = userInfo['phoneNum'];
       });
     } catch (e) {
       print('Error fetching user data: $e');
@@ -52,12 +52,12 @@ class _PrivacyPageState extends State<PrivacyPage> {
           'Bearer YOUR_JWT_TOKEN_HERE' // Replace with your actual JWT token
     };
     var body = jsonEncode({
-      'userName': _nameController.text,
+      'userName': _userNameController.text,
       'major': _majorController.text,
-      'grade': int.tryParse(_year) ??
+      'grade': int.tryParse(_grade) ??
           1, // Make sure to convert the grade to an integer
       'school': _schoolController.text,
-      'phoneNum': _contactController.text
+      'phoneNum': _phoneNumController.text
     });
 
     try {
@@ -156,7 +156,7 @@ class _PrivacyPageState extends State<PrivacyPage> {
                   ),
                   const SizedBox(height: 16.0),
                   DropdownButtonFormField<String>(
-                    value: _year,
+                    value: _grade,
                     items: <String>['1', '2', '3', '4']
                         .map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
@@ -166,7 +166,7 @@ class _PrivacyPageState extends State<PrivacyPage> {
                     }).toList(),
                     onChanged: (String? newValue) {
                       setState(() {
-                        _year = newValue!;
+                        _grade = newValue!;
                       });
                     },
                     decoration: InputDecoration(
@@ -190,7 +190,7 @@ class _PrivacyPageState extends State<PrivacyPage> {
                   ),
                   const SizedBox(height: 10.0),
                   TextField(
-                    controller: _nameController,
+                    controller: _userNameController,
                     textCapitalization: TextCapitalization.words,
                     decoration: InputDecoration(
                       labelText: '이름',
@@ -200,7 +200,7 @@ class _PrivacyPageState extends State<PrivacyPage> {
                   ),
                   const SizedBox(height: 16.0),
                   TextField(
-                    controller: _contactController,
+                    controller: _phoneNumController,
                     decoration: InputDecoration(
                       labelText: '연락처',
                       border: UnderlineInputBorder(),

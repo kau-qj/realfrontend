@@ -16,7 +16,7 @@ class ProfileEditPage extends StatefulWidget {
 }
 
 class _ProfileEditPageState extends State<ProfileEditPage> {
-  String? nickname;
+  String? userName;
   String? jobName;
   String? imageUrl;
   TextEditingController jobNameController = TextEditingController();
@@ -39,7 +39,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       final ApiService _apiService = ApiService();
       final userProfile = await _apiService.fetchUserProfile();
       setState(() {
-        nickname = userProfile['nickname'];
+        userName = userProfile['userName'];
         jobName = userProfile['jobName'];
         imageUrl = userProfile['image'][0]['imageUrl'];
         jobNameController.text = jobName ?? '';
@@ -53,7 +53,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   void _saveProfile() async {
     var uri = Uri.parse('https://kauqj.shop/mypage/profile');
     var request = http.MultipartRequest('PUT', uri)
-      ..fields['nickName'] = nickname ?? ''
+      ..fields['userName'] = userName ?? ''
       ..fields['jobName'] = jobNameController.text;
 
     // 새 이미지가 선택되었고, 로컬 파일 경로인 경우에만 이미지 업로드를 수행합니다.
@@ -184,7 +184,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
               ),
               SizedBox(height: screenSize.height * 0.01),
               TextField(
-                controller: TextEditingController(text: nickname),
+                controller: TextEditingController(text: userName),
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -194,7 +194,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                 ),
                 onChanged: (value) {
                   setState(() {
-                    nickname = value;
+                    userName = value;
                   });
                 },
               ),
