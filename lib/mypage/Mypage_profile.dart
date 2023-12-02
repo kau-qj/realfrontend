@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
-import 'mypage.dart';
 import '../httpApi/api_Mypage/api_mypage_profile.dart';
 
 class ProfileEditPage extends StatefulWidget {
@@ -16,9 +15,10 @@ class ProfileEditPage extends StatefulWidget {
 }
 
 class _ProfileEditPageState extends State<ProfileEditPage> {
-  String? userName;
+  String? nickName;
   String? jobName;
   String? imageUrl;
+  TextEditingController nickNameController = TextEditingController();
   TextEditingController jobNameController = TextEditingController();
   bool _isImageUpdated = false;
 
@@ -39,9 +39,10 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       final ApiService _apiService = ApiService();
       final userProfile = await _apiService.fetchUserProfile();
       setState(() {
-        userName = userProfile['userName'];
-        jobName = userProfile['jobName'];
-        imageUrl = userProfile['image'][0]['imageUrl'];
+        nickName = userProfile['nickName'] as String?;
+        jobName = userProfile['jobName'] as String?;
+        imageUrl = userProfile['imageUrl'] as String?;
+        nickNameController.text = nickName ?? '';
         jobNameController.text = jobName ?? '';
       });
     } catch (e) {
@@ -53,8 +54,8 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   void _saveProfile() async {
     var uri = Uri.parse('https://kauqj.shop/mypage/profile');
     var request = http.MultipartRequest('PUT', uri)
-      ..fields['userName'] = userName ?? ''
-      ..fields['jobName'] = jobNameController.text;
+      ..fields['nickName'] = nickNameController.text //nickName값을 업데이트
+      ..fields['jobName'] = jobNameController.text; //jobName도 업데이트
 
     // 새 이미지가 선택되었고, 로컬 파일 경로인 경우에만 이미지 업로드를 수행합니다.
     if (_isImageUpdated && imageUrl != null && File(imageUrl!).existsSync()) {
@@ -79,9 +80,10 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                 : (imageUrl ?? 'assets/profile.png');
 
         setState(() {
+          nickName = nickNameController.text; // nickName 값을 업데이트
           // job과 imageUrl을 MyPage로 전달
           Navigator.of(context).pop({
-            'job': jobNameController.text,
+            'jobName': jobNameController.text,
             'imageUrl': updatedImageUrl,
           });
         });
@@ -184,7 +186,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
               ),
               SizedBox(height: screenSize.height * 0.01),
               TextField(
-                controller: TextEditingController(text: userName),
+                controller: TextEditingController(text: nickName),
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -194,7 +196,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                 ),
                 onChanged: (value) {
                   setState(() {
-                    userName = value;
+                    nickName = value;
                   });
                 },
               ),

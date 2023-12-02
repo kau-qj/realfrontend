@@ -56,9 +56,9 @@ class JobDetails extends StatelessWidget {
               child: SvgPicture.asset('assets/smallQj.svg'),
             ),
             Positioned(
-              top: 45,
-              height: 915,
-              width: 370,
+              top: 35,
+              height: 985,
+              width: 400,
               child: SvgPicture.asset('assets/jobDetailsBox.svg'),
             ),
             Positioned(
@@ -159,7 +159,7 @@ class JobDetails extends StatelessWidget {
                     left: 0,
                     right: 0,
                     child: Container(
-                      height: MediaQuery.of(context).size.height - 290,
+                      height: MediaQuery.of(context).size.height - 340,
                       child: ListView(
                         padding: EdgeInsets.symmetric(horizontal: 40),  // 패딩 값 지정
                         children: <Widget>[

@@ -101,7 +101,7 @@ class _OtherLectureState extends State<OtherLecture> {
               ),
             ),
             Positioned(
-              bottom: 280,
+              bottom: 400,
               child: GestureDetector(  // SvgPicture를 GestureDetector로 감싸서 onTap 이벤트를 처리
                 onTap: () {
                   sendJob();  // sendJob 메소드를 호출하여 텍스트 필드의 내용을 전송
@@ -196,26 +196,35 @@ class _NewLectureState extends State<NewLecture> {
               top: 195, // 상단 위치 조절
               child: SvgPicture.asset('assets/CourseName.svg'),
             ),
+            /*
             Positioned(
               top: 260, // 상단 위치 조절
               child: SvgPicture.asset('assets/CourseInfo.svg'),
             ),
+            */
             Positioned(
               top: 450, // 상단 위치 조절
-              child: SvgPicture.asset('assets/QjLogoBack.svg'),
+              child: SvgPicture.asset(
+                'assets/QjLogoBack.svg',
+                width: 170, // 원하는 너비로 조절
+                height: 170, // 원하는 높이로 조절
+              ),
             ),
-            FutureBuilder<Map<String, dynamic>>(
-              future: apiService.sendJob(widget.job),
+            FutureBuilder<List<dynamic>>(
+              future: Future.wait([
+                apiService.sendJob(widget.job),
+                apiService.fetchData(),
+              ]),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return GptLoading(); // GptLoading 위젯 반환
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
-                } else if (!snapshot.hasData || snapshot.data == null || snapshot.data!['result'] == null) {
+                } else if (!snapshot.hasData || snapshot.data == null || snapshot.data![1]['result'] == null) {
                   return Text('No data fetched from API.');
                 } else {
                   // API로부터 받아온 데이터를 저장
-                  List result = snapshot.data!['result'];
+                  List result = snapshot.data![1]['result'];
 
                   // 각 아이템에서 'title', 'comment', 'score', 'details'만 추출
                   List<Map<String, dynamic>> extractedData = result.map((item) {
@@ -226,34 +235,46 @@ class _NewLectureState extends State<NewLecture> {
                       'details': item['details'],
                     };
                   }).toList();
-
-                  return Column(
+                  return Stack(
                     children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 206, left: 0.0, right: 0.0),  // 패딩 값 지정
+                      Positioned(
+                        top: 210,
+                        left: 0,
+                        right: 0,
                         child: Text(
                           '${extractedData[0]['title']}',
                           style: TextStyle(
-                            fontSize: 15,     // 글자 크기
+                            fontSize: 16,     // 글자 크기
                             fontWeight: FontWeight.bold,  // 글자 두께
                           ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 40),
+                      Positioned(
+                        top: 280,
+                        left: 0,
+                        right: 0,
                         child: Container(
-                          height: MediaQuery.of(context).size.height - 290,
-                          child: ListView.builder(
-                            itemCount: extractedData[0]['details'].length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: EdgeInsets.fromLTRB(18, 0, 18, 10),
-                                child: ListTile(
-                                  leading: Text('Score: ${extractedData[0]['details'][index]['score']}'),  // leading 사용
-                                  subtitle: Text('${extractedData[0]['details'][index]['comment']}'),  // title 사용
+                          height: MediaQuery.of(context).size.height - 340,
+                          child: ListView(
+                            padding: EdgeInsets.symmetric(horizontal: 10),  // 패딩 값 지정
+                            children: <Widget>[
+                              SizedBox(height: 30),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 0),
+                                child: Column(
+                                  children: extractedData[0]['details'].map<Widget>((item) {
+                                    return Padding(
+                                      padding: EdgeInsets.fromLTRB(18, 0, 18, 10),
+                                      child: ListTile(
+                                        leading: Text('Score: ${item['score']}'),  // leading 사용
+                                        subtitle: Text('${item['comment']}'),  // title 사용
+                                      ),
+                                    );
+                                  }).toList(),
                                 ),
-                              );
-                            },
+                              ),
+                            ],
                           ),
                         ),
                       ),

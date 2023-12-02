@@ -6,24 +6,14 @@ import 'Mypage_Setting .dart';
 import 'Mypage_profile.dart';
 import 'Mypage_PrivacyPage.dart';
 import 'Mypage_storage.dart';
+import 'package:qj_projec/jobDic/job_details.dart';
+
 
 class MyPage extends StatefulWidget {
   const MyPage({Key? key}) : super(key: key);
 
   @override
   State<MyPage> createState() => _MyPageState();
-}
-
-class UserData {
-  String? jobName;
-
-  static final UserData _singleton = UserData._internal();
-
-  factory UserData() {
-    return _singleton;
-  }
-
-  UserData._internal();
 }
 
 class _MyPageState extends State<MyPage> {
@@ -45,9 +35,10 @@ class _MyPageState extends State<MyPage> {
 
       // Now when you call fetchUserInfo, it will use the cookies
       final userInfo = await _apiService.fetchUserInfo();
+      print('qwe: $userInfo');
       setState(() {
         userName = userInfo['userName'] ?? '';
-        UserData().jobName = userInfo['jobName'];
+        jobName = userInfo['jobName'];
         imageUrl = userInfo['imageUrl'] ?? '';
       });
     } catch (e) {
@@ -67,6 +58,7 @@ class _MyPageState extends State<MyPage> {
         builder: (context) => ProfileEditPage(),
       ),
     );
+
 
     if (result != null) {
       setState(() {
@@ -239,21 +231,6 @@ class _MyPageState extends State<MyPage> {
                   SizedBox(height: 5),
                 ],
               ),
-            ),
-          ),
-          Container(
-            height: 150, // SVG 아이콘들의 컨테이너 높이 설정
-            child: Stack(
-              children: [
-                Positioned(
-                  bottom: 10,
-                  // 위치를 조정하여 적절한 위치를 찾습니다.
-                  child: SvgPicture.asset(
-                    'assets/MypageButtonRound.svg', // 세 번째 원형 SVG 파일
-                    width: 410,
-                  ),
-                ),
-              ],
             ),
           ),
         ],

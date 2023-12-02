@@ -15,7 +15,7 @@ class CourseRecommend extends StatefulWidget {
 }
 
 class _CourseRecommendState extends State<CourseRecommend> {
-  String? jobName = UserData().jobName;
+  //String? jobName = UserData().jobName;
   Color textColor = const Color.fromRGBO(45, 67, 77, 1);
   bool isGptLoadingVisible = false; // 로딩 페이지 표시 여부를 제어하기 위한 변수
 
@@ -161,11 +161,19 @@ class MyLecture extends StatelessWidget {
             ),
             Positioned(
               top: 260, // 상단 위치 조절
-              child: SvgPicture.asset('assets/CourseInfo.svg'),
+              child: SvgPicture.asset(
+                'assets/CourseInfo.svg',
+                //width: 270, // 원하는 너비로 조절
+                height: 650, // 원하는 높이로 조절
+              ),
             ),
             Positioned(
               top: 450, // 상단 위치 조절
-              child: SvgPicture.asset('assets/QjLogoBack.svg'),
+              child: SvgPicture.asset(
+                'assets/QjLogoBack.svg',
+                width: 170, // 원하는 너비로 조절
+                height: 170, // 원하는 높이로 조절
+              ),
             ),
             FutureBuilder<Map<String, dynamic>>(
               future: apiService.fetchData(),
@@ -189,34 +197,46 @@ class MyLecture extends StatelessWidget {
                       'details': item['details'],
                     };
                   }).toList();
-
-                  return Column(
+                  return Stack(
                     children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 206, left: 0.0, right: 0.0),  // 패딩 값 지정
+                      Positioned(
+                        top: 210,
+                        left: 0,
+                        right: 0,
                         child: Text(
                           '${extractedData[0]['title']}',
                           style: TextStyle(
-                            fontSize: 15,     // 글자 크기
+                            fontSize: 16,     // 글자 크기
                             fontWeight: FontWeight.bold,  // 글자 두께
                           ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 40),
+                      Positioned(
+                        top: 280,
+                        left: 0,
+                        right: 0,
                         child: Container(
-                          height: MediaQuery.of(context).size.height - 290,
-                          child: ListView.builder(
-                            itemCount: extractedData[0]['details'].length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: EdgeInsets.fromLTRB(18, 0, 18, 10),
-                                child: ListTile(
-                                  leading: Text('Score: ${extractedData[0]['details'][index]['score']}'),  // leading 사용
-                                  subtitle: Text('${extractedData[0]['details'][index]['comment']}'),  // title 사용
+                          height: MediaQuery.of(context).size.height - 340,
+                          child: ListView(
+                            padding: EdgeInsets.symmetric(horizontal: 10),  // 패딩 값 지정
+                            children: <Widget>[
+                              SizedBox(height: 30),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 0),
+                                child: Column(
+                                  children: extractedData[0]['details'].map<Widget>((item) {
+                                    return Padding(
+                                      padding: EdgeInsets.fromLTRB(18, 0, 18, 10),
+                                      child: ListTile(
+                                        leading: Text('Score: ${item['score']}'),  // leading 사용
+                                        subtitle: Text('${item['comment']}'),  // title 사용
+                                      ),
+                                    );
+                                  }).toList(),
                                 ),
-                              );
-                            },
+                              ),
+                            ],
                           ),
                         ),
                       ),
