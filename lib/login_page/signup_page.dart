@@ -32,10 +32,10 @@ Future<String> User(String userId, String userPw, String grade, String major, St
     );
     // 요청이 성공적으로 이루어졌는지 확인 (상태 코드 200)
     if (response.statusCode == 200) {
-      print("good");
-      return '회원가입 성공'; // 회원가입 성공
+        print("good");
+        return jobName; // 회원가입 성공하면 jobName 반환
     } else {
-      return '회원가입 실패'; // 회원가입 실패
+        return '회원가입 실패'; // 회원가입 실패
     }
   } catch (e) {
     print('signupUser 함수에서 에러 발생: $e');
@@ -53,10 +53,10 @@ class SignupPage extends StatefulWidget {
 class _SignupPageState extends State<SignupPage> {
   TextEditingController _schoolController = TextEditingController();
   TextEditingController _majorController = TextEditingController();
-  String _year = '1';
-  TextEditingController _interestController = TextEditingController();
+  String _grade = '1';
+  TextEditingController _jobNameController = TextEditingController();
   TextEditingController _nameController = TextEditingController();
-  TextEditingController _contactController = TextEditingController();
+  TextEditingController _phoneNumController = TextEditingController();
   TextEditingController _userIdController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _userNameController =TextEditingController();
@@ -88,7 +88,7 @@ class _SignupPageState extends State<SignupPage> {
             ),
             const SizedBox(height: 16.0),
             DropdownButtonFormField<String>(
-              value: _year,
+              value: _grade,
               items: <String>['1', '2', '3', '4'].map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
@@ -97,7 +97,7 @@ class _SignupPageState extends State<SignupPage> {
               }).toList(),
               onChanged: (String? newValue) {
                 setState(() {
-                  _year = newValue!;
+                  _grade = newValue!;
                 });
               },
               decoration: InputDecoration(
@@ -108,7 +108,7 @@ class _SignupPageState extends State<SignupPage> {
             ),
             const SizedBox(height: 16.0),
             TextField(
-              controller: _interestController,
+              controller: _jobNameController,
               decoration: InputDecoration(
                 labelText: '관심직무',
                 border: UnderlineInputBorder(),
@@ -126,7 +126,7 @@ class _SignupPageState extends State<SignupPage> {
             ),
             const SizedBox(height: 16.0),
             TextField(
-              controller: _contactController,
+              controller: _phoneNumController,
               decoration: InputDecoration(
                 labelText: '연락처',
                 border: UnderlineInputBorder(),
@@ -166,20 +166,20 @@ class _SignupPageState extends State<SignupPage> {
               onPressed: () async {
                 String school = _schoolController.text;
                 String major = _majorController.text;
-                String year = _year;
-                String interest = _interestController.text;
+                String grade = _grade;
+                String jobName = _jobNameController.text;
                 String name = _nameController.text;
-                String contact = _contactController.text;
+                String phoneNum = _phoneNumController.text;
                 String userId = _userIdController.text;
                 String userPw = _passwordController.text;
                 String userName = _nameController.text;
 
                 if (school.isEmpty ||
                     major.isEmpty ||
-                    year.isEmpty ||
-                    interest.isEmpty ||
+                    grade.isEmpty ||
+                    jobName.isEmpty ||
                     name.isEmpty ||
-                    contact.isEmpty ||
+                    phoneNum.isEmpty ||
                     userId.isEmpty ||
                     userPw.isEmpty||
                     userName.isEmpty) {
@@ -190,11 +190,11 @@ class _SignupPageState extends State<SignupPage> {
                 String result = await User(
                   userId,
                   userPw,
-                  year,
+                  grade,
                   major,
-                  contact,
+                  phoneNum,
                   school,
-                  interest,
+                  jobName,
                   userName
                 );
 
@@ -202,10 +202,10 @@ class _SignupPageState extends State<SignupPage> {
                   print('회원가입 정보: ');
                   print('학교: $school');
                   print('전공: $major');
-                  print('학년: $year');
-                  print('관심직무: $interest');
+                  print('학년: $grade');
+                  print('관심직무: $jobName');
                   print('이름: $name');
-                  print('연락처: $contact');
+                  print('연락처: $phoneNum');
                   print('닉네임: $userName');
                   print('아이디: $userId');
                   print('비밀번호: $userPw');
