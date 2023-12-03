@@ -30,11 +30,13 @@ class ApiService {
 
     final response = await http.get(Uri.parse('$baseUrl$endpoint'), headers: headers);
 
-    if (response.statusCode == 200) {
-      Map<String, dynamic> data = json.decode(response.body);
-      return data['result'][0] as List; // 'result'의 첫 번째 항목 반환
+
+    Map<String, dynamic> data = json.decode(response.body);
+    dynamic result = data['result'];
+    if (result is List) {
+      return result;
     } else {
-      throw Exception('Failed to load data. Status code: ${response.statusCode}, Message: ${response.body}');
+      throw Exception('Failed to parse data. Expected type: List, Actual type: ${result.runtimeType}');
     }
   }
 }

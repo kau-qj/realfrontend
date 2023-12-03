@@ -86,7 +86,7 @@ class _QJStorageState extends State<QJStorage> {
                           )),
                 ),
                 Positioned(
-                  top: screenSize.height * 0.4, // 상단 위치 조정 (화면 높이의 50%)
+                  top: screenSize.height * 0.3, // 상단 위치 조정 (화면 높이의 50%)
                   child: SvgPicture.asset('assets/QjLogoBack.svg'),
                 )
               ],

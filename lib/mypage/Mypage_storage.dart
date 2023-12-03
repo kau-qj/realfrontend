@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:qj_projec/httpApi/api_Mypage/api_mypage_Storage.dart';
-import 'package:qj_projec/mypage/Mypage_QJStorage.dart';
-
+import 'Mypage_QJstorage.dart';
 
 class Storage extends StatefulWidget {
   const Storage({Key? key}) : super(key: key);
@@ -12,12 +11,12 @@ class Storage extends StatefulWidget {
 }
 
 class _StorageState extends State<Storage> {
-  late Future<List<dynamic>> qjData;
+  //Future<List<dynamic>> async;
 
   @override
   void initState() {
     super.initState();
-    qjData = ApiService().fetchData(); // API 서비스에서 데이터를 가져옵니다.
+    final ApiService apiService = ApiService(); //api 연결fetchData
   }
 
   void _navigateToQjStorage(BuildContext context, int setIdx) {
@@ -28,6 +27,7 @@ class _StorageState extends State<Storage> {
 
   @override
   Widget build(BuildContext context) {
+    final ApiService apiService = ApiService(); //api 연결
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       appBar: AppBar(
@@ -62,7 +62,7 @@ class _StorageState extends State<Storage> {
         elevation: 0,
       ),
       body: FutureBuilder<List<dynamic>>(
-        future: qjData,
+        future: apiService.fetchData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const CircularProgressIndicator();
@@ -87,7 +87,7 @@ class _StorageState extends State<Storage> {
                         height: 100,
                       ),
                       Positioned(
-                        top: 25, 
+                        top: 25, // 이 값을 조절하여 텍스트 위치를 조정합니다.
                         child: Column(
                           children: [
                             Text(

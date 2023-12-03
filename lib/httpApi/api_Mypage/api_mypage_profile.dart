@@ -8,7 +8,7 @@ class ApiService {
   final String baseUrl = 'https://kauqj.shop';
 
   // 사용자 정보를 가져오는 메서드
-  Future<Map<String, dynamic>> fetchUserProfile() async {
+  Future<Map<String, dynamic>> fetchData() async {
     final String endpoint = '/mypage/profile';
     final uri = Uri.parse(baseUrl);
     final cookies = await cookieJar.loadForRequest(uri);

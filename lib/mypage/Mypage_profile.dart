@@ -21,6 +21,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   TextEditingController nickNameController = TextEditingController();
   TextEditingController jobNameController = TextEditingController();
   bool _isImageUpdated = false;
+  final ApiService apiService = ApiService(); // ApiService 인스턴스를 생성합니다.
 
   @override
   void initState() {
@@ -36,8 +37,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
 
   void _fetchUserProfile() async {
     try {
-      final ApiService _apiService = ApiService();
-      final userProfile = await _apiService.fetchUserProfile();
+      final userProfile = await apiService.fetchData();
       setState(() {
         nickName = userProfile['nickName'] as String?;
         jobName = userProfile['jobName'] as String?;

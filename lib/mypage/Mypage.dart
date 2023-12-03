@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:qj_projec/login_page/login_page.dart';
 
 import '../httpApi/api_Mypage/api_mypage.dart';
 import 'Mypage_Setting .dart';
@@ -7,7 +9,6 @@ import 'Mypage_profile.dart';
 import 'Mypage_PrivacyPage.dart';
 import 'Mypage_storage.dart';
 import 'package:qj_projec/jobDic/job_details.dart';
-
 
 class MyPage extends StatefulWidget {
   const MyPage({Key? key}) : super(key: key);
@@ -45,20 +46,21 @@ class _MyPageState extends State<MyPage> {
       print('Error fetching user data: $e');
     }
   }
+
   void _navigateToJobDetails(BuildContext context) async {
     final result = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => JobDetails(jobname: jobName ?? ''),  // 현재 jobName을 JobDetails에 전달
+        builder: (context) =>
+            JobDetails(jobname: jobName ?? ''), // 현재 jobName을 JobDetails에 전달
       ),
     );
 
-  if (result != null) {
-    setState(() {
-      jobName = result['jobName'] ?? jobName;
-    });
+    if (result != null) {
+      setState(() {
+        jobName = result['jobName'] ?? jobName;
+      });
+    }
   }
-}
-
 
   void _navigateToSettings() {
     Navigator.of(context).push(
@@ -72,7 +74,6 @@ class _MyPageState extends State<MyPage> {
         builder: (context) => ProfileEditPage(),
       ),
     );
-
 
     if (result != null) {
       setState(() {
@@ -106,6 +107,36 @@ class _MyPageState extends State<MyPage> {
         imageUrl = newProfile['imageUrl'];
       });
     }
+  }
+
+  void _logout() {
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (BuildContext context) => CupertinoAlertDialog(
+        title: const Text('알림'),
+        content: const Text('로그아웃하시겠습니까?'),
+        actions: <CupertinoDialogAction>[
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () => Navigator.pop(context),
+            child: const Text('아니오'),
+          ),
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            onPressed: () {
+              // '예'를 선택하면 로그인 페이지로 이동합니다.
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (builder) => LoginPage(),
+                ),
+              );
+            },
+            child: Text('예'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -239,9 +270,7 @@ class _MyPageState extends State<MyPage> {
                     _navigateToSettings,
                   ), // 여기서 SettingPage로 이동합니다.
                   _Line(),
-                  _buildMenuItem('로그아웃', () {
-                    // 다른 페이지로 이동하는 로직
-                  }),
+                  _buildMenuItem('로그아웃', _logout),
                   SizedBox(height: 5),
                 ],
               ),
