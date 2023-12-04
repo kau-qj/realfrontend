@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:qj_projec/POST/screen/post_page.dart';
+import 'package:qj_projec/POST/post.dart';
 import 'package:qj_projec/jobDic/job_main.dart';
 import 'package:qj_projec/home.dart';
 import 'package:qj_projec/mypage/myPage.dart';
