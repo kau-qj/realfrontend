@@ -1,4 +1,3 @@
-//mypage_profile
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -19,11 +18,11 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   String? imageUrl;
   TextEditingController nickNameController = TextEditingController();
   TextEditingController jobNameController = TextEditingController();
-  bool _isImageUpdated = false;
+  bool _isImageUpdated = true;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
     _fetchUserProfile();
   }
 
@@ -92,7 +91,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
           },
         ),
         title: Row(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween, // 자식들을 양 끝으로 정렬
           children: [
             const Text(
               '프로필 설정',
@@ -102,21 +101,16 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                 color: Color.fromARGB(255, 0, 0, 0),
               ),
             ),
-            const SizedBox(width: 10),
-            Container(
-              margin: const EdgeInsets.only(top: 15),
-              child: SvgPicture.asset('assets/RoundTop.svg'),
-            )
           ],
         ),
-        centerTitle: true,
+        centerTitle: false,
         backgroundColor: Colors.white,
-        toolbarHeight: 150,
+        toolbarHeight: kToolbarHeight, // AppBar의 높이를 기본 높이로 설정
         elevation: 0,
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: EdgeInsets.fromLTRB(20.0, 80.0, 20.0, 0.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
