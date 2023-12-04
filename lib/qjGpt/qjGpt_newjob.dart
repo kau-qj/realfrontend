@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:async';
-import 'package:qj_projec/qjGpt/qjGpt_myJob.dart';
 import 'package:qj_projec/httpApi/api_qjGpt_newJob.dart';
-import 'package:qj_projec/mypage/Mypage_storage.dart';
 
 
 class OtherLecture extends StatefulWidget {
@@ -23,7 +21,8 @@ class _OtherLectureState extends State<OtherLecture> {
       isGptLoadingVisible = true; // 로딩 페이지 표시
     }
   );
-
+  // 3초 동안 대기
+  //await Future.delayed(Duration(seconds: 3));
   //final ApiService apiService = ApiService(); //api 연결
 
     // MyLecture 화면으로 이동

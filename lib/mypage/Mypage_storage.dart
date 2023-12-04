@@ -12,7 +12,7 @@ class Storage extends StatefulWidget {
 
 class _StorageState extends State<Storage> {
   //Future<List<dynamic>> async;
-
+  final ApiService apiService = ApiService(); //api 연결
   @override
   void initState() {
     super.initState();
@@ -27,92 +27,93 @@ class _StorageState extends State<Storage> {
 
   @override
   Widget build(BuildContext context) {
-    final ApiService apiService = ApiService(); //api 연결
+    
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-      appBar: AppBar(
-        leading: IconButton(
-          icon: SvgPicture.asset('assets/BackButton.svg'), // 뒤로가기 버튼 SVG 파일
-          onPressed: () {
-            Navigator.of(context).pop(); // 현재 화면을 스택에서 제거하여 이전 화면으로 돌아감
-          },
-        ),
-        title: Row(
-          mainAxisSize: MainAxisSize.min, // 자식들의 크기만큼 Row의 크기를 설정
-          children: [
-            const Text(
-              'QJ 보관함',
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 20,
-                color: Color.fromARGB(255, 0, 0, 0),
+
+      body: Center(
+        child: Stack(
+          alignment: Alignment.center,
+          children: <Widget>[
+            Positioned(
+              top: 70,
+              left: 25, // 상단 위치 조절
+              child: InkWell(
+                onTap: () {
+                  // 이전 페이지로 돌아가기
+                  Navigator.pop(context);
+                },
+              child: Row(
+                children: [
+                  SvgPicture.asset('assets/BackButton.svg'),
+                  SizedBox(width: 20),  // SVG 이미지와 텍스트 사이의 간격
+                  Text('QJ 보관함', style: TextStyle(fontSize: 23))  // 텍스트 추가
+                ],
+              ),
               ),
             ),
-            const SizedBox(width: 10),
-            Container(
-              margin: const EdgeInsets.only(top: 0), // 아이콘을 조금 아래로 내립니다.
-              child: SvgPicture.asset('assets/RoundTop.svg',
-                  fit: BoxFit.scaleDown),
-            )
-          ],
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        toolbarHeight: 150,
-        elevation: 0,
-      ),
-      body: FutureBuilder<List<dynamic>>(
-        future: apiService.fetchData(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            return ListView.separated(
-              itemCount: snapshot.data!.length,
-              separatorBuilder: (context, index) =>
-                  SizedBox(height: 10), // 간격을 조절합니다.
-              itemBuilder: (context, index) {
-                var item = snapshot.data![index];
-                return GestureDetector(
-                  onTap: () => _navigateToQjStorage(context, item['setIdx']),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      SvgPicture.asset(
-                        'assets/QjStorageBox.svg',
-                        // 이미지 크기를 조절
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        height: 100,
-                      ),
-                      Positioned(
-                        top: 25, // 이 값을 조절하여 텍스트 위치를 조정합니다.
-                        child: Column(
-                          children: [
-                            Text(
-                              item['title'],
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'Poppins'),
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(height: 5), //타이틀과 createAt 사이
-                            Text(
-                              item['createAt'],
-                              style: TextStyle(fontFamily: 'Poppins'),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                );
+            Positioned(
+              top: 50,
+              right: 0, // 상단 위치 조절
+              child: SvgPicture.asset('assets/RoundTop.svg'),
+            ),
+            FutureBuilder<List<dynamic>>(
+              future: apiService.fetchData(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  return Container(
+                    height: MediaQuery.of(context).size.height - 0,
+                    child: ListView.separated(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      itemCount: snapshot.data!.length,
+                      separatorBuilder: (context, index) => SizedBox(height: 10),
+                      itemBuilder: (context, index) {
+                        var item = snapshot.data![index];
+                        return GestureDetector(
+                          onTap: () => _navigateToQjStorage(context, item['setIdx']),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              SvgPicture.asset(
+                                'assets/QjStorageBox.svg',
+                                width: MediaQuery.of(context).size.width * 0.8,
+                                height: 100,
+                              ),
+                              Positioned(
+                                top: 25,
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      item['title'],
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Poppins'),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    SizedBox(height: 5),
+                                    Text(
+                                      item['createAt'],
+                                      style: TextStyle(fontFamily: 'Poppins'),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                }
               },
-            );
-          }
-        },
+            ),
+          ]
+        ),
       ),
     );
   }

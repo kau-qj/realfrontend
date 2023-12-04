@@ -4,7 +4,6 @@ import 'dart:async';
 import 'package:qj_projec/httpApi/api_qjGpt_myJob.dart';
 import 'package:qj_projec/qjGpt/qjGpt_newJob.dart';
 import 'package:qj_projec/mypage/Mypage_storage.dart';
-import 'package:qj_projec/mypage/Mypage.dart';
 
 
 class CourseRecommend extends StatefulWidget {

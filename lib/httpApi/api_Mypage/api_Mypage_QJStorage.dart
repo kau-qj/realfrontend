@@ -13,7 +13,7 @@ class ApiService {
     final uri = Uri.parse(baseUrl);
     final cookies = await cookieJar.loadForRequest(uri);
     String jwtToken = '';
-
+    //print('setIdx: $setIdx');
     // 기존 코드에서 쿠키 이름이 'access_token'인 것을 찾도록 수정
     final jwt = cookies.firstWhereOrNull((cookie) => cookie.name == 'access_token');
 

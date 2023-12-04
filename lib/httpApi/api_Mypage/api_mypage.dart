@@ -1,3 +1,4 @@
+//api_mypage.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:cookie_jar/cookie_jar.dart';
@@ -35,15 +36,11 @@ class ApiService {
         await http.get(Uri.parse('$baseUrl$endpoint'), headers: headers);
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      print('555=$data');
       if (data['isSuccess'] && data['result'] != null) {
         return {
           'userName': data['result']['userName'],
           'jobName': data['result']['jobName'],
-          'imageUrl': data['result']['imageUrl'] != null &&
-                  data['result']['imageUrl'].isNotEmpty
-              ? data['result']['imageUrl'][0]['imageUrl']
-              : null, // userimageUrl이 null이거나 비어있지 않은 경우 첫 번째 이미지 URL을 가져옵니다. 그렇지 않으면 null을 반환합니다.
+          'imageUrl': data['result']['imageUrl'],
         };
       } else {
         throw Exception('Result key is not found in the response');

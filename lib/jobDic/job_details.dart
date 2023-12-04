@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:qj_projec/mypage/Mypage_storage.dart';
 import 'package:qj_projec/httpApi/api_jobdetails.dart';
 import 'package:flutter_html/flutter_html.dart';
 
 
+
 class JobDetails extends StatelessWidget {
   //const jobdetails({super.key});
-  final String jobname;
+  final String jobName;
   final ApiService apiService = ApiService(); //api 연결
 
-  JobDetails({required this.jobname}); // 생성자에서 jobname 파라미터를 필수로 받도록 설정
+  JobDetails({required this.jobName}); // 생성자에서 jobName 파라미터를 필수로 받도록 설정
   
   String convertNewlinesToBreaks(String text) {
     return text.replaceAll('\n', '<br>');
@@ -82,7 +82,7 @@ class JobDetails extends StatelessWidget {
                             borderRadius: BorderRadius.circular(30.0), // 테두리 둥글게 설정
                           ),
                           title: Text(
-                            '관심 직무 등록',
+                            '관심직무 등록',
                             style: TextStyle(
                               color: textColor2,
                               fontWeight: FontWeight.bold,
@@ -90,7 +90,7 @@ class JobDetails extends StatelessWidget {
                             ),
                           ),
                           content: Text(
-                            '최대 한 개의 관심직무 등록이 가능합니다. 관심직무를 수정하시겠습니까?',
+                            '최대 한 개의 관심직무만 등록이 가능합니다. 해당 관심직무로 등록하시겠습니까?',
                             style: TextStyle(
                               color: textColor2,
                             ),
@@ -115,12 +115,24 @@ class JobDetails extends StatelessWidget {
                                   color: textColor1,
                                   fontWeight: FontWeight.bold,
                                 ),
-                              ),                              
-                              onPressed: () {
-                                // 예를 선택하면 관심 직무를 수정하는 로직을 실행
-                                // 이 부분은 실제 앱에서는 관심 직무 정보를 수정하는 로직에 따라 달라집니다.
-                                Navigator.of(context).pop({'jobName': jobname});  // jobname을 전달하며 닫기
+                              ), 
+                              onPressed: () async {
+                                try {
+                                  final response = await apiService.fetchInterestJob(jobName); // 관심 직무 업데이트
+                                  // 관심 직무 업데이트 성공
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('관심 직무가 성공적으로 업데이트되었습니다.'),
+                                      backgroundColor: Color.fromRGBO(161, 196, 253, 1),  // RGB로 바탕색 설정
+                                    )
+                                  );
+                                  Navigator.of(context).pop(); // 페이지 닫기
+                                } catch (e) {
+                                  // 오류 처리
+                                  print(e);
+                                }
                               },
+
                             ),
                           ],
                         );
@@ -135,7 +147,7 @@ class JobDetails extends StatelessWidget {
               ),
             ),
             FutureBuilder<Map<String, dynamic>>(
-              future: apiService.fetchData(jobname),
+              future: apiService.fetchData(jobName),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return CircularProgressIndicator();
@@ -147,7 +159,7 @@ class JobDetails extends StatelessWidget {
                   // API로부터 받아온 데이터를 저장
                   Map<String, dynamic> result = snapshot.data!['result'];
 
-                  // 'jobname', 'comments', 'imageUrl'만 추출
+                  // 'jobName', 'comments', 'imageUrl'만 추출
                   Map<String, dynamic> extractedData = {
                     'jobname': result['jobname'],
                     'comments': result['comments'],

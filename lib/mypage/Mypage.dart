@@ -1,8 +1,8 @@
+//mypage.dart
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:qj_projec/login_page/login_page.dart';
-
 import '../httpApi/api_Mypage/api_mypage.dart';
 import 'Mypage_Setting .dart';
 import 'Mypage_profile.dart';
@@ -36,7 +36,6 @@ class _MyPageState extends State<MyPage> {
 
       // Now when you call fetchUserInfo, it will use the cookies
       final userInfo = await _apiService.fetchUserInfo();
-      print('qwe: $userInfo');
       setState(() {
         userName = userInfo['userName'] ?? '';
         jobName = userInfo['jobName'];
@@ -51,7 +50,7 @@ class _MyPageState extends State<MyPage> {
     final result = await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) =>
-            JobDetails(jobname: jobName ?? ''), // 현재 jobName을 JobDetails에 전달
+            JobDetails(jobName: jobName ?? ''), // 현재 jobName을 JobDetails에 전달
       ),
     );
 
@@ -75,12 +74,11 @@ class _MyPageState extends State<MyPage> {
       ),
     );
 
+    // 반환된 데이터가 있다면 상태 업데이트
     if (result != null) {
       setState(() {
         jobName = result['jobName'] ?? jobName;
-        imageUrl = result['imageUrl'].isEmpty
-            ? 'assets/profile.png'
-            : result['imageUrl'];
+        imageUrl = result['imageUrl'] ?? imageUrl;
       });
     }
   }

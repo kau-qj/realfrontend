@@ -132,7 +132,7 @@ class _JobDictionaryState extends State<JobDictionary> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => JobDetails(jobname: titles[index]), // 선택한 항목의 값을 파라미터로 전달
+                                      builder: (context) => JobDetails(jobName: titles[index]), // 선택한 항목의 값을 파라미터로 전달
                                     ),
                                   );
                                 },
