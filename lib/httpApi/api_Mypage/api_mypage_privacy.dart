@@ -50,4 +50,60 @@ class ApiService {
       throw Exception('Error fetching user info: $e');
     }
   }
+
+  Future<void> savePrivacy({
+    required String userName,
+    required String major,
+    required String grade,
+    required String school,
+    required String phoneNum,
+  }) async {
+    final uri = Uri.parse('$baseUrl/mypage/info');
+    String jwtToken = await _getJWTToken();
+
+    try {
+      final cookies = await cookieJar.loadForRequest(uri);
+      final headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $jwtToken',
+        'Cookie': cookies.map((c) => '${c.name}=${c.value}').join('; ')
+      };
+
+      var body = jsonEncode({
+        'userName': userName,
+        'major': major,
+        'grade': grade,
+        'school': school,
+        'phoneNum': phoneNum,
+      });
+
+      var response = await http.put(uri, headers: headers, body: body);
+      var data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && data['isSuccess'] == true) {
+        print('개인정보 업데이트 성공');
+      } else {
+        print('개인정보 업데이트 실패: ${data['message']}');
+      }
+    } catch (e) {
+      print('개인정보 업데이트 에러: $e');
+    }
+  }
+
+  Future<String> _getJWTToken() async {
+    // 로그인된 사용자의 JWT 토큰을 얻어옴
+    final uri = Uri.parse('https://kauqj.shop');
+    final cookies = await cookieJar.loadForRequest(uri);
+    final jwt =
+        cookies.firstWhereOrNull((cookie) => cookie.name == 'access_token');
+
+    // jwt가 null인 경우 예외를 던지거나 기본값을 반환하도록 처리할 수 있습니다.
+    if (jwt == null) {
+      throw Exception('JWT 토큰을 찾을 수 없습니다.');
+      // 또는 기본값 반환: return '기본값';
+    }
+
+    // 'access_token='을 포함한 토큰 전체 문자열을 반환
+    return jwt.value;
+  }
 }

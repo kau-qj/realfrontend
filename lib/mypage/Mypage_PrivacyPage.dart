@@ -1,8 +1,10 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import '../httpApi/api_Mypage/api_mypage_privacy.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:http/http.dart' as http;
+import 'package:qj_projec/httpApi/api_Mypage/api_mypage_privacy.dart';
+import 'package:qj_projec/httpApi/cookie_utils.dart';
+import 'package:collection/collection.dart';
 
 class PrivacyPage extends StatefulWidget {
   const PrivacyPage({Key? key}) : super(key: key);
@@ -14,12 +16,9 @@ class PrivacyPage extends StatefulWidget {
 class _PrivacyPageState extends State<PrivacyPage> {
   TextEditingController _schoolController = TextEditingController();
   TextEditingController _majorController = TextEditingController();
-  String _grade = '1'; // 기본적으로 '1'학년이 선택되도록 설정합니다.
-  TextEditingController _jobNameController = TextEditingController();
+  String _grade = '1';
   TextEditingController _userNameController = TextEditingController();
   TextEditingController _phoneNumController = TextEditingController();
-  TextEditingController _userIdController = TextEditingController();
-  TextEditingController _userPwController = TextEditingController();
   Color primaryColor = Color.fromRGBO(161, 196, 253, 1);
   final ApiService _apiService = ApiService();
 
@@ -44,34 +43,18 @@ class _PrivacyPageState extends State<PrivacyPage> {
     }
   }
 
-  void _savePrivacy() async {
-    var uri = Uri.parse('https://kauqj.shop/mypage/info');
-    var headers = {
-      'Content-Type': 'application/json',
-      'Authorization':
-          'Bearer YOUR_JWT_TOKEN_HERE' // Replace with your actual JWT token
-    };
-    var body = jsonEncode({
-      'userName': _userNameController.text,
-      'major': _majorController.text,
-      'grade': int.tryParse(_grade) ??
-          1, // Make sure to convert the grade to an integer
-      'school': _schoolController.text,
-      'phoneNum': _phoneNumController.text
-    });
-
+  Future<void> _savePrivacy() async {
     try {
-      var response = await http.put(uri, headers: headers, body: body);
-      var data = jsonDecode(response.body);
-      if (response.statusCode == 200 && data['isSuccess'] == true) {
-        print('개인정보 업데이트 성공');
-        // Perform success operations here
-      } else {
-        print('개인정보 업데이트 실패: ${data['message']}');
-        // Handle the failure here, you can use data['message'] to understand the reason
-      }
+      await _apiService.savePrivacy(
+        userName: _userNameController.text,
+        major: _majorController.text,
+        grade: _grade,
+        school: _schoolController.text,
+        phoneNum: _phoneNumController.text,
+      );
+      Navigator.pop(context);
     } catch (e) {
-      print('개인정보 업데이트 에러: $e');
+      print('Error saving user data: $e');
     }
   }
 
