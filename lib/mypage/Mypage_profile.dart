@@ -1,3 +1,4 @@
+//mypage_profile
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   String? imageUrl;
   TextEditingController nickNameController = TextEditingController();
   TextEditingController jobNameController = TextEditingController();
-  bool _isImageUpdated = true;
+  bool _isImageUpdated = false;
 
   @override
   void initState() {
@@ -45,15 +46,19 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   void _saveProfile() async {
     try {
       final ApiService _apiService = ApiService();
+
+      // 이미지가 업데이트되지 않았다면 기존의 imageUrl을 그대로 사용
+      String? updatedImageUrl = _isImageUpdated ? imageUrl : imageUrl;
+
       await _apiService.saveProfile(
         nickName: nickNameController.text,
         jobName: jobNameController.text,
-        imageUrl: _isImageUpdated
-            ? imageUrl
-            : null, // _isImageUpdated 값에 따라 imageUrl을 전송하거나 null로 설정
+        imageUrl: updatedImageUrl, // 새 이미지 URL 또는 기존 URL
       );
-      Navigator.of(context)
-          .pop({'jobName': jobNameController.text, 'imageUrl': imageUrl});
+      Navigator.of(context).pop({
+        'jobName': jobNameController.text,
+        'imageUrl': updatedImageUrl // 새로운 이미지가 없다면 기존 imageUrl 사용
+      });
     } catch (e) {
       print('Error saving user profile: $e');
     }
@@ -90,10 +95,10 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
             Navigator.of(context).pop();
           },
         ),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween, // 자식들을 양 끝으로 정렬
+        title: const Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
+            Text(
               '프로필 설정',
               style: TextStyle(
                 fontFamily: 'Poppins',
@@ -101,16 +106,21 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                 color: Color.fromARGB(255, 0, 0, 0),
               ),
             ),
+            /*const SizedBox(width: 10),
+            Container(
+              margin: const EdgeInsets.only(top: 15),
+              child: SvgPicture.asset('assets/RoundTop.svg'),
+            )*/
           ],
         ),
-        centerTitle: false,
+        centerTitle: true,
         backgroundColor: Colors.white,
-        toolbarHeight: kToolbarHeight, // AppBar의 높이를 기본 높이로 설정
+        toolbarHeight: 120,
         elevation: 0,
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.fromLTRB(20.0, 80.0, 20.0, 0.0),
+          padding: const EdgeInsets.all(20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

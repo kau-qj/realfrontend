@@ -1,4 +1,3 @@
-//mypage.dart
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -111,7 +110,6 @@ class _MyPageState extends State<MyPage> {
     showCupertinoModalPopup<void>(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
-        title: const Text('알림'),
         content: const Text('로그아웃하시겠습니까?'),
         actions: <CupertinoDialogAction>[
           CupertinoDialogAction(
@@ -139,28 +137,30 @@ class _MyPageState extends State<MyPage> {
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+    
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
-      appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 255, 255, 255),
-        elevation: 0,
-        toolbarHeight: 120,
-        title: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: SvgPicture.asset('assets/QJLog.svg'),
-            ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: SvgPicture.asset('assets/HompageTopBar.svg'),
-            ),
-          ],
-        ),
-      ),
       body: Column(
         children: [
+          SizedBox(
+            height: screenHeight * 0.13, // AppBar의 높이와 동일하게
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: SvgPicture.asset('assets/QJLog.svg',),
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: SvgPicture.asset('assets/HompageTopBar.svg'),
+                ),
+              ],
+            ),
+          ),
           SizedBox(height: 5),
           Container(
             width: double.infinity,

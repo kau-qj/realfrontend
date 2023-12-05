@@ -1,29 +1,30 @@
+// post.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../httpApi/api_post.dart';
+import 'package:qj_projec/httpApi/api_post.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-// 글을 작성하는 화면을 정의하는 StatefulWidget
 class CreatePostPage extends StatefulWidget {
-  const CreatePostPage({Key? key}) : super(key: key);
+  final _PostPageState parent;
+
+  const CreatePostPage({Key? key, required this.parent}) : super(key: key);
 
   @override
   _CreatePostPageState createState() => _CreatePostPageState();
 }
 
-// CreatePostPage의 State 클래스
 class _CreatePostPageState extends State<CreatePostPage> {
   final titleController = TextEditingController();
   final contentController = TextEditingController();
   final apiService = ApiService();
-  
+
   @override
   void dispose() {
-    // 컨트롤러를 사용한 후에는 dispose를 호출해야 합니다.
     titleController.dispose();
     contentController.dispose();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,22 +54,21 @@ class _CreatePostPageState extends State<CreatePostPage> {
         child: Column(
           children: [
             Container(
-              height: 50,
+              height: 70,
               child: TextField(
                 controller: titleController,
                 decoration: InputDecoration(
                   labelText: '제목',
                 ),
                 style: TextStyle(
-                  fontSize: 30.0,
+                  fontSize: 25.0,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
             const SizedBox(height: 15.0),
-            // 내용 입력 필드
             Container(
-              height: 300, // 필요에 따라 높이 조절
+              height: 300,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
@@ -90,27 +90,46 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       labelText: '내용을 입력해주세요',
                     ),
                     style: TextStyle(fontSize: 16.0),
-                    maxLines: null, // 여러 줄 입력을 허용합니다.
+                    maxLines: null,
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 10.0),
-            // 작성 완료 버튼
+            const SizedBox(height: 240.0),
             ElevatedButton(
               onPressed: () async {
                 final title = titleController.text;
                 final content = contentController.text;
                 try {
-                  await apiService.createPost(title, content, 2); // 숫자 0 대신 postType
-                  // 성공적으로 저장한 후 다른 동작 수행 (예: 화면 이동)
+                  await apiService.createPost(title, content, 2);
+
+                  widget.parent.addCreatedPost(title, content);
+
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.setString('title', title);
+                  await prefs.setString('content', content);
+
+                  final storedTitle = prefs.getString('title');
+                  final storedContent = prefs.getString('content');
+                  print('Stored title: $storedTitle');
+                  print('Stored content: $storedContent');
+
                   Navigator.pop(context);
                 } catch (e) {
-                  // 저장에 실패한 경우 처리 (예: 에러 메시지 표시)
                   print('게시글 작성에 실패했습니다: $e');
+                  if (e is Error) {
+                    print('Stack trace: ${e.stackTrace}');
+                  }
+                }
+                if (title.isEmpty && content.isEmpty) {
+                  print('제목과 내용을 입력하세요.');
+                } else if (title.isEmpty) {
+                  print('제목을 입력하세요.');
+                } else if (content.isEmpty) {
+                  print('내용을 입력하세요.');
                 }
               },
-              child: const Text('작성완료', style: TextStyle(fontSize: 20)),
+              child: const Text('작성완료', style: TextStyle(fontSize: 30)),
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
@@ -119,7 +138,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
                 backgroundColor: Color.fromRGBO(161, 196, 253, 1),
               ),
             ),
-
           ],
         ),
       ),
@@ -127,134 +145,247 @@ class _CreatePostPageState extends State<CreatePostPage> {
   }
 }
 
-// 글의 세부 정보와 댓글을 표시하는 화면을 정의하는 StatefulWidget
-class PostDetailsPage extends StatefulWidget {
-  const PostDetailsPage({Key? key}) : super(key: key);
+class CommentSection extends StatefulWidget {
+  const CommentSection({Key? key}) : super(key: key);
 
   @override
-  _PostDetailsPageState createState() => _PostDetailsPageState();
+  _CommentSectionState createState() => _CommentSectionState();
 }
 
-// PostDetailsPage의 State 클래스
-class _PostDetailsPageState extends State<PostDetailsPage> {
-  final titleController = TextEditingController();
-  final contentController = TextEditingController();
-  final apiService = ApiService();
-
+class _CommentSectionState extends State<CommentSection> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        title: Text(
-          '게시판 - 게시글',
-          style: TextStyle(
-            fontSize: 20,
-            color: Color.fromRGBO(0, 0, 0, 1),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 20.0),
+        TextField(
+          decoration: InputDecoration(
+            labelText: "댓글을 입력하세요...",
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(35),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Color.fromRGBO(161, 196, 253, 1)),
+              borderRadius: BorderRadius.circular(35),
+            ),
+            contentPadding: EdgeInsets.all(20),
+            suffixIcon: IconButton(
+              icon: Icon(Icons.send),
+              onPressed: () {},
+            ),
           ),
         ),
-        centerTitle: false,
-        elevation: 0,
-        leading: Padding(
-          padding: EdgeInsets.only(left: 10),
-          child: InkWell(
-            onTap: () {},
-            child: SvgPicture.asset('assets/BackButton.svg'),
+        const SizedBox(height: 20.0),
+        Expanded(
+          child: ListView.builder(
+            itemCount: 0,
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text('댓글'),
+              );
+            },
           ),
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 제목 입력 필드
-            
-            const SizedBox(height: 20.0),
-            // 댓글 입력 필드
-            TextField(
-              decoration: InputDecoration(
-                labelText: "댓글을 입력하세요...",
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(35),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color.fromRGBO(161, 196, 253, 1)),
-                  borderRadius: BorderRadius.circular(35),
-                ),
-                contentPadding: EdgeInsets.all(20),
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.send),
-                  onPressed: () {},
-                ),
-              ),
-            ),
-            const SizedBox(height: 20.0),
-            // 댓글 목록
-            Expanded(
-              child: ListView.builder(
-                itemCount: 0,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text('댓글'),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
+      ],
     );
   }
 }
 
+  class PostDetailsPage extends StatefulWidget {
+    final String postTitle;
+    final String postContent;
 
-// 전체 게시판을 나타내는 StatefulWidget
-class PostPage extends StatefulWidget {
-  const PostPage({Key? key}) : super(key: key);
+    const PostDetailsPage({Key? key, required this.postTitle, required this.postContent}) : super(key: key);
 
-  @override
-  State<PostPage> createState() => _PostPageState();
-}
+    @override
+    _PostDetailsPageState createState() => _PostDetailsPageState();
+  }
 
-// PostPage의 State 클래스
-class _PostPageState extends State<PostPage> {
-  // ListView를 생성하는 메서드
-  Widget _buildListView() {
-    return ListView.builder(
-      itemCount: 0,
-      itemBuilder: (context, index) {
-        return Card(
-          margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          elevation: 2.0,
-          child: ListTile(
-            onTap: () {},
+    class _PostDetailsPageState extends State<PostDetailsPage> {
+      final ApiService apiService = ApiService();
+
+      Future<void> _editPost() async {
+        print('Editing post: ${widget.postTitle}'); // Debugging: Log when editing starts
+
+        try {
+          await apiService.updatePost(1, widget.postTitle + ' Updated', widget.postContent + ' Updated');
+          print('Post updated successfully'); // Debugging: Log when editing is successful
+          // You may want to refresh the UI or navigate back after successful update
+        } catch (e) {
+          print('Failed to update post: $e'); // Debugging: Log if editing fails
+        }
+      }
+
+    Future<void> _deletePost() async {
+      print('Deleting post: ${widget.postTitle}'); // Debugging: Log when deletion starts
+
+      try {
+        await apiService.deletePost(1);
+        print('Post deleted successfully'); // Debugging: Log when deletion is successful
+
+        // Access the parent widget directly and remove the post
+        final PostPage parentPage = ModalRoute.of(context)!.settings.arguments as PostPage;
+        parentPage.removePost(widget.postTitle);
+
+        // Navigate back after successful deletion
+        Navigator.pop(context);
+      } catch (e) {
+        print('Failed to delete post: $e'); // Debugging: Log if deletion fails
+      }
+    }
+
+
+      @override
+      Widget build(BuildContext context) {
+        return Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
             title: Text(
-              '제목',
+              '게시판 - 게시글',
               style: TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Color.fromRGBO(0, 0, 0, 1),
               ),
             ),
-            subtitle: Text('내용'),
+            centerTitle: false,
+            elevation: 0,
+            leading: Padding(
+              padding: EdgeInsets.only(left: 10),
+              child: InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: SvgPicture.asset('assets/BackButton.svg'),
+              ),
+            ),
+            actions: [
+              IconButton(
+                icon: Icon(Icons.edit, color: Color.fromRGBO(161, 196, 253, 1)),
+                onPressed: _editPost,
+              ),
+              IconButton(
+                icon: Icon(Icons.delete, color: Color.fromRGBO(161, 196, 253, 1)),
+                onPressed: _deletePost,
+              ),
+            ],
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.postTitle,
+                  style: TextStyle(
+                    fontSize: 25.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 15.0),
+                Text(
+                  widget.postContent,
+                  style: TextStyle(fontSize: 16.0),
+                ),
+              ],
+            ),
           ),
         );
-      },
-    );
+      }
+    }
+
+      @override
+      Widget build(BuildContext context) {
+        return Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            title: Text(
+              '게시판 - 게시글',
+              style: TextStyle(
+                fontSize: 20,
+                color: Color.fromRGBO(0, 0, 0, 1),
+              ),
+            ),
+            centerTitle: false,
+            elevation: 0,
+            leading: Padding(
+              padding: EdgeInsets.only(left: 10),
+              child: InkWell(
+                onTap: () {},
+                child: SvgPicture.asset('assets/BackButton.svg'),
+              ),
+            ),
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(30.0),
+            child: CommentSection(),
+          ),
+        );
+      }
+
+    class PostPage extends StatefulWidget {
+      const PostPage({Key? key}) : super(key: key);
+
+      @override
+      State<PostPage> createState() => _PostPageState();
+      
+      void removePost(String postTitle) {}
+    }
+
+class _PostPageState extends State<PostPage> {
+  List<Map<String, String>> createdPosts = [];
+
+  void addCreatedPost(String title, String content) {
+    setState(() {
+      createdPosts.add({'title': title, 'content': content});
+    });
   }
+
+
+  Widget _buildListView() {
+  return ListView.builder(
+    itemCount: createdPosts.length,
+    itemBuilder: (context, index) {
+      final post = createdPosts[index];
+      return Card(
+        margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+        elevation: 2.0,
+        child: ListTile(
+          onTap: () {
+            // Navigate to detailed post page
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PostDetailsPage(postTitle: post['title'] ?? '', postContent: post['content'] ?? ''),
+              ),
+            );
+          },
+          title: Text(
+            post['title'] ?? '',
+            style: TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          subtitle: Text(post['content'] ?? ''),
+        ),
+      );
+    },
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 5,
       child: Scaffold(
-        appBar: null, // 앱 바를 사용하지 않음
+        appBar: null,
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: <Widget>[
               const SizedBox(height: 80),
-              // 검색 기능을 제공하는 TextField
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: TextField(
@@ -278,7 +409,6 @@ class _PostPageState extends State<PostPage> {
                   ),
                 ),
               ),
-              // 각 카테고리를 표시하는 TabBar
               TabBar(
                 labelColor: Color.fromRGBO(161, 196, 253, 1),
                 unselectedLabelColor: Colors.black,
@@ -292,7 +422,6 @@ class _PostPageState extends State<PostPage> {
                   Tab(text: '뉴스'),
                 ],
               ),
-              // 각 카테고리에 따른 게시글 목록을 표시하는 TabBarView
               Expanded(
                 child: TabBarView(
                   children: [
@@ -307,13 +436,11 @@ class _PostPageState extends State<PostPage> {
             ],
           ),
         ),
-
-        // 글 작성 화면으로 이동하는 FloatingActionButton
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const CreatePostPage()),
+              MaterialPageRoute(builder: (context) => CreatePostPage(parent: this)),
             );
           },
           child: const Icon(Icons.create),

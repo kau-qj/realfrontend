@@ -6,6 +6,7 @@ import 'package:cookie_jar/cookie_jar.dart';
 import 'package:collection/collection.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:qj_projec/httpApi/cookie_utils.dart';
+import 'package:path_provider/path_provider.dart';
 
 class ApiService {
   final String baseUrl = 'https://kauqj.shop';
@@ -87,14 +88,25 @@ class ApiService {
         ..fields['nickName'] = nickName
         ..fields['jobName'] = jobName;
 
+      print("imageUrl: $imageUrl");
+
       if (imageUrl != null) {
-        request.files
-            .add(await http.MultipartFile.fromPath('profileImage', imageUrl));
+        // 이미지 URL에서 파일 다운로드
+        var response = await http.get(Uri.parse(imageUrl));
+        var documentDirectory = await getApplicationDocumentsDirectory();
+        var firstPath = documentDirectory.path + "/images";
+        var filePathAndName = documentDirectory.path + '/images/temp.jpg';
+        await Directory(firstPath).create(recursive: true); // 폴더 생성
+        File file2 = File(filePathAndName);
+        file2.writeAsBytesSync(response.bodyBytes);
+
+        // MultipartFile 생성
+        request.files.add(
+            await http.MultipartFile.fromPath('profileImage', filePathAndName));
       }
 
       var response = await http.Response.fromStream(await request.send());
       var data = jsonDecode(response.body);
-
       if (response.statusCode == 200 && data['isSuccess'] == true) {
         print('프로필 업데이트 성공');
       } else {
