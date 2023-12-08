@@ -80,7 +80,7 @@ class _QJStorageState extends State<QJStorage> {
                               return Text(
                                 course['title'],
                                 style: TextStyle(
-                                  fontSize: screenSize.width * 0.05, // 글자 크기
+                                  fontSize: screenSize.width * 0.04, // 글자 크기
                                   fontWeight: FontWeight.bold, // 글자 두께
                                 ),
                                 textAlign: TextAlign.center,
@@ -121,11 +121,11 @@ class _QJStorageState extends State<QJStorage> {
                 } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                   var course = snapshot.data![0]; // 첫 번째 코스 세부정보를 가져옵니다.
                   return Positioned(
-                    top: screenSize.height * 0.31,
+                    top: screenSize.height * 0.32,
                     left: 0,
                     right: 0,
                     child: Container(
-                      height: screenSize.height - screenSize.height * 0.35,
+                      height: screenSize.height - screenSize.height * 0.38,
                       child: ListView(
                         padding: EdgeInsets.symmetric(
                             horizontal: screenSize.width * 0.05), // 패딩 값 지정
@@ -147,13 +147,14 @@ class _QJStorageState extends State<QJStorage> {
                                     leading: Text(
                                       'Score: ${item['score']}',
                                       style: TextStyle(
-                                        fontSize: screenSize.width * 0.04,
+                                        fontSize: screenSize.width * 0.03,
                                       ),
                                     ),
                                     title: Text(
                                       item['comment'],
                                       style: TextStyle(
                                         fontSize: screenSize.width * 0.035,
+                                        color: Color.fromRGBO(45, 67, 77, 1),
                                       ),
                                     ),
                                   ),

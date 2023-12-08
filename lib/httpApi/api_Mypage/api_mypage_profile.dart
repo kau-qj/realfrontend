@@ -6,7 +6,6 @@ import 'package:cookie_jar/cookie_jar.dart';
 import 'package:collection/collection.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:qj_projec/httpApi/cookie_utils.dart';
-import 'package:path_provider/path_provider.dart';
 
 class ApiService {
   final String baseUrl = 'https://kauqj.shop';
@@ -45,6 +44,8 @@ class ApiService {
         String? imageUrl = data['result']['imageUrl'];
         String? parsedImageUrl;
 
+        print('dkdkdk: $imageUrl');
+        print('xcxcxc: $parsedImageUrl');
         if (imageUrl != null && imageUrl.isNotEmpty) {
           try {
             final uri = Uri.parse(imageUrl);
@@ -57,7 +58,8 @@ class ApiService {
         return {
           'nickName': nickName ?? '',
           'jobName': jobName ?? '',
-          'imageUrl': parsedImageUrl ?? 'assets/profile.png',
+          'imageUrl': parsedImageUrl ??
+              'assets/profile.png', // URL이 유효하지 않으면 기본 이미지 경로 사용
         };
       } else {
         throw Exception('Result key is not found in the response');
@@ -88,25 +90,22 @@ class ApiService {
         ..fields['nickName'] = nickName
         ..fields['jobName'] = jobName;
 
-      print("imageUrl: $imageUrl");
-
       if (imageUrl != null) {
-        // 이미지 URL에서 파일 다운로드
-        var response = await http.get(Uri.parse(imageUrl));
-        var documentDirectory = await getApplicationDocumentsDirectory();
-        var firstPath = documentDirectory.path + "/images";
-        var filePathAndName = documentDirectory.path + '/images/temp.jpg';
-        await Directory(firstPath).create(recursive: true); // 폴더 생성
-        File file2 = File(filePathAndName);
-        file2.writeAsBytesSync(response.bodyBytes);
-
-        // MultipartFile 생성
-        request.files.add(
-            await http.MultipartFile.fromPath('profileImage', filePathAndName));
+        if (imageUrl.startsWith('http')) {
+          // Case 3: S3 URL provided directly
+          request.fields['s3ImageUrl'] = imageUrl;
+        } else if (!imageUrl.startsWith('assets')) {
+          // Case 1: Image file uploaded
+          request.files
+              .add(await http.MultipartFile.fromPath('profileImage', imageUrl));
+        }
       }
+      print('0909: ${request.fields}');
 
       var response = await http.Response.fromStream(await request.send());
+      print('제밝:${response.body}');
       var data = jsonDecode(response.body);
+      print('dadada:$data');
       if (response.statusCode == 200 && data['isSuccess'] == true) {
         print('프로필 업데이트 성공');
       } else {

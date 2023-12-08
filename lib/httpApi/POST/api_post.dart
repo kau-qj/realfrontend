@@ -1,9 +1,9 @@
 //api_post.dart
-
+import 'dart:ffi';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:collection/collection.dart';
 import 'package:qj_projec/httpApi/cookie_utils.dart';
+import 'package:collection/collection.dart';
 
 class ApiService {
   final baseUrl = 'https://kauqj.shop';
@@ -11,11 +11,11 @@ class ApiService {
 
   Map<String, String> headers = {
     'Content-Type': 'application/json',
+    'Accept': 'application/json',
   };
 
-
   // 특정 게시판 게시글 조회
-  Future<void> getPosts(String postType) async {
+  Future<Map<String, dynamic>> getPosts(int postType) async {
     final uri = Uri.parse(baseUrl);
     final cookies = await cookieJar.loadForRequest(uri);
     String jwtToken = '';
@@ -38,7 +38,7 @@ class ApiService {
     };
 
     final response = await http.get(
-      Uri.parse('$baseUrl/board/postType/$postType'),
+      Uri.parse('$baseUrl/board/posts/$postType'),
       headers: headers,
     );
 
@@ -50,7 +50,7 @@ class ApiService {
   }
 
   // 특정 게시글 상세 조회
-  Future<void> getPostDetail(int postIdx) async {
+  Future<Map<String, dynamic>> getPostDetail(int postIdx) async {
     final uri = Uri.parse(baseUrl);
     final cookies = await cookieJar.loadForRequest(uri);
     String jwtToken = '';
@@ -102,7 +102,9 @@ class ApiService {
     // 'Bearer' 헤더에 적절한 토큰 값을 설정
     final headers = {
       'Cookie': cookies.map((c) => '${c.name}=${c.value}').join('; '),
-      'Authorization': 'Bearer $jwtToken'
+      'Authorization': 'Bearer $jwtToken',
+      'accept': 'application/json',
+      'Content-Type': 'application/json; charset=UTF-8',
     };
 
     final response = await http.patch(
@@ -176,11 +178,13 @@ class ApiService {
     // 'Bearer' 헤더에 적절한 토큰 값을 설정
     final headers = {
       'Cookie': cookies.map((c) => '${c.name}=${c.value}').join('; '),
-      'Authorization': 'Bearer $jwtToken'
+      'Authorization': 'Bearer $jwtToken',
+      'accept': 'application/json',
+      'Content-Type': 'application/json; charset=UTF-8',
     };
 
     final response = await http.post(
-      Uri.parse('$baseUrl/board/posts'),
+      Uri.parse('$baseUrl$endpoint'),
       headers: headers,
       body: jsonEncode(<String, String>{
         'Title': title,
@@ -219,7 +223,9 @@ class ApiService {
     // 'Bearer' 헤더에 적절한 토큰 값을 설정
     final headers = {
       'Cookie': cookies.map((c) => '${c.name}=${c.value}').join('; '),
-      'Authorization': 'Bearer $jwtToken'
+      'Authorization': 'Bearer $jwtToken',
+      'accept': 'application/json',
+      'Content-Type': 'application/json; charset=UTF-8',
     };
 
     final response = await http.post(

@@ -105,6 +105,9 @@ class _LoginPageState extends State<LoginPage> {
                     labelText: '아이디',
                     labelStyle: TextStyle(fontSize: 18),
                     border: UnderlineInputBorder(),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Color.fromRGBO(161, 196, 253, 0.94)),  // 여기에서 RGB 값을 지정합니다.
+                    ),
                     prefixIcon: Icon(Icons.account_circle, color: primaryColor),
                   ),
                 ),
@@ -115,6 +118,9 @@ class _LoginPageState extends State<LoginPage> {
                     labelText: '비밀번호',
                     labelStyle: TextStyle(fontSize: 18),
                     border: UnderlineInputBorder(),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Color.fromRGBO(161, 196, 253, 0.94)),  // 여기에서 RGB 값을 지정합니다.
+                    ),
                     prefixIcon: Icon(Icons.lock, color: primaryColor),
                     suffixIcon: IconButton(
                       icon: Icon(

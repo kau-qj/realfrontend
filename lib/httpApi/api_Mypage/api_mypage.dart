@@ -41,6 +41,7 @@ class ApiService {
           'userName': data['result']['userName'],
           'jobName': data['result']['jobName'],
           'imageUrl': data['result']['imageUrl'],
+          'nickName': data['result']['nickName'],
         };
       } else {
         throw Exception('Result key is not found in the response');

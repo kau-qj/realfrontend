@@ -25,6 +25,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   void initState() {
     super.initState();
     _fetchUserProfile();
+    _isImageUpdated = false;
   }
 
   void _fetchUserProfile() async {
@@ -47,17 +48,20 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     try {
       final ApiService _apiService = ApiService();
 
-      // 이미지가 업데이트되지 않았다면 기존의 imageUrl을 그대로 사용
+      // 이전에 설정된 imageUrl을 유지하고, 새로운 이미지가 선택되었을 때만 업데이트
       String? updatedImageUrl = _isImageUpdated ? imageUrl : imageUrl;
+      print("989989: $updatedImageUrl");
 
       await _apiService.saveProfile(
         nickName: nickNameController.text,
         jobName: jobNameController.text,
-        imageUrl: updatedImageUrl, // 새 이미지 URL 또는 기존 URL
+        imageUrl: updatedImageUrl, // 새로운 이미지 또는 기존 이미지 URL
       );
+
       Navigator.of(context).pop({
+        'nickName': nickNameController.text,
         'jobName': jobNameController.text,
-        'imageUrl': updatedImageUrl // 새로운 이미지가 없다면 기존 imageUrl 사용
+        'imageUrl': updatedImageUrl
       });
     } catch (e) {
       print('Error saving user profile: $e');

@@ -145,6 +145,7 @@ class _MyPageState extends State<MyPage> {
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
       body: Column(
         children: [
+          const SizedBox(height: 50),
           SizedBox(
             height: screenHeight * 0.13, // AppBar의 높이와 동일하게
             child: Column(
@@ -200,7 +201,7 @@ class _MyPageState extends State<MyPage> {
                   child: Text(
                     '$userName님 안녕하세요!',
                     style: const TextStyle(
-                      fontSize: 13,
+                      fontSize: 15,
                       color: Color.fromARGB(255, 0, 0, 0),
                     ),
                   ),

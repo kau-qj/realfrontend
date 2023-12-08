@@ -137,13 +137,14 @@ class _MyHompageState extends State<MyHompage> {
                                 alignment: Alignment.topLeft,
                                 child: Padding(
                                   padding:
-                                      EdgeInsets.fromLTRB(20.0, 15.0, 8.0, 1.0),
+                                      EdgeInsets.fromLTRB(30.0, 15.0, 8.0, 1.0),
                                   child: Text(
                                     "채용공고",
                                     style: TextStyle(
                                       fontFamily: 'Poppins',
-                                      fontSize: 17,
-                                      color: Colors.black,
+                                      fontSize: 20,
+                                      color: Color.fromRGBO(55, 62, 80, 1),
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
@@ -234,9 +235,36 @@ class _MyHompageState extends State<MyHompage> {
                   alignment: Alignment.center,
                   child: Container(
                     alignment: Alignment.center,
-                    padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
                     width: width,
-                    child: Text(
+                    child: title.contains(']') ? RichText(
+                      textAlign: TextAlign.center,
+                      maxLines: 5,
+                      overflow: TextOverflow.ellipsis,
+                      text: TextSpan(
+                        style: TextStyle(
+                          //fontSize: 12.0,
+                          //fontWeight: FontWeight.bold,
+                        ),
+                        children: <TextSpan>[
+                          TextSpan(
+                            text: title.split(']')[0] + ']\n\n\n',  // 줄바꿈 추가
+                            style: TextStyle(
+                              color: Color.fromRGBO(55, 62, 80, 1),  // 첫 번째 부분의 글자색
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15.0,
+                            ),
+                          ),
+                          TextSpan(
+                            text: title.split(']')[1],
+                            style: TextStyle(
+                              color: Color.fromRGBO(55, 62, 80, 1),  // 두 번째 부분의 글자색
+                              fontSize: 12.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ) : Text(
                       title,
                       textAlign: TextAlign.center,
                       maxLines: 3,

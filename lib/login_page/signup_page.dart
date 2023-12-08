@@ -84,6 +84,9 @@ class _SignupPageState extends State<SignupPage> {
               decoration: InputDecoration(
                 labelText: '학교',
                 border: UnderlineInputBorder(),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Color.fromRGBO(161, 196, 253, 0.94)),  // 여기에서 RGB 값을 지정합니다.
+                ),
                 prefixIcon: Icon(Icons.school, color: primaryColor),
               ),
             ),
@@ -93,6 +96,9 @@ class _SignupPageState extends State<SignupPage> {
               decoration: InputDecoration(
                 labelText: '전공',
                 border: UnderlineInputBorder(),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Color.fromRGBO(161, 196, 253, 0.94)),  // 여기에서 RGB 값을 지정합니다.
+                ),
                 prefixIcon: Icon(Icons.book, color: primaryColor),
               ),
             ),
@@ -114,6 +120,9 @@ class _SignupPageState extends State<SignupPage> {
               decoration: InputDecoration(
                 labelText: '학년',
                 border: UnderlineInputBorder(),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Color.fromRGBO(161, 196, 253, 0.94)),  // 여기에서 RGB 값을 지정합니다.
+                ),
                 prefixIcon: Icon(Icons.school, color: primaryColor),
               ),
             ),
@@ -123,6 +132,9 @@ class _SignupPageState extends State<SignupPage> {
               decoration: InputDecoration(
                 labelText: '관심직무',
                 border: UnderlineInputBorder(),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Color.fromRGBO(161, 196, 253, 0.94)),  // 여기에서 RGB 값을 지정합니다.
+                ),
                 prefixIcon: Icon(Icons.workspace_premium, color: primaryColor),
               ),
             ),
@@ -132,6 +144,9 @@ class _SignupPageState extends State<SignupPage> {
               decoration: InputDecoration(
                 labelText: '이름',
                 border: UnderlineInputBorder(),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Color.fromRGBO(161, 196, 253, 0.94)),  // 여기에서 RGB 값을 지정합니다.
+                ),
                 prefixIcon: Icon(Icons.person, color: primaryColor),
               ),
             ),
@@ -141,6 +156,9 @@ class _SignupPageState extends State<SignupPage> {
               decoration: InputDecoration(
                 labelText: '연락처',
                 border: UnderlineInputBorder(),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Color.fromRGBO(161, 196, 253, 0.94)),  // 여기에서 RGB 값을 지정합니다.
+                ),
                 prefixIcon: Icon(Icons.phone, color: primaryColor),
               ),
             ),
@@ -150,6 +168,9 @@ class _SignupPageState extends State<SignupPage> {
               decoration: InputDecoration(
                 labelText: '닉네임',
                 border: UnderlineInputBorder(),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Color.fromRGBO(161, 196, 253, 0.94)),  // 여기에서 RGB 값을 지정합니다.
+                ),
                 prefixIcon: Icon(Icons.person_pin, color: primaryColor),
               ),
             ),
@@ -159,6 +180,9 @@ class _SignupPageState extends State<SignupPage> {
               decoration: InputDecoration(
                 labelText: '아이디',
                 border: UnderlineInputBorder(),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Color.fromRGBO(161, 196, 253, 0.94)),  // 여기에서 RGB 값을 지정합니다.
+                ),
                 prefixIcon: Icon(Icons.perm_identity, color: primaryColor),
               ),
             ),
@@ -168,6 +192,9 @@ class _SignupPageState extends State<SignupPage> {
               decoration: InputDecoration(
                 labelText: '비밀번호',
                 border: UnderlineInputBorder(),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Color.fromRGBO(161, 196, 253, 0.94)),  // 여기에서 RGB 값을 지정합니다.
+                ),
                 prefixIcon: Icon(Icons.lock, color: primaryColor),
               ),
               obscureText: true,
