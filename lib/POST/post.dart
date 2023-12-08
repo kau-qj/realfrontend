@@ -1,8 +1,11 @@
 // post.dart
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'api_post.dart';
+import 'package:qj_projec/POST/api_service.dart';
+import 'package:qj_projec/POST/post_detail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 
 class CreatePostPage extends StatefulWidget {
   final _PostPageState parent;
@@ -16,14 +19,9 @@ class CreatePostPage extends StatefulWidget {
 class _CreatePostPageState extends State<CreatePostPage> {
   final titleController = TextEditingController();
   final contentController = TextEditingController();
-  final apiService = ApiService();
-
-  @override
-  void dispose() {
-    titleController.dispose();
-    contentController.dispose();
-    super.dispose();
-  }
+  int selectedPostType = 0; // Default: 자유
+  String selectedBoardName = '자유';
+  bool _isChecked = false;
 
   @override
   Widget build(BuildContext context) {
@@ -48,180 +46,229 @@ class _CreatePostPageState extends State<CreatePostPage> {
             child: SvgPicture.asset('assets/BackButton.svg'),
           ),
         ),
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 30),
+            child: Container(
+              height: 50,
+              width: 120,
+              child: DropdownButtonFormField<int>(
+                decoration: InputDecoration(
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color.fromRGBO(161, 196, 253, 1)),
+                  ),
+                ),
+                items: [
+                  DropdownMenuItem<int>(
+                    value: 0,
+                    child: Text('자유'),
+                  ),
+                  DropdownMenuItem<int>(
+                    value: 1,
+                    child: Text('채용'),
+                  ),
+                  DropdownMenuItem<int>(
+                    value: 2,
+                    child: Text('대외활동'),
+                  ),
+                  DropdownMenuItem<int>(
+                    value: 3,
+                    child: Text('동아리'),
+                  ),
+                  DropdownMenuItem<int>(
+                    value: 4,
+                    child: Text('뉴스'),
+                  ),
+                ],
+                value: selectedPostType,
+                onChanged: (int? value) {
+                  setState(() {
+                    selectedPostType = value ?? 0;
+                    switch (selectedPostType) {
+                      case 0:
+                        selectedBoardName = '자유';
+                        break;
+                      case 1:
+                        selectedBoardName = '채용';
+                        break;
+                      case 2:
+                        selectedBoardName = '대외활동';
+                        break;
+                      case 3:
+                        selectedBoardName = '동아리';
+                        break;
+                      case 4:
+                        selectedBoardName = '뉴스';
+                        break;
+                    }
+                  });
+                },
+              ),
+            ),
+          ),
+        ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: EdgeInsets.fromLTRB(30.0, 20.0, 30.0, 0.0),
         child: Column(
           children: [
             Container(
-              height: 70,
+              height: 50,
               child: TextField(
                 controller: titleController,
                 decoration: InputDecoration(
-                  labelText: '제목',
+                  hintText: '제목',
+                  hintStyle: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 20,
+                  ),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Color.fromRGBO(161, 196, 253, 0.94)),
+                  ),
                 ),
                 style: TextStyle(
-                  fontSize: 25.0,
+                  fontSize: 20.0,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            const SizedBox(height: 15.0),
+            const SizedBox(height: 20.0),
             Container(
-              height: 300,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 2,
-                    blurRadius: 10,
-                    offset: Offset(0, 3),
-                  ),
-                ],
-              ),
+              height: 230,
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(0.0),
                 child: SingleChildScrollView(
                   child: TextField(
                     controller: contentController,
+                    minLines: 10,
+                    maxLines: null,
                     decoration: InputDecoration(
-                      labelText: '내용을 입력해주세요',
+                      hintText: '내용을 입력해주세요',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide(color: Color.fromRGBO(161, 196, 253, 0.94)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        borderSide: BorderSide(color: Color.fromRGBO(161, 196, 253, 0.94)),
+                      ),
                     ),
                     style: TextStyle(fontSize: 16.0),
-                    maxLines: null,
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 240.0),
-            ElevatedButton(
-              onPressed: () async {
-                final title = titleController.text;
-                final content = contentController.text;
-                try {
-                  await apiService.createPost(title, content, 2);
+            const SizedBox(height: 0.0),
+            Row(
+              children: <Widget>[
+                Text(
+                  "익명",
+                  style: TextStyle(
+                    fontSize: 16.0,
+                  ),
+                ),
+                Checkbox(
+                  checkColor: Colors.white,
+                  activeColor: Color.fromRGBO(161, 196, 253, 0.94),
+                  value: _isChecked,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      _isChecked = value ?? false;
+                    });
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 100.0),
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color.fromRGBO(194, 233, 251, 1),
+                    Color.fromRGBO(161, 196, 253, 0.94),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: ElevatedButton(
+                onPressed: () async {
+                  final title = titleController.text;
+                  final content = contentController.text;
 
-                  widget.parent.addCreatedPost(title, content);
+                  if (title.isEmpty) {
+                    print('제목을 입력하세요.');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('제목을 입력하세요.'),
+                        backgroundColor: Color.fromRGBO(161, 196, 253, 1),
+                      ),
+                    );
+                    return;
+                  } else if (content.isEmpty) {
+                    print('내용을 입력하세요.');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('내용을 입력하세요.'),
+                        backgroundColor: Color.fromRGBO(161, 196, 253, 1),
+                      ),
+                    );
+                    return;
+                  } else if (title.isEmpty && content.isEmpty) {
+                    print('제목과 내용을 입력하세요.');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('제목과 내용을 입력하세요.'),
+                        backgroundColor: Color.fromRGBO(161, 196, 253, 1),
+                      ),
+                    );
+                    return;
+                  }
 
                   final prefs = await SharedPreferences.getInstance();
-                  await prefs.setString('title', title);
-                  await prefs.setString('content', content);
+                  final apiService = ApiService();
+                  try {
+                    await apiService.createPost(title, content, selectedPostType);
+                    widget.parent.addCreatedPost(title, content, selectedPostType, selectedBoardName);
+                    await prefs.setString('title', title);
+                    await prefs.setString('content', content);
+                    final storedTitle = prefs.getString('title');
+                    final storedContent = prefs.getString('content');
+                    print('Stored title: $storedTitle');
+                    print('Stored content: $storedContent');
 
-                  final storedTitle = prefs.getString('title');
-                  final storedContent = prefs.getString('content');
-                  print('Stored title: $storedTitle');
-                  print('Stored content: $storedContent');
-
-                  Navigator.pop(context);
-                } catch (e) {
-                  print('게시글 작성에 실패했습니다: $e');
-                  if (e is Error) {
-                    print('Stack trace: ${e.stackTrace}');
+                    Navigator.pop(context);
+                  } catch (e) {
+                    print('게시글 작성에 실패했습니다: $e');
+                    if (e is Error) {
+                      print('Stack trace: ${e.stackTrace}');
+                    }
                   }
-                }
-                if (title.isEmpty && content.isEmpty) {
-                  print('제목과 내용을 입력하세요.');
-                } else if (title.isEmpty) {
-                  print('제목을 입력하세요.');
-                } else if (content.isEmpty) {
-                  print('내용을 입력하세요.');
-                }
-              },
-              child: const Text('작성완료', style: TextStyle(fontSize: 30)),
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+                },
+                child: const Text('작성완료', style: TextStyle(fontSize: 30)),
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                    const EdgeInsets.symmetric(horizontal: 100),
+                  ),
+                  backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                  shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 80),
-                backgroundColor: Color.fromRGBO(161, 196, 253, 1),
               ),
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class CommentSection extends StatefulWidget {
-  const CommentSection({Key? key}) : super(key: key);
-
-  @override
-  _CommentSectionState createState() => _CommentSectionState();
-}
-
-class _CommentSectionState extends State<CommentSection> {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 20.0),
-        TextField(
-          decoration: InputDecoration(
-            labelText: "댓글을 입력하세요...",
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(35),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Color.fromRGBO(161, 196, 253, 1)),
-              borderRadius: BorderRadius.circular(35),
-            ),
-            contentPadding: EdgeInsets.all(20),
-            suffixIcon: IconButton(
-              icon: Icon(Icons.send),
-              onPressed: () {},
-            ),
-          ),
-        ),
-        const SizedBox(height: 20.0),
-        Expanded(
-          child: ListView.builder(
-            itemCount: 0,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text('댓글'),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _PostDetailsPageState extends State<StatefulWidget> {
-  final titleController = TextEditingController();
-  final contentController = TextEditingController();
-  final apiService = ApiService();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        title: Text(
-          '게시판 - 게시글',
-          style: TextStyle(
-            fontSize: 20,
-            color: Color.fromRGBO(0, 0, 0, 1),
-          ),
-        ),
-        centerTitle: false,
-        elevation: 0,
-        leading: Padding(
-          padding: EdgeInsets.only(left: 10),
-          child: InkWell(
-            onTap: () {},
-            child: SvgPicture.asset('assets/BackButton.svg'),
-          ),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: CommentSection(),
       ),
     );
   }
@@ -234,35 +281,140 @@ class PostPage extends StatefulWidget {
   State<PostPage> createState() => _PostPageState();
 }
 
-class _PostPageState extends State<PostPage> {
-  List<Map<String, String>> createdPosts = [];
+class _PostPageState extends State<PostPage> with AutomaticKeepAliveClientMixin {
+  List<Map<String, dynamic>> createdPosts = [];
+  int currentTab = 0;
+  String selectedBoardName = '자유';
 
-  void addCreatedPost(String title, String content) {
+  void _savePosts() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> postsJson =
+        createdPosts.map((post) => json.encode(post)).toList();
+    prefs.setStringList('createdPosts', postsJson);
+  }
+
+  void _loadPosts() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? postsJson = prefs.getStringList('createdPosts');
+    if (postsJson != null) {
+      setState(() {
+        createdPosts = postsJson
+            .map<Map<String, dynamic>>((postJson) {
+              Map<String, dynamic> postMap =
+                  Map<String, dynamic>.from(json.decode(postJson));
+              return {
+                'title': postMap['title'],
+                'content': postMap['content'],
+                'postType': postMap['postType'],
+                'selectedBoardName': postMap['selectedBoardName'],
+              };
+            })
+            .toList()
+            .reversed
+            .toList();
+      });
+    }
+  }
+
+  void addCreatedPost(
+      String title, String content, int postType, String selectedBoardName) {
     setState(() {
-      createdPosts.add({'title': title, 'content': content});
+      createdPosts.add({
+        'title': title,
+        'content': content,
+        'postType': postType,
+        'selectedBoardName': selectedBoardName,
+      });
+      _savePosts();
+      _loadPosts();
     });
   }
 
-  Widget _buildListView() {
+  void removePost(String title) {
+    setState(() {
+      createdPosts.removeWhere((post) => post['title'] == title);
+      _savePosts();
+    });
+  }
+
+  @override
+void initState() {
+  super.initState();
+  print('initState called');
+  _loadPosts();
+}
+
+  @override
+  void dispose() {
+    // 페이지가 종료될 때 _loadPosts 다시 호출
+    _loadPosts();
+    super.dispose();
+  }
+
+
+  @override
+  bool get wantKeepAlive => true;
+
+  Widget _buildListViewForPostType(int postType) {
+    List<Map<String, dynamic>> postsForType = createdPosts
+        .where((post) => post['postType'] == postType)
+        .toList()
+        .reversed
+        .toList();
+
     return ListView.builder(
-      itemCount: createdPosts.length,
+      itemCount: postsForType.length,
       itemBuilder: (context, index) {
-        final post = createdPosts[index];
+        final post = postsForType[index];
         return Card(
           margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          elevation: 2.0,
-          child: ListTile(
+          elevation: 10.0,
+          shadowColor: Colors.grey,
+          child: InkWell(
             onTap: () {
-              // TODO: Navigate to detailed post page
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PostDetailsPage(
+                    postTitle: post['title'] ?? '',
+                    postContent: post['content'] ?? '',
+                    createAT: post['time'] ?? '',
+                    nickName: post['nickName'] ?? '',
+                    selectedBoardName: post['selectedBoardName'] ?? '',
+                    onDelete: () async {
+                      removePost(post['title'] ?? '');
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('게시글이 삭제되었습니다.'),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              );
             },
-            title: Text(
-              post['title'] ?? '',
-              style: TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
+            child: Container(
+              height: 93.0,
+              padding: EdgeInsets.all(13.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    post['title'] ?? '',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8.0),
+                  Text(
+                    post['content'] ?? '',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ),
             ),
-            subtitle: Text(post['content'] ?? ''),
           ),
         );
       },
@@ -298,7 +450,8 @@ class _PostPageState extends State<PostPage> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
-                      borderSide: BorderSide(color: Color.fromRGBO(161, 196, 253, 1)),
+                      borderSide:
+                          BorderSide(color: Color.fromRGBO(161, 196, 253, 1)),
                     ),
                   ),
                 ),
@@ -315,15 +468,20 @@ class _PostPageState extends State<PostPage> {
                   Tab(text: '동아리'),
                   Tab(text: '뉴스'),
                 ],
+                onTap: (index) {
+                  setState(() {
+                    currentTab = index;
+                  });
+                },
               ),
               Expanded(
                 child: TabBarView(
                   children: [
-                    _buildListView(),
-                    _buildListView(),
-                    _buildListView(),
-                    _buildListView(),
-                    _buildListView(),
+                    _buildListViewForPostType(0),
+                    _buildListViewForPostType(1),
+                    _buildListViewForPostType(2),
+                    _buildListViewForPostType(3),
+                    _buildListViewForPostType(4),
                   ],
                 ),
               ),
