@@ -1,7 +1,5 @@
-// post_detail.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:http/http.dart';
 import 'package:qj_projec/POST/api_service.dart';
 import 'package:qj_projec/POST/post.dart';
 
@@ -31,12 +29,14 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
   final ApiService apiService = ApiService();
   late String mutablePostTitle;
   late String mutablePostContent;
+  late TextEditingController commentController;
 
   @override
   void initState() {
     super.initState();
     mutablePostTitle = widget.postTitle;
     mutablePostContent = widget.postContent;
+    commentController = TextEditingController();
   }
 
   Future<void> _editPost() async {
@@ -60,7 +60,6 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
     print('Deleting post: ${widget.postTitle}');
 
     try {
-      print("$Response");
       await apiService.deletePost(1);
       print('Post deleted successfully');
 
@@ -91,6 +90,12 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
         );
       },
     );
+  }
+
+  void _addComment() {
+    String commentText = commentController.text;
+    print('Comment added: $commentText');
+    commentController.clear();
   }
 
   @override
@@ -178,6 +183,46 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
                   style: TextStyle(fontSize: 16.0),
                 ),
               ),
+            ),
+            Spacer(), // Added Spacer to push widgets to the bottom
+            const SizedBox(height: 20.0),
+            Text(
+              '',
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 10.0),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: commentController,
+                    decoration: InputDecoration(
+                      labelText: '댓글을 입력하세요',
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color.fromRGBO(161, 196, 253, 1),
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color.fromRGBO(161, 196, 253, 1),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 10.0),
+                ElevatedButton(
+                  onPressed: _addComment,
+                  style: ElevatedButton.styleFrom(
+                    primary: Color.fromRGBO(161, 196, 253, 1),
+                  ),
+                  child: Icon(Icons.send),
+                ),
+              ],
             ),
           ],
         ),
