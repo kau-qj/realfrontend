@@ -1,8 +1,9 @@
 //api_post.dart
+import 'dart:ffi';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:realfronted/httpApi/cookie_utils.dart';
 import 'package:collection/collection.dart';
+import 'package:realfront12/httpApi/cookie_utils.dart';
 
 class ApiService {
   final baseUrl = 'https://kauqj.shop';
@@ -10,11 +11,11 @@ class ApiService {
 
   Map<String, String> headers = {
     'Content-Type': 'application/json',
+    'Accept': 'application/json',
   };
 
-
   // 특정 게시판 게시글 조회
-  Future<void> getPosts(String postType) async {
+  Future<Map<String, dynamic>> getPosts(int postType) async {
     final uri = Uri.parse(baseUrl);
     final cookies = await cookieJar.loadForRequest(uri);
     String jwtToken = '';
@@ -37,7 +38,7 @@ class ApiService {
     };
 
     final response = await http.get(
-      Uri.parse('$baseUrl/board/postType/$postType'),
+      Uri.parse('$baseUrl/board/posts/$postType'),
       headers: headers,
     );
 
