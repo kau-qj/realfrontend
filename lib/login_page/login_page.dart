@@ -23,44 +23,32 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _login() async {
-  String userId = _emailController.text;
-  String userPw = _passwordController.text;
-  try {
-    // 이 부분에서 context를 추가해서 loginUser 함수를 호출합니다.
-    String result = await loginUser(userId, userPw, context);
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('로그인 결과'),
-        content: Text(result),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text('확인'),
-          ),
-        ],
-      ),
-    );
-  } catch (error) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('로그인 실패'),
-        content: Text(error.toString()),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text('확인'),
-          ),
-        ],
-      ),
-    );
+    String userId = _emailController.text;
+    String userPw = _passwordController.text;
+    try {
+      // 이 부분에서 context를 추가해서 loginUser 함수를 호출합니다.
+      String result = await loginUser(userId, userPw, context);
+      
+      // 로그인 성공 시 메시지를 디버그 콘솔에 출력합니다.
+      print('로그인 성공: $result');
+    } catch (error) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('로그인 실패'),
+          content: Text(error.toString()),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('확인'),
+            ),
+          ],
+        ),
+      );
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
         children: <Widget>[
           Positioned(
             right: 0,
-            top: screenHeight * 0.011,
+            top: screenHeight * 0.0001,
             child: SvgPicture.asset(
               'assets/LoginPageCircle.svg',
               height: 230,
@@ -105,9 +93,6 @@ class _LoginPageState extends State<LoginPage> {
                     labelText: '아이디',
                     labelStyle: TextStyle(fontSize: 18),
                     border: UnderlineInputBorder(),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Color.fromRGBO(161, 196, 253, 0.94)),  // 여기에서 RGB 값을 지정합니다.
-                    ),
                     prefixIcon: Icon(Icons.account_circle, color: primaryColor),
                   ),
                 ),
@@ -118,9 +103,6 @@ class _LoginPageState extends State<LoginPage> {
                     labelText: '비밀번호',
                     labelStyle: TextStyle(fontSize: 18),
                     border: UnderlineInputBorder(),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Color.fromRGBO(161, 196, 253, 0.94)),  // 여기에서 RGB 값을 지정합니다.
-                    ),
                     prefixIcon: Icon(Icons.lock, color: primaryColor),
                     suffixIcon: IconButton(
                       icon: Icon(

@@ -65,48 +65,45 @@ class _PrivacyPageState extends State<PrivacyPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-      appBar: AppBar(
-        leading: IconButton(
-          icon: SvgPicture.asset('assets/BackButton.svg'),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        title: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            const Text(
-              '개인정보',
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 20,
-                color: Color.fromARGB(255, 0, 0, 0),
+      body: Stack(
+        alignment: Alignment.center,
+        children: <Widget>[
+          Positioned(
+            top: screenSize.height * 0.1,
+            left: screenSize.width * 0.05,
+            child: InkWell(
+              onTap: () {
+                // 이전 페이지로 돌아가기
+                Navigator.of(context).pop();
+              },
+              child: Row(
+                children: [
+                  SvgPicture.asset('assets/BackButton.svg'),
+                  SizedBox(
+                      width: screenSize.width * 0.05), // SVG 이미지와 텍스트 사이의 간격
+                  Text('개인정보',
+                    style: TextStyle(
+                    fontSize: screenSize.width * 0.06)) // 텍스트 추가
+                ],
               ),
             ),
-            const SizedBox(width: 10),
-            Container(
-              margin: const EdgeInsets.only(top: 15),
-              child: SvgPicture.asset('assets/RoundTop.svg'),
-            )
-          ],
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        toolbarHeight: 140,
-        elevation: 0,
-      ),
-      body: Column(
-        children: <Widget>[
+          ),
+          Positioned(
+            top: 0,
+            right: 0, // 상단 위치 조절
+            child: SvgPicture.asset('assets/RoundTop.svg'),
+          ),          
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(60.0),
+              padding: const EdgeInsets.only(
+                  left: 60.0, right: 60.0, bottom: 130.0, top: 60.0),
               child: Column(
                 children: <Widget>[
                   Center(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        const SizedBox(height: 150.0),
                         const Text(
                           '학교정보',
                           style: TextStyle(
@@ -158,7 +155,7 @@ class _PrivacyPageState extends State<PrivacyPage> {
                       prefixIcon: Icon(Icons.school, color: primaryColor),
                     ),
                   ),
-                  const SizedBox(height: 20.0),
+                  const SizedBox(height: 70.0),
                   Align(
                     alignment: Alignment.centerLeft,
                     child: const Text(
@@ -195,15 +192,18 @@ class _PrivacyPageState extends State<PrivacyPage> {
               ),
             ),
           ),
-          Container(
-            padding: EdgeInsets.only(
-                left: 20.0, right: 20.0, bottom: 30.0, top: 10.0),
-            color: Color.fromARGB(255, 255, 255, 255),
-            child: InkWell(
-              onTap: _savePrivacy,
-              child: SvgPicture.asset(
-                'assets/RoundButton.svg',
-                // 필요하다면 SVG의 크기를 조절하세요
+          Positioned(
+            bottom: 0,
+            child: Container(
+              padding: EdgeInsets.only(
+                  left: 20.0, right: 20.0, bottom: 0.0, top: 0.0),
+              color: Color.fromARGB(255, 255, 255, 255),
+              child: InkWell(
+                onTap: _savePrivacy,
+                child: SvgPicture.asset(
+                  'assets/RoundButton.svg',
+                  // 필요하다면 SVG의 크기를 조절하세요
+                ),
               ),
             ),
           ),

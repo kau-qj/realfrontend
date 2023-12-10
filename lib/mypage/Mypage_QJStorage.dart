@@ -44,8 +44,8 @@ class _QJStorageState extends State<QJStorage> {
                     SizedBox(
                         width: screenSize.width * 0.05), // SVG 이미지와 텍스트 사이의 간격
                     Text('QJ 보관함',
-                        style: TextStyle(
-                            fontSize: screenSize.width * 0.06)) // 텍스트 추가
+                      style: TextStyle(
+                      fontSize: screenSize.width * 0.06)) // 텍스트 추가
                   ],
                 ),
               ),

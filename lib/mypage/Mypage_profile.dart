@@ -69,6 +69,38 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   }
 
   Future<void> _pickImage() async {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                  leading: Icon(Icons.photo_library),
+                  title: Text('갤러리에서 선택하기'),
+                  onTap: () {
+                    _openGallery();
+                    Navigator.of(context).pop();
+                  }),
+              ListTile(
+                leading: Icon(Icons.image),
+                title: Text('기본 이미지 사용하기'),
+                onTap: () {
+                  setState(() {
+                    imageUrl = 'assets/profile.png'; // 기본 이미지 경로 설정
+                    _isImageUpdated = true;
+                  });
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _openGallery() async {
     final ImagePicker _picker = ImagePicker();
     try {
       final XFile? image = await _picker.pickImage(source: ImageSource.gallery);

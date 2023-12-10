@@ -3,10 +3,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-// api_service.dart
-final baseUrl = 'https://kauqj.shop';  // 기본 URL이 서버 API의 올바른 주소인지 확인
-final endpoint = '/board/posts';       // 게시물을 가져오기 위한 올바른 엔드포인트인지 확인
-
+final baseUrl = 'https://kauqj.shop';
+final endpoint = '/board/posts';
 
 class ApiService {
   Future<void> createPost(String title, String content, int userId) async {

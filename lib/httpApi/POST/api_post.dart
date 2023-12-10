@@ -14,40 +14,36 @@ class ApiService {
     'Accept': 'application/json',
   };
 
-  // 특정 게시판 게시글 조회
-  Future<Map<String, dynamic>> getPosts(int postType) async {
-    final uri = Uri.parse(baseUrl);
-    final cookies = await cookieJar.loadForRequest(uri);
-    String jwtToken = '';
-    print('cookies: $cookies');
+  // 특정 게시판의 게시글 조회
+  Future<Map<String, dynamic>> getPostsInBoard(int postType) async {
+  final uri = Uri.parse(baseUrl);
+  final cookies = await cookieJar.loadForRequest(uri);
+  String jwtToken = '';
 
-    // 기존 코드에서 쿠키 이름이 'access_token'인 것을 찾도록 수정
-    final jwt = cookies.firstWhereOrNull((cookie) => cookie.name == 'access_token');
-    print('jwt: $jwt');
-    if (jwt != null) {
-      jwtToken = jwt.value;  // 찾은 경우 토큰 값을 설정
-    } else {
-      // jwtToken이 비었을 경우의 처리 추가
-      throw Exception('토큰이 존재하지 않습니다. 로그인이 필요합니다.');
-    }
-
-    // 'Bearer' 헤더에 적절한 토큰 값을 설정
-    final headers = {
-      'Cookie': cookies.map((c) => '${c.name}=${c.value}').join('; '),
-      'Authorization': 'Bearer $jwtToken'
-    };
-
-    final response = await http.get(
-      Uri.parse('$baseUrl/board/posts/$postType'),
-      headers: headers,
-    );
-
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Failed to load posts');
-    }
+  final jwt = cookies.firstWhereOrNull((cookie) => cookie.name == 'access_token');
+  if (jwt != null) {
+    jwtToken = jwt.value;
+  } else {
+    throw Exception('토큰이 존재하지 않습니다. 로그인이 필요합니다.');
   }
+
+  final headers = {
+    'Cookie': cookies.map((c) => '${c.name}=${c.value}').join('; '),
+    'Authorization': 'Bearer $jwtToken'
+  };
+
+  final response = await http.get(Uri.parse('$baseUrl/board/posts/$postType'), headers: headers);
+  
+  print('Response status: ${response.statusCode}');
+  print('Response body: ${response.body}');
+
+  if (response.statusCode == 200) {
+    return json.decode(response.body);
+  } else {
+    throw Exception('Failed to load posts');
+  }
+}
+
 
   // 특정 게시글 상세 조회
   Future<Map<String, dynamic>> getPostDetail(int postIdx) async {
@@ -55,17 +51,13 @@ class ApiService {
     final cookies = await cookieJar.loadForRequest(uri);
     String jwtToken = '';
 
-    // 기존 코드에서 쿠키 이름이 'access_token'인 것을 찾도록 수정
     final jwt = cookies.firstWhereOrNull((cookie) => cookie.name == 'access_token');
-
     if (jwt != null) {
-      jwtToken = jwt.value;  // 찾은 경우 토큰 값을 설정
+      jwtToken = jwt.value;
     } else {
-      // jwtToken이 비었을 경우의 처리 추가
       throw Exception('토큰이 존재하지 않습니다. 로그인이 필요합니다.');
     }
 
-    // 'Bearer' 헤더에 적절한 토큰 값을 설정
     final headers = {
       'Cookie': cookies.map((c) => '${c.name}=${c.value}').join('; '),
       'Authorization': 'Bearer $jwtToken'

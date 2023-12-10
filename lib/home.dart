@@ -102,14 +102,16 @@ class _MyHompageState extends State<MyHompage> {
                           topLeft: Radius.circular(37),
                           topRight: Radius.circular(37),
                         ),
-                        color: Color.fromARGB(255, 255, 255, 255),
+                        color: Color.fromRGBO(161, 196, 253, 0.25),
+                        /*
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.25),
+                            color: Colors.grey,
                             blurRadius: 10,
                             offset: const Offset(2, 5),
                           ),
                         ],
+                        */
                       ),
                       child: Stack(
                         children: [
@@ -230,7 +232,7 @@ class _MyHompageState extends State<MyHompage> {
             children: [
               SvgPicture.asset(svgAsset, width: width),
               Positioned(
-                bottom: 60,
+                top: 55,
                 child: Align(
                   alignment: Alignment.center,
                   child: Container(
@@ -239,7 +241,7 @@ class _MyHompageState extends State<MyHompage> {
                     width: width,
                     child: title.contains(']') ? RichText(
                       textAlign: TextAlign.center,
-                      maxLines: 5,
+                      maxLines: 10,
                       overflow: TextOverflow.ellipsis,
                       text: TextSpan(
                         style: TextStyle(
@@ -252,7 +254,7 @@ class _MyHompageState extends State<MyHompage> {
                             style: TextStyle(
                               color: Color.fromRGBO(55, 62, 80, 1),  // 첫 번째 부분의 글자색
                               fontWeight: FontWeight.bold,
-                              fontSize: 15.0,
+                              fontSize: 13.0,
                             ),
                           ),
                           TextSpan(

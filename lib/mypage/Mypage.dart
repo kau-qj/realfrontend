@@ -8,6 +8,7 @@ import 'Mypage_profile.dart';
 import 'Mypage_PrivacyPage.dart';
 import 'Mypage_storage.dart';
 import 'package:qj_projec/jobDic/job_details.dart';
+import 'Mypage_subscribe.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({Key? key}) : super(key: key);
@@ -94,6 +95,12 @@ class _MyPageState extends State<MyPage> {
     );
   }
 
+  void _navigateToSubscribe() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => const SubscribePage()),
+    );
+  }
+
   void _navigateToProfilImage(BuildContext context) async {
     final newProfile = await Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => const ProfileEditPage()),
@@ -110,7 +117,7 @@ class _MyPageState extends State<MyPage> {
     showCupertinoModalPopup<void>(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
-        content: const Text('로그아웃하시겠습니까?'),
+        content: const Text('로그아웃 하시겠습니까?'),
         actions: <CupertinoDialogAction>[
           CupertinoDialogAction(
             isDefaultAction: true,
@@ -139,7 +146,7 @@ class _MyPageState extends State<MyPage> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-    
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Color.fromARGB(255, 255, 255, 255),
@@ -153,7 +160,9 @@ class _MyPageState extends State<MyPage> {
               children: [
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: SvgPicture.asset('assets/QJLog.svg',),
+                  child: SvgPicture.asset(
+                    'assets/QJLog.svg',
+                  ),
                 ),
                 Align(
                   alignment: Alignment.centerLeft,
@@ -256,9 +265,7 @@ class _MyPageState extends State<MyPage> {
               color: Colors.transparent, // 배경색을 투명으로 설정
               child: Column(
                 children: [
-                  _buildMenuItem('유료 구독하기', () {
-                    // 다른 페이지로 이동하는 로직
-                  }),
+                  _buildMenuItem('유료 구독하기', _navigateToSubscribe),
                   _Line(),
                   _buildMenuItem('QJ 보관함', _navigateToStorage),
                   _Line(),
@@ -267,7 +274,7 @@ class _MyPageState extends State<MyPage> {
                   _buildMenuItem(
                     '환경설정',
                     _navigateToSettings,
-                  ), // 여기서 SettingPage로 이동합니다.
+                  ),
                   _Line(),
                   _buildMenuItem('로그아웃', _logout),
                   SizedBox(height: 5),

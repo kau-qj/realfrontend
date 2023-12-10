@@ -8,6 +8,231 @@ import 'package:qj_projec/POST/post_detail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:cloud_firestore/cloud_firestore.dart';
 
+class PostPage extends StatefulWidget {
+  const PostPage({Key? key}) : super(key: key);
+
+  @override
+  State<PostPage> createState() => _PostPageState();
+}
+
+class _PostPageState extends State<PostPage> with AutomaticKeepAliveClientMixin {
+  List<Map<String, dynamic>> createdPosts = [];
+  int currentTab = 0;
+  String selectedBoardName = '자유';
+  final ApiService apiService = ApiService();
+
+  void _savePosts() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> postsJson = createdPosts.map((post) => json.encode(post)).toList();
+    prefs.setStringList('createdPosts', postsJson);
+  }
+
+  void _loadPosts() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? postsJson = prefs.getStringList('createdPosts');
+    if (postsJson != null) {
+      setState(() {
+        createdPosts = postsJson.map<Map<String, dynamic>>((postJson) {
+          Map<String, dynamic> postMap = Map<String, dynamic>.from(json.decode(postJson));
+          return {
+            'title': postMap['title'],
+            'content': postMap['content'],
+            'postType': postMap['postType'],
+            'selectedBoardName': postMap['selectedBoardName'],
+          };
+        }).toList()
+        .reversed.toList();
+      });
+    }
+  }
+
+  void _loadPostsForBoard(int boardId) async {
+    try {
+      Map<String, dynamic> posts = await apiService.getPostsInBoard(boardId);
+      // posts를 사용하여 UI 업데이트
+      // 예: createdPosts를 posts 데이터로 설정
+    } catch (e) {
+      print('Failed to load posts for board: $e');
+    }
+  }
+
+  void addCreatedPost(String title, String content, int postType, String selectedBoardName) {
+    setState(() {
+      createdPosts.add({
+        'title': title,
+        'content': content,
+        'postType': postType,
+        'selectedBoardName': selectedBoardName,
+      });
+      _savePosts();
+      _loadPosts();
+    });
+  }
+
+  void removePost(String title) {
+    setState(() {
+      createdPosts.removeWhere((post) => post['title'] == title);
+      _savePosts();
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPosts();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 5,
+      child: Scaffold(
+        appBar: null,
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: <Widget>[
+              const SizedBox(height: 80),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Search...',
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {},
+                    ),
+                    prefixIcon: IconButton(
+                      icon: const Icon(Icons.search),
+                      onPressed: () {},
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(color: Color.fromRGBO(161, 196, 253, 1)),
+                    ),
+                  ),
+                ),
+              ),
+              TabBar(
+                labelColor: Color.fromRGBO(161, 196, 253, 1),
+                unselectedLabelColor: Colors.black,
+                labelStyle: TextStyle(fontSize: 12.0),
+                indicatorColor: Color.fromRGBO(161, 196, 253, 1),
+                tabs: [
+                  Tab(text: '자유'),
+                  Tab(text: '채용'),
+                  Tab(text: '대외활동'),
+                  Tab(text: '동아리'),
+                  Tab(text: '뉴스'),
+                ],
+                onTap: (index) {
+                  setState(() {
+                    currentTab = index;
+                    _loadPostsForBoard(currentTab);
+                  });
+                },
+              ),
+              Expanded(
+                child: TabBarView(
+                  children: [
+                    _buildListViewForPostType(0),
+                    _buildListViewForPostType(1),
+                    _buildListViewForPostType(2),
+                    _buildListViewForPostType(3),
+                    _buildListViewForPostType(4),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => CreatePostPage(parent: this)),
+            );
+          },
+          child: const Icon(Icons.create),
+          backgroundColor: Color.fromRGBO(161, 196, 253, 1),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildListViewForPostType(int postType) {
+  List<Map<String, dynamic>> postsForType = createdPosts
+      .where((post) => post['postType'] == postType)
+      .toList();
+
+  return ListView.builder(
+    itemCount: postsForType.length,
+    itemBuilder: (context, index) {
+      final post = postsForType[index];
+      return Card(
+        margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+        elevation: 10.0,
+        shadowColor: Colors.grey,
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PostDetailsPage(
+                  postTitle: post['title'] ?? '',
+                  postContent: post['content'] ?? '',
+                  createAT: post['time'] ?? '',
+                  nickName: post['nickName'] ?? '',
+                  selectedBoardName: post['selectedBoardName'] ?? '',
+                  onDelete: () async {
+                    removePost(post['title'] ?? '');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('게시글이 삭제되었습니다.'),
+                        backgroundColor: Color.fromRGBO(161, 196, 253, 1),  // RGB로 바탕색 설정
+                      ),
+                    );
+                  },
+                  postId: post['id'] ?? 0, // postId 값을 전달
+                ),
+              ),
+            );
+          },
+            child: Container(
+              height: 93.0,
+              padding: EdgeInsets.all(13.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    post['title'] ?? '',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8.0),
+                  Text(
+                    post['content'] ?? '',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  bool get wantKeepAlive => true;
+}
+
 class CreatePostPage extends StatefulWidget {
   final _PostPageState parent;
 
@@ -222,28 +447,12 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       ),
                     );
                     return;
-                  } else if (title.isEmpty && content.isEmpty) {
-                    print('제목과 내용을 입력하세요.');
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('제목과 내용을 입력하세요.'),
-                        backgroundColor: Color.fromRGBO(161, 196, 253, 1),
-                      ),
-                    );
-                    return;
                   }
 
-                  final prefs = await SharedPreferences.getInstance();
                   final apiService = ApiService();
                   try {
                     await apiService.createPost(title, content, selectedPostType);
                     widget.parent.addCreatedPost(title, content, selectedPostType, selectedBoardName);
-                    await prefs.setString('title', title);
-                    await prefs.setString('content', content);
-                    final storedTitle = prefs.getString('title');
-                    final storedContent = prefs.getString('content');
-                    print('Stored title: $storedTitle');
-                    print('Stored content: $storedContent');
 
                     Navigator.pop(context);
                   } catch (e) {
@@ -269,235 +478,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class PostPage extends StatefulWidget {
-  const PostPage({Key? key}) : super(key: key);
-
-  @override
-  State<PostPage> createState() => _PostPageState();
-}
-
-class _PostPageState extends State<PostPage> with AutomaticKeepAliveClientMixin {
-  List<Map<String, dynamic>> createdPosts = [];
-  int currentTab = 0;
-  String selectedBoardName = '자유';
-
-  void _savePosts() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> postsJson =
-        createdPosts.map((post) => json.encode(post)).toList();
-    prefs.setStringList('createdPosts', postsJson);
-  }
-
-  void _loadPosts() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String>? postsJson = prefs.getStringList('createdPosts');
-    if (postsJson != null) {
-      setState(() {
-        createdPosts = postsJson
-            .map<Map<String, dynamic>>((postJson) {
-              Map<String, dynamic> postMap =
-                  Map<String, dynamic>.from(json.decode(postJson));
-              return {
-                'title': postMap['title'],
-                'content': postMap['content'],
-                'postType': postMap['postType'],
-                'selectedBoardName': postMap['selectedBoardName'],
-              };
-            })
-            .toList()
-            .reversed
-            .toList();
-      });
-    }
-  }
-
-  void addCreatedPost(
-      String title, String content, int postType, String selectedBoardName) {
-    setState(() {
-      createdPosts.add({
-        'title': title,
-        'content': content,
-        'postType': postType,
-        'selectedBoardName': selectedBoardName,
-      });
-      _savePosts();
-      _loadPosts();
-    });
-  }
-
-  void removePost(String title) {
-    setState(() {
-      createdPosts.removeWhere((post) => post['title'] == title);
-      _savePosts();
-    });
-  }
-
-  @override
-void initState() {
-  super.initState();
-  print('initState called');
-  _loadPosts();
-}
-
-  @override
-  void dispose() {
-    // 페이지가 종료될 때 _loadPosts 다시 호출
-    _loadPosts();
-    super.dispose();
-  }
-
-
-  @override
-  bool get wantKeepAlive => true;
-
-  Widget _buildListViewForPostType(int postType) {
-    List<Map<String, dynamic>> postsForType = createdPosts
-        .where((post) => post['postType'] == postType)
-        .toList()
-        .reversed
-        .toList();
-
-    return ListView.builder(
-      itemCount: postsForType.length,
-      itemBuilder: (context, index) {
-        final post = postsForType[index];
-        return Card(
-          margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          elevation: 10.0,
-          shadowColor: Colors.grey,
-          child: InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => PostDetailsPage(
-                    postTitle: post['title'] ?? '',
-                    postContent: post['content'] ?? '',
-                    createAT: post['time'] ?? '',
-                    nickName: post['nickName'] ?? '',
-                    selectedBoardName: post['selectedBoardName'] ?? '',
-                    onDelete: () async {
-                      removePost(post['title'] ?? '');
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('게시글이 삭제되었습니다.'),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              );
-            },
-            child: Container(
-              height: 93.0,
-              padding: EdgeInsets.all(13.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    post['title'] ?? '',
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8.0),
-                  Text(
-                    post['content'] ?? '',
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 5,
-      child: Scaffold(
-        appBar: null,
-        body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: <Widget>[
-              const SizedBox(height: 80),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Search...',
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.clear),
-                      onPressed: () {},
-                    ),
-                    prefixIcon: IconButton(
-                      icon: const Icon(Icons.search),
-                      onPressed: () {},
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                      borderSide:
-                          BorderSide(color: Color.fromRGBO(161, 196, 253, 1)),
-                    ),
-                  ),
-                ),
-              ),
-              TabBar(
-                labelColor: Color.fromRGBO(161, 196, 253, 1),
-                unselectedLabelColor: Colors.black,
-                labelStyle: TextStyle(fontSize: 12.0),
-                indicatorColor: Color.fromRGBO(161, 196, 253, 1),
-                tabs: [
-                  Tab(text: '자유'),
-                  Tab(text: '채용'),
-                  Tab(text: '대외활동'),
-                  Tab(text: '동아리'),
-                  Tab(text: '뉴스'),
-                ],
-                onTap: (index) {
-                  setState(() {
-                    currentTab = index;
-                  });
-                },
-              ),
-              Expanded(
-                child: TabBarView(
-                  children: [
-                    _buildListViewForPostType(0),
-                    _buildListViewForPostType(1),
-                    _buildListViewForPostType(2),
-                    _buildListViewForPostType(3),
-                    _buildListViewForPostType(4),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => CreatePostPage(parent: this)),
-            );
-          },
-          child: const Icon(Icons.create),
-          backgroundColor: Color.fromRGBO(161, 196, 253, 1),
         ),
       ),
     );

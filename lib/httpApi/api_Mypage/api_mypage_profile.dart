@@ -46,6 +46,7 @@ class ApiService {
 
         print('dkdkdk: $imageUrl');
         print('xcxcxc: $parsedImageUrl');
+
         if (imageUrl != null && imageUrl.isNotEmpty) {
           try {
             final uri = Uri.parse(imageUrl);
