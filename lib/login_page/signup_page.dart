@@ -215,7 +215,6 @@ class _SignupPageState extends State<SignupPage> {
                 if (school.isEmpty ||
                     major.isEmpty ||
                     grade.isEmpty ||
-                    jobName.isEmpty ||
                     userName.isEmpty ||
                     phoneNum.isEmpty ||
                     userId.isEmpty ||

@@ -15,7 +15,6 @@ class ApiService {
     final String endpoint = '/mypage/profile';
     final uri = Uri.parse(baseUrl);
     final cookies = await cookieJar.loadForRequest(uri);
-
     String jwtToken = '';
 
     final jwt =
@@ -43,10 +42,9 @@ class ApiService {
         String? jobName = data['result']['jobName'];
         String? imageUrl = data['result']['imageUrl'];
         String? parsedImageUrl;
+        print('rororo: $imageUrl');
 
-        print('dkdkdk: $imageUrl');
         print('xcxcxc: $parsedImageUrl');
-
         if (imageUrl != null && imageUrl.isNotEmpty) {
           try {
             final uri = Uri.parse(imageUrl);
@@ -92,13 +90,14 @@ class ApiService {
         ..fields['jobName'] = jobName;
 
       if (imageUrl != null) {
+        print('어디에: $imageUrl');
         if (imageUrl.startsWith('http')) {
           // Case 3: S3 URL provided directly
           request.fields['s3ImageUrl'] = imageUrl;
         } else if (!imageUrl.startsWith('assets')) {
           // Case 1: Image file uploaded
           request.files
-              .add(await http.MultipartFile.fromPath('profileImage', imageUrl));
+              .add(await http.MultipartFile.fromPath('imageUrl', imageUrl));
         }
       }
       print('0909: ${request.fields}');
@@ -129,6 +128,6 @@ class ApiService {
     }
 
     // 'access_token='을 포함한 토큰 전체 문자열을 반환
-    return jwt.name + '=' + jwt.value; // 이렇게 변경
+    return jwt.name + '=' + jwt.value;
   }
 }

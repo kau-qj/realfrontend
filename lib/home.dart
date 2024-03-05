@@ -158,7 +158,9 @@ class _MyHompageState extends State<MyHompage> {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting) {
                                       return Center(
-                                          child: CircularProgressIndicator());
+                                          child: CircularProgressIndicator(
+                                            valueColor: AlwaysStoppedAnimation<Color>(Color.fromARGB(194, 183, 236, 255)),
+                                          ),);
                                     } else if (snapshot.hasError) {
                                       return Text('Error: ${snapshot.error}');
                                     } else if (!snapshot.hasData ||

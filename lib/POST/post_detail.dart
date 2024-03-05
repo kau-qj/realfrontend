@@ -1,9 +1,14 @@
-//post_detail.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:qj_projec/httpApi/POST/api_service.dart';
-import 'package:qj_projec/POST/post.dart';
-//import 'package:cloud_firestore/cloud_firestore.dart';
+
+class Comment {
+  final int commentId; // 댓글 ID
+  final String text;
+  final String userName;
+
+  Comment({required this.commentId, required this.text, required this.userName});
+}
 
 class PostDetailsPage extends StatefulWidget {
   final String postTitle;
@@ -12,7 +17,7 @@ class PostDetailsPage extends StatefulWidget {
   final VoidCallback onDelete;
   final String nickName;
   final String selectedBoardName;
-  final int postId; // 게시글 ID 추가
+  final int postId;
 
   const PostDetailsPage({
     Key? key,
@@ -22,7 +27,7 @@ class PostDetailsPage extends StatefulWidget {
     required this.nickName,
     required this.onDelete,
     required this.selectedBoardName,
-    required this.postId, // 생성자에 postId 추가
+    required this.postId,
   }) : super(key: key);
 
   @override
@@ -34,6 +39,7 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
   late String mutablePostTitle;
   late String mutablePostContent;
   late TextEditingController commentController;
+  List<Comment> comments = [];
 
   @override
   void initState() {
@@ -41,28 +47,30 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
     mutablePostTitle = widget.postTitle;
     mutablePostContent = widget.postContent;
     commentController = TextEditingController();
-    _loadPostDetail(); // 게시글 상세 정보 로드
+    _loadPostDetail();
+    _loadComments();
   }
 
   Future<void> _loadPostDetail() async {
-  try {
-    print('Getting details for post: ${widget.postId}'); // 현재 postId 확인 로그
-    final postDetail = await apiService.getPostDetail(widget.postId);
-    if (postDetail != null && postDetail.isNotEmpty) {
-      setState(() {
-        mutablePostTitle = postDetail['title'] as String? ?? '기본 제목';
-        mutablePostContent = postDetail['content'] as String? ?? '기본 내용';
-      });
-    } else {
-      // 데이터가 비어있거나 null인 경우 처리
-      print('No data available for post: ${widget.postId}');
+    try {
+      print('Getting details for post: ${widget.postId}');
+      final postDetail = await apiService.getPostDetail(widget.postId);
+      if (postDetail != null && postDetail.isNotEmpty) {
+        setState(() {
+          mutablePostTitle = postDetail['title'] as String? ?? '기본 제목';
+          mutablePostContent = postDetail['content'] as String? ?? '기본 내용';
+        });
+      } else {
+        print('No data available for post: ${widget.postId}');
+      }
+    } catch (e) {
+      print('Error loading post detail: $e');
     }
-  } catch (e) {
-    print('Error loading post detail: $e');
-    // 적절한 예외 처리를 여기에 추가합니다.
   }
-}
 
+  Future<void> _loadComments() async {
+    // TODO: Implement loading comments from the server.
+  }
 
   Future<void> _editPost() async {
     print('Editing post: ${widget.postTitle}');
@@ -114,10 +122,32 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
     );
   }
 
-  void _addComment() {
+  Future<void> _addComment() async {
     String commentText = commentController.text;
+    String userName = '사용자'; // TODO: Modify as needed based on user information
+
+    // TODO: Implement API call to add a new comment and get the comment ID.
+    int commentId = 1; // Replace with the actual comment ID.
+
+    Comment newComment = Comment(commentId: commentId, text: commentText, userName: userName);
+
+    setState(() {
+      comments.add(newComment);
+    });
+
     print('Comment added: $commentText');
     commentController.clear();
+  }
+
+  Future<void> _deleteComment(int index) async {
+    // TODO: Implement API call to delete a comment.
+    // 예를 들어, comments[index].commentId와 같은 방식으로 삭제할 수 있습니다.
+
+    setState(() {
+      comments.removeAt(index);
+    });
+
+    print('Comment deleted successfully');
   }
 
   @override
@@ -167,7 +197,7 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
                     Icon(Icons.person, size: 20.0, color: Colors.grey),
                     SizedBox(width: 5.0),
                     Text(
-                      '작성자: ${widget.nickName}',
+                      '작성자: 마하',
                       style: TextStyle(fontSize: 12.0, color: Colors.grey),
                     ),
                   ],
@@ -184,11 +214,10 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
               style: TextStyle(
                 fontSize: 30.0,
                 fontWeight: FontWeight.bold,
-                //decoration: TextDecoration.underline,
               ),
             ),
             const SizedBox(height: 20.0),
-            Container(
+            Container(  
               height: 300.0,
               width: double.infinity,
               padding: EdgeInsets.all(8.0),
@@ -204,6 +233,40 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
                   mutablePostContent,
                   style: TextStyle(fontSize: 16.0),
                 ),
+              ),
+            ),
+            const SizedBox(height: 30.0),
+            Text(
+              '댓글',
+              style: TextStyle(
+                fontSize: 20.0,
+                //fontWeight: FontWeight.bold,
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: comments.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: ListTile(
+                            title: Text(comments[index].text),
+                            subtitle: Text('작성자: 마하'),
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.delete, color: Color.fromRGBO(161, 196, 253, 1)),
+                          onPressed: () {
+                            _deleteComment(index);
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
             ),
             const SizedBox(height: 20.0),
@@ -224,6 +287,7 @@ class _PostDetailsPageState extends State<PostDetailsPage> {
                           color: Color.fromRGBO(161, 196, 253, 1),
                         ),
                       ),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10),
                     ),
                   ),
                 ),
@@ -321,7 +385,7 @@ class _EditPostDialogState extends State<EditPostDialog> {
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: Color.fromRGBO(161, 196, 253, 1)),
               ),
-              contentPadding: EdgeInsets.only(top: 10, ),
+              contentPadding: EdgeInsets.only(top: 10),
             ),
           ),
         ],

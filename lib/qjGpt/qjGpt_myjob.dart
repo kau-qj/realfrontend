@@ -182,7 +182,7 @@ class MyLecture extends StatelessWidget {
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else if (!snapshot.hasData || snapshot.data == null || snapshot.data!['result'] == null) {
-                  return Text('No data fetched from API.');
+                  return Text('등록된 관심직무가 없습니다.\n마이페이ㅈ');
                 } else {
                   // API로부터 받아온 데이터를 저장
                   List result = snapshot.data!['result'];

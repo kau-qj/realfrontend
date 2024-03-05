@@ -40,8 +40,8 @@ class _PostPageState extends State<PostPage> with AutomaticKeepAliveClientMixin 
             'postType': postMap['postType'],
             'selectedBoardName': postMap['selectedBoardName'],
           };
-        }).toList()
-        .reversed.toList();
+        })
+        .toList();
       });
     }
   }
@@ -166,7 +166,8 @@ class _PostPageState extends State<PostPage> with AutomaticKeepAliveClientMixin 
   Widget _buildListViewForPostType(int postType) {
   List<Map<String, dynamic>> postsForType = createdPosts
       .where((post) => post['postType'] == postType)
-      .toList();
+      .toList()
+      .reversed.toList ();
 
   return ListView.builder(
     itemCount: postsForType.length,

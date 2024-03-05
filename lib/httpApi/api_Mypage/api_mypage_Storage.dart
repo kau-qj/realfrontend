@@ -38,7 +38,7 @@ class ApiService {
       return result;
     } else {
       throw Exception(
-          'Failed to parse data. Expected type: List, Actual type: ${result.runtimeType}');
+          '보관함이 비어있습니다. ${result.runtimeType}');
     }
   }
 }

@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:qj_projec/jobDic/job_details.dart';
 import 'package:qj_projec/httpApi/api_job_main.dart';
 
-
 class JobDictionary extends StatefulWidget {
   const JobDictionary({super.key});
 
@@ -72,11 +71,13 @@ class _JobDictionaryState extends State<JobDictionary> {
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
-                      borderSide: BorderSide(color: Color.fromRGBO(161, 196, 253, 1)),
+                      borderSide:
+                          BorderSide(color: Color.fromRGBO(161, 196, 253, 1)),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30.0),
-                      borderSide: BorderSide(color: Color.fromRGBO(161, 196, 253, 1)),
+                      borderSide:
+                          BorderSide(color: Color.fromRGBO(161, 196, 253, 1)),
                     ),
                   ),
                   onTap: () {
@@ -99,7 +100,8 @@ class _JobDictionaryState extends State<JobDictionary> {
                   height: 300,
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.5),
-                    border: Border.all( // 테두리 설정
+                    border: Border.all(
+                      // 테두리 설정
                       color: Color.fromRGBO(161, 196, 253, 0.94), // 테두리 색상
                       width: 1, // 테두리 두께
                     ),
@@ -109,30 +111,42 @@ class _JobDictionaryState extends State<JobDictionary> {
                     future: apiService.fetchData(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return CircularProgressIndicator();
+                        return CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              Color.fromARGB(194, 183, 236, 255)),
+                        );
                       } else if (snapshot.hasError) {
                         return Text('Error: ${snapshot.error}');
-                      } else if (!snapshot.hasData || snapshot.data == null || snapshot.data!['result'] == null) {
+                      } else if (!snapshot.hasData ||
+                          snapshot.data == null ||
+                          snapshot.data!['result'] == null) {
                         return Text('No data fetched from API.');
                       } else {
                         // API로부터 받아온 데이터를 저장
                         List result = snapshot.data!['result'];
 
                         // 각 아이템에서 '---'만 추출
-                        List<String> titles = result.map((item) => item['jobname'] as String).toList();
+                        List<String> titles = result
+                            .map((item) => item['jobname'] as String)
+                            .toList();
 
                         return ListView.builder(
                           itemCount: titles.length,
                           itemBuilder: (context, index) {
                             return Container(
-                              padding: index == 0 ? EdgeInsets.fromLTRB(0, 0, 0, 0) : EdgeInsets.fromLTRB(0, 0, 0, 0),
+                              padding: index == 0
+                                  ? EdgeInsets.fromLTRB(0, 0, 0, 0)
+                                  : EdgeInsets.fromLTRB(0, 0, 0, 0),
                               child: ListTile(
                                 title: Text(titles[index]),
-                                onTap: () { // 항목을 탭했을 때의 이벤트를 정의
+                                onTap: () {
+                                  // 항목을 탭했을 때의 이벤트를 정의
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => JobDetails(jobName: titles[index]), // 선택한 항목의 값을 파라미터로 전달
+                                      builder: (context) => JobDetails(
+                                          jobName: titles[
+                                              index]), // 선택한 항목의 값을 파라미터로 전달
                                     ),
                                   );
                                 },
